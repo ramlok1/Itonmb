@@ -78,7 +78,19 @@ public class BaseMenu extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.ing_efe_caja) {
-            Toast.makeText(getApplicationContext(),"Ingrese selecc",Toast.LENGTH_SHORT).show();
+            Intent anIntent = new Intent(getApplicationContext(), ingresa_efectivo_caja.class);
+            startActivity(anIntent);
+            drawerLayout.closeDrawers();
+            return true;
+        } else if (id == R.id.ret_efe_caja) {
+            Intent anIntent = new Intent(getApplicationContext(), retirar_efectivo_caja.class);
+            startActivity(anIntent);
+            drawerLayout.closeDrawers();
+            return true;
+        } else if (id == R.id.cerrar_caja) {
+            Intent anIntent = new Intent(getApplicationContext(), cerrar_caja.class);
+            startActivity(anIntent);
+            drawerLayout.closeDrawers();
             return true;
         }
 

@@ -23,10 +23,13 @@
         <activity
             android:name=".apertura_caja"
             android:label="@string/title_activity_apertura_caja"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".search_orden" />
-        <activity android:name=".listado_orden"></activity>
+        <activity android:name=".listado_orden" />
+        <activity android:name=".ingresa_efectivo_caja" />
+        <activity android:name=".retirar_efectivo_caja" />
+        <activity android:name=".cerrar_caja"></activity>
     </application>
 
 </manifest>
