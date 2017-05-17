@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/ing_efe_caja"
+        android:orderInCategory="100"
+        android:title="@string/ing_efe"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/ret_efe_caja"
+        android:orderInCategory="100"
+        android:title="@string/ret_efe"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/cerrar_caja"
+        android:orderInCategory="100"
+        android:title="@string/cerrar_caja"
+        app:showAsAction="never" />
+</menu>

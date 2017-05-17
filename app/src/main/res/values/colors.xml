@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#303958</color>
+    <color name="colorPrimaryDark">#303958</color>
+    <color name="colorAccent">#2b2b2b</color>
+    <color name="colory">#fecf0f</color>
+    <color name="colorbtncancelar">#c20f50</color>
+    <color name="colorfondo">#2b2b2b</color>
+    <color name="colortxt">#686969</color>
+    <color name="fondo_layout">#eeeeee</color>
+</resources>

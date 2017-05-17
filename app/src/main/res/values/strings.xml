@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Itonmb</string>
+    <string name="title_activity_apertura_caja">apertura_caja</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="ing_efe">Ingresar efectivo a Caja</string>
+    <string name="ret_efe">Retirar efectivo a Caja</string>
+    <string name="cerrar_caja">Cerrar Caja</string>
+
+    <string name="abordar">Abordar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="no_show">No Show</string>
+    <string name="upgrade">Upgrade</string>
+
+    <string name="list_caja_prompt">Caja</string>
+    <string name="list_t_arqueo">Tipo Arqueo</string>
+
+    <string-array name="caja_array">
+        <item>Elemento 1</item>
+        <item>Elemento 2</item>
+        <item>Elemento 3</item>
+        <item>Elemento 4</item>
+        <item>Elemento 5</item>
+    </string-array>
+    <string-array name="options">
+        <item>Ingresar efectivo a Caja</item>
+        <item>Retirar efectivo a Caja</item>
+        <item>Cerrar Caja</item>
+        <item>Elemento 4</item>
+        <item>Elemento 5</item>
+    </string-array>
+    <string-array name="arqueo_array">
+        <item>Elemento 1</item>
+        <item>Elemento 2</item>
+        <item>Elemento 3</item>
+        <item>Elemento 4</item>
+        <item>Elemento 5</item>
+    </string-array>
+    <string-array name="moneda_array">
+        <item>Moneda</item>
+        <item>Elemento 2</item>
+        <item>Elemento 3</item>
+        <item>Elemento 4</item>
+        <item>Elemento 5</item>
+    </string-array>
+    <string-array name="billete_array">
+        <item>Billete</item>
+        <item>Elemento 2</item>
+        <item>Elemento 3</item>
+        <item>Elemento 4</item>
+        <item>Elemento 5</item>
+    </string-array>
+</resources>
