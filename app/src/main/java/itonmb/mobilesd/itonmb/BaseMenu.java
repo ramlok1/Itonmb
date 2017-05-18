@@ -41,8 +41,13 @@ public class BaseMenu extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.nav_buscar_serv:
-                        Intent anIntent = new Intent(getApplicationContext(), search_orden.class);
-                        startActivity(anIntent);
+                        Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
+                        startActivity(intent_serv);
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_ver_disp:
+                        Intent intent_disp = new Intent(getApplicationContext(), barcos_disponibles.class);
+                        startActivity(intent_disp);
                         drawerLayout.closeDrawers();
                         break;
 

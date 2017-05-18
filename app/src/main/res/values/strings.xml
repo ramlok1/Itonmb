@@ -9,6 +9,7 @@
     <string name="cerrar_caja">Cerrar Caja</string>
 
     <string name="abordar">Abordar</string>
+    <string name="detalle_barco">Ver detalles</string>
     <string name="cancelar">Cancelar</string>
     <string name="no_show">No Show</string>
     <string name="upgrade">Upgrade</string>

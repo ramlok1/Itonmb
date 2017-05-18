@@ -29,7 +29,8 @@
         <activity android:name=".listado_orden" />
         <activity android:name=".ingresa_efectivo_caja" />
         <activity android:name=".retirar_efectivo_caja" />
-        <activity android:name=".cerrar_caja"></activity>
+        <activity android:name=".cerrar_caja" />
+        <activity android:name=".barcos_disponibles"></activity>
     </application>
 
 </manifest>
