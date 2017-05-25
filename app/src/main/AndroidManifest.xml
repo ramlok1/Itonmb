@@ -30,7 +30,8 @@
         <activity android:name=".ingresa_efectivo_caja" />
         <activity android:name=".retirar_efectivo_caja" />
         <activity android:name=".cerrar_caja" />
-        <activity android:name=".barcos_disponibles"></activity>
+        <activity android:name=".barcos_disponibles" />
+        <activity android:name=".brazaletes_disponibles"></activity>
     </application>
 
 </manifest>

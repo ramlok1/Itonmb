@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         android:textSize="30sp" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         android:textSize="30sp" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         android:textSize="30sp" />
 
     <Button
