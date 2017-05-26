@@ -1,6 +1,7 @@
 package itonmb.mobilesd.itonmb.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import itonmb.mobilesd.itonmb.barcos_abordar;
+import itonmb.mobilesd.itonmb.upgrade;
 import itonmb.mobilesd.itonmb.R;
+import itonmb.mobilesd.itonmb.ingresa_efectivo_caja;
 import itonmb.mobilesd.itonmb.modelo.*;
 
 import java.util.ArrayList;
@@ -118,7 +121,22 @@ public class adapter_lista_servicio extends BaseAdapter {
 
                         //noinspection SimplifiableIfStatement
                         if (id == R.id.abordar) {
-                            Toast.makeText(context,"Abordar",Toast.LENGTH_SHORT).show();
+                            Intent anIntent = new Intent(context, barcos_abordar.class);
+                            context.startActivity(anIntent);
+                            return true;
+                        }
+
+                        if (id == R.id.cancelar) {
+                            Toast.makeText(context,"En construcción...",Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                        if (id == R.id.no_show) {
+                            Toast.makeText(context,"En construcción...",Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                        if (id == R.id.upgrade) {
+                            Intent anIntent = new Intent(context, upgrade.class);
+                            context.startActivity(anIntent);
                             return true;
                         }
                         return true;

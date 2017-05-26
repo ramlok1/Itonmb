@@ -1,13 +1,13 @@
 package itonmb.mobilesd.itonmb.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,23 +15,23 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.R;
-import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
 /**
  * Created by Conrado on 09/05/2017.
  */
 
-public class adapter_lista_brazaletes_disp extends BaseAdapter {
-    TextView tview_cantidad, tview_tipo;
-    Button btn_color;
+public class adapter_lista_barcos_abordar extends BaseAdapter {
+    TextView tview_nombre, tview_capacidad, tview_booking, tview_abordar;
+    CheckBox chk_sel_abordar;
 
 
     // Declare Variables
     private Context context;
     private LayoutInflater inflater;
-    private ArrayList<modelo_lista_dbrazaletes> lista;
+    private ArrayList<modelo_lista_dbarcos> lista;
 
-    public adapter_lista_brazaletes_disp(Context context, ArrayList<modelo_lista_dbrazaletes> lista) {
+    public adapter_lista_barcos_abordar(Context context, ArrayList<modelo_lista_dbarcos> lista) {
         this.context = context;
         this.lista = lista;
     }
@@ -61,22 +61,24 @@ public class adapter_lista_brazaletes_disp extends BaseAdapter {
         //http://developer.android.com/intl/es/reference/android/view/LayoutInflater.html
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View itemView = inflater.inflate(R.layout.lista_brazaletes_disponibles, parent, false);
+        final View itemView = inflater.inflate(R.layout.lista_barcos_abordar, parent, false);
 
-        tview_cantidad = (TextView) itemView.findViewById(R.id.tview_cantidad_braz);
-        tview_tipo = (TextView) itemView.findViewById(R.id.tview_tipo_braz);
+        tview_nombre = (TextView) itemView.findViewById(R.id.tview_nombre_barco_abordar);
+        tview_capacidad = (TextView) itemView.findViewById(R.id.tview_cap_barco_abordar);
+        tview_booking = (TextView) itemView.findViewById(R.id.tview_book_barco_abordar);
+        tview_abordar = (TextView) itemView.findViewById(R.id.tview_abordar_barco_abordar);
 
 
-
-        btn_color = (Button) itemView.findViewById(R.id.color_braz);
+        chk_sel_abordar = (CheckBox) itemView.findViewById(R.id.chk_sel_abordar);
 
 
 
         // Capture position and set to the TextViews
-        String colors=lista.get(position).color;
-        tview_cantidad.setText(Integer.toString(lista.get(position).cantidad));
-        tview_tipo.setText(lista.get(position).tipo);
-        btn_color.setBackgroundColor(Color.parseColor(colors));
+        tview_nombre.setText(lista.get(position).nombre);
+        tview_capacidad.setText(Integer.toString(lista.get(position).capacidad));
+        tview_booking.setText(Integer.toString(lista.get(position).booking));
+        tview_abordar.setText(Integer.toString(lista.get(position).abordar));
+
 
 
         return itemView;

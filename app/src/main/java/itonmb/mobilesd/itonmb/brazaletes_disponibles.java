@@ -26,11 +26,11 @@ public class brazaletes_disponibles extends BaseMenu {
 
         final ArrayList<modelo_lista_dbrazaletes> datos = new ArrayList<>();
 
-        datos.add(new modelo_lista_dbrazaletes(50,"Extreme","f5054e"));
-        datos.add(new modelo_lista_dbrazaletes(50,"Ecopark","f47004"));
-        datos.add(new modelo_lista_dbrazaletes(50,"Selfinus","17a86f"));
-        datos.add(new modelo_lista_dbrazaletes(50,"Chichen","000000"));
-        datos.add(new modelo_lista_dbrazaletes(50,"Basico","0575f3"));
+        datos.add(new modelo_lista_dbrazaletes(50,"Extreme","#f5054e"));
+        datos.add(new modelo_lista_dbrazaletes(50,"Ecopark","#f47004"));
+        datos.add(new modelo_lista_dbrazaletes(50,"Selfinus","#17a86f"));
+        datos.add(new modelo_lista_dbrazaletes(50,"Chichen","#000000"));
+        datos.add(new modelo_lista_dbrazaletes(50,"Basico","#0575f3"));
 
 
 

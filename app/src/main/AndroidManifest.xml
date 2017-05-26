@@ -31,7 +31,9 @@
         <activity android:name=".retirar_efectivo_caja" />
         <activity android:name=".cerrar_caja" />
         <activity android:name=".barcos_disponibles" />
-        <activity android:name=".brazaletes_disponibles"></activity>
+        <activity android:name=".brazaletes_disponibles" />
+        <activity android:name=".barcos_abordar" />
+        <activity android:name=".upgrade"></activity>
     </application>
 
 </manifest>
