@@ -51,22 +51,15 @@ public class search_orden extends BaseMenu {
     }
 
     private void set_triggers(){
+
+        // Disparador de boton para buscar orden de servicio
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent =
-                                        new Intent(getApplicationContext(), listado_orden.class);
-                                startActivity(intent);
-                            }
-                        });
-                    }
-                }).start();
+
+                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
+                startActivity(intent);
+
             }
         });
 

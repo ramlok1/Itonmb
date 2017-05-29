@@ -1,7 +1,10 @@
 package itonmb.mobilesd.itonmb;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -12,6 +15,8 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 
 public class upgrade extends BaseMenu {
 
+    Button btn_fp_upgrade;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +24,8 @@ public class upgrade extends BaseMenu {
         getLayoutInflater().inflate(R.layout.activity_upgrade, contentFrameLayout);
         toolbar.setTitle("Upgrade");
 
+        findviews();
+        set_triggers();
         genera_lista_productos_seleccionados();
     }
 
@@ -38,5 +45,25 @@ public class upgrade extends BaseMenu {
         ListView lay_upgrades = (ListView) findViewById(R.id.list_productos_upgrade);
         adapter_lista_upgrade_productos adapter = new adapter_lista_upgrade_productos(upgrade.this, datos);
         lay_upgrades.setAdapter(adapter);
+    }
+
+    private void findviews(){
+
+        btn_fp_upgrade = (Button) findViewById(R.id.btn_fp_upgrade);
+    }
+
+    private void set_triggers (){
+
+        btn_fp_upgrade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
+                startActivity(intent);
+            }
+        });
+
+
+
     }
 }
