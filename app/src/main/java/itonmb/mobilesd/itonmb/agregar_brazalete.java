@@ -9,18 +9,18 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import itonmb.mobilesd.itonmb.adapters.adapter_lista_upgrade_productos;
-import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
+import itonmb.mobilesd.itonmb.adapters.adapter_lista_agregar_brazalete;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 
 public class agregar_brazalete extends BaseMenu {
 
-    Button btn_fp_upgrade;
+    Button btn_asignar,btn_aceptar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
-        getLayoutInflater().inflate(R.layout.activity_upgrade, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_agregar_brazalete, contentFrameLayout);
         toolbar.setTitle("Upgrade");
 
         findviews();
@@ -30,34 +30,35 @@ public class agregar_brazalete extends BaseMenu {
 
     private void genera_lista_productos_seleccionados() {
 
-        final ArrayList<modelo_lista_upgrade_productos> datos = new ArrayList<>();
+        final ArrayList<modelo_lista_agregar_brazalete> datos = new ArrayList<>();
 
-        datos.add(new modelo_lista_upgrade_productos("Isla M. Regular F-II",4,2,0,300,300));
-        datos.add(new modelo_lista_upgrade_productos("Isla M. PLUS",4,2,0,450,450));
-        datos.add(new modelo_lista_upgrade_productos("Cozumel Plus",4,2,0,550,550));
-
-
+        datos.add(new modelo_lista_agregar_brazalete("03156634","Isla M. Regular F-II","#e0920c"));
+        datos.add(new modelo_lista_agregar_brazalete("03156635","Isla M. Regular F-II","#e0920c"));
+        datos.add(new modelo_lista_agregar_brazalete("03156636","Isla M. Regular F-II","#e0920c"));
 
 
 
 
-        ListView lay_upgrades = (ListView) findViewById(R.id.list_productos_upgrade);
-        adapter_lista_upgrade_productos adapter = new adapter_lista_upgrade_productos(agregar_brazalete.this, datos);
+
+
+        ListView lay_upgrades = (ListView) findViewById(R.id.list_brazaletes_agregados);
+        adapter_lista_agregar_brazalete adapter = new adapter_lista_agregar_brazalete(agregar_brazalete.this, datos);
         lay_upgrades.setAdapter(adapter);
     }
 
     private void findviews(){
 
-        btn_fp_upgrade = (Button) findViewById(R.id.btn_fp_upgrade);
+        btn_asignar = (Button) findViewById(R.id.btn_asignar_brazalete);
+        btn_aceptar = (Button) findViewById(R.id.btn_aceptar_brazalete);
     }
 
     private void set_triggers (){
 
-        btn_fp_upgrade.setOnClickListener(new View.OnClickListener() {
+        btn_aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
+                Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
                 startActivity(intent);
             }
         });

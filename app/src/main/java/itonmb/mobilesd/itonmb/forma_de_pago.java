@@ -29,7 +29,7 @@ public class forma_de_pago extends BaseMenu {
         btn_pagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
+                Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
                 startActivity(intent);
             }
         });
