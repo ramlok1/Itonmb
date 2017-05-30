@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondo_layout"
+    android:orientation="vertical"
+    tools:context="itonmb.mobilesd.itonmb.agregar_brazalete">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/background_light"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Agregar Productos"
+                android:textColor="@android:color/black"
+                android:textSize="36sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+
+            <Spinner
+                android:id="@+id/spin_producto_upg"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:layout_marginLeft="20dp"
+                android:entries="@array/arqueo_array"
+                android:prompt="@string/list_t_arqueo"
+                android:spinnerMode="dialog"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btn_menos_a"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/minus" />
+
+            <TextView
+                android:id="@+id/txt_upgrade_adultos"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/fondo_layout"
+                android:textColor="@android:color/black"
+                android:textSize="36sp" />
+
+            <Button
+                android:id="@+id/btn_mas_a"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/plus"
+                android:elevation="0dp" />
+
+            <Button
+                android:id="@+id/btn_menos_n"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/minus" />
+
+            <TextView
+                android:id="@+id/txt_upgrade_nino"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/fondo_layout"
+                android:textColor="@android:color/black"
+                android:textSize="36sp" />
+
+            <Button
+                android:id="@+id/btn_mas_n"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/plus"
+                android:elevation="0dp" />
+
+            <Button
+                android:id="@+id/btn_menos_infante"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/minus" />
+
+            <TextView
+                android:id="@+id/txt_upgrade_infante"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/fondo_layout"
+                android:textColor="@android:color/black"
+                android:textSize="36sp" />
+
+            <Button
+                android:id="@+id/btn_mas_infante"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/plus"
+                android:elevation="0dp" />
+
+            <Button
+                android:id="@+id/button8"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="10dp"
+                android:background="#61a6dd"
+                android:text="AGREGAR"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"></LinearLayout>
+
+        <ListView
+            android:id="@+id/list_productos_upgrade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Total a pagar:"
+            android:textSize="32dp" />
+
+        <TextView
+            android:id="@+id/txt_total_pago_upgrade"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="26sp" />
+
+        <Button
+            android:id="@+id/btn_fp_upgrade"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="600dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/holo_blue_light"
+            android:text="Forma de Pago"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

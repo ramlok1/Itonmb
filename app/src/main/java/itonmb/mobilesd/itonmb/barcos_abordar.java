@@ -10,6 +10,7 @@ import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_abordar;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
 public class barcos_abordar extends BaseMenu {
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

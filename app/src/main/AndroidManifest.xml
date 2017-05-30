@@ -34,7 +34,8 @@
         <activity android:name=".brazaletes_disponibles" />
         <activity android:name=".barcos_abordar" />
         <activity android:name=".upgrade" />
-        <activity android:name=".forma_de_pago"></activity>
+        <activity android:name=".forma_de_pago"/>
+        <activity android:name=".agregar_brazalete"/>
     </application>
 
 </manifest>

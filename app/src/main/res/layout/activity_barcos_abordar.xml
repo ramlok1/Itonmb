@@ -73,7 +73,7 @@
             android:layout_height="476dp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_abordar"
             android:layout_width="377dp"
             android:layout_height="60dp"
             android:layout_marginLeft="800dp"
