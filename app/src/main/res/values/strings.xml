@@ -16,6 +16,10 @@
 
     <string name="list_caja_prompt">Caja</string>
     <string name="list_t_arqueo">Tipo Arqueo</string>
+    <string name="aceptar">ACEPTAR</string>
+    <string name="asignar">ASIGNAR</string>
+    <string name="agregar_brazalete">Agregar Brazalete</string>
+    <string name="folio_de_brazalete">Folio de brazalete</string>
 
     <string-array name="caja_array">
         <item>Elemento 1</item>

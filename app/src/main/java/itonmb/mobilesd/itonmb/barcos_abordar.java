@@ -1,6 +1,9 @@
 package itonmb.mobilesd.itonmb;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -10,6 +13,8 @@ import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_abordar;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
 public class barcos_abordar extends BaseMenu {
+
+    Button btn_abordar;
     
 
     @Override
@@ -19,6 +24,8 @@ public class barcos_abordar extends BaseMenu {
         getLayoutInflater().inflate(R.layout.activity_barcos_abordar, contentFrameLayout);
         toolbar.setTitle("Abordar Barco");
 
+        findviews();
+        set_triggers();
         genera_lista_barcos();
     }
 
@@ -40,5 +47,19 @@ public class barcos_abordar extends BaseMenu {
         ListView lay_barcos_abordar = (ListView) findViewById(R.id.list_barcos_abordar);
         adapter_lista_barcos_abordar adapter = new adapter_lista_barcos_abordar(barcos_abordar.this, datos);
         lay_barcos_abordar.setAdapter(adapter);
+    }
+    private void findviews(){
+
+        btn_abordar = (Button) findViewById(R.id.btn_abordar);
+    }
+    private void set_triggers(){
+
+        btn_abordar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
+                startActivity(intent);
+            }
+        });
     }
 }

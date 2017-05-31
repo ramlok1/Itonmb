@@ -1,6 +1,7 @@
 package itonmb.mobilesd.itonmb.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,16 +56,18 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
 
         View itemView = inflater.inflate(R.layout.lista_agregar_brazaletes, parent, false);
 
-        tview_folio = (TextView) itemView.findViewById(R.id.tview_desc_producto);
-        tview_producto = (TextView) itemView.findViewById(R.id.tview_upgrade_adulto);
+        tview_folio = (TextView) itemView.findViewById(R.id.tview_folio_brazalete);
+        tview_producto = (TextView) itemView.findViewById(R.id.tview_producto);
 
 
 
 
         btn_del_brazalete = (Button) itemView.findViewById(R.id.btn_delete_brazalete);
         btn_color = (Button) itemView.findViewById(R.id.color_braz_agregado);
-        tview_folio.setText(lista.get(position).descripcion);
-        tview_producto.setText(lista.get(position).descripcion);
+        tview_folio.setText(lista.get(position).folio);
+        tview_producto.setText(lista.get(position).producto);
+
+        btn_color.setBackgroundColor(Color.parseColor(lista.get(position).color));
 
 
 

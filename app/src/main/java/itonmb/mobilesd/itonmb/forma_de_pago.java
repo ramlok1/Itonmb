@@ -17,6 +17,9 @@ public class forma_de_pago extends BaseMenu {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_forma_de_pago, contentFrameLayout);
         toolbar.setTitle("Forma de Pago");
+
+        findview();
+        set_triggers();
     }
 
     private void findview (){
