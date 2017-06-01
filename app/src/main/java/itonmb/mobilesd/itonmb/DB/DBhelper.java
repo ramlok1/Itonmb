@@ -1,10 +1,12 @@
 package itonmb.mobilesd.itonmb.DB;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 
 public class DBhelper extends SQLiteOpenHelper {
@@ -72,21 +74,36 @@ public class DBhelper extends SQLiteOpenHelper {
 
     public void onUpgrade(SQLiteDatabase db, int version1, int version2) {
 
-        db.execSQL(TABLA_USUARIOS);
-        db.execSQL(TABLA_ENC_CAJA);
-        db.execSQL(TABLA_DET_CAJA);
-        db.execSQL(TABLA_RESERVAS);
-        db.execSQL(TABLA_PRODUCTOS);
-        db.execSQL(TABLA_BRAZALETES);
-        db.execSQL(TABLA_ABORDAJE);
-        db.execSQL(TABLA_ENC_UPGRADE);
-        db.execSQL(TABLA_DET_UPGRADE);
-        db.execSQL(TABLA_FORMA_PAGO);
-        db.execSQL(TABLA_BOTES);
+        db.execSQL("drop table if exists usuarios");
+        db.execSQL("drop table if exists encabezado_caja");
+        db.execSQL("drop table if exists detalle_caja");
+        db.execSQL("drop table if exists reservas");
+        db.execSQL("drop table if exists productos");
+        db.execSQL("drop table if exists brazaletes");
+        db.execSQL("drop table if exists abordado");
+        db.execSQL("drop table if exists encabezado_upgrade");
+        db.execSQL("drop table if exists detalle_upgrade");
+        db.execSQL("drop table if exists forma_de_pago");
+        db.execSQL("drop table if exists botes");
+
 
         onCreate(db);
 
 
+    }
+
+    public String getLogin(String usr, String pwd){
+
+        String shapwd = new String(Hex.encodeHex(DigestUtils.sha1(pwd)));
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String nombre="";
+        String query = "select nombre from usuarios where usuario='"+usr+"' and password='"+shapwd+"'";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            nombre=cursor.getString(cursor.getColumnIndex("nombre"));
+        }
+        return nombre;
     }
 
 }
