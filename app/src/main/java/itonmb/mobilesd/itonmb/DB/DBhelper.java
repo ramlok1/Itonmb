@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.ArrayList;
+
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+
 
 public class DBhelper extends SQLiteOpenHelper {
 
@@ -24,7 +28,7 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "DBlocal";
@@ -36,8 +40,8 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_USUARIOS = "create table usuarios(id_usr integer PRIMARY KEY, usuario text, password text, nombre text, tipo integer, status integer)";
     private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer,monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer, monto integer, forma_ingreso integer)";
-    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cuponn integer, agencia text,prroducto text," +
-            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, status integer, abordaje integer )";
+    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,producto text," +
+            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime, status integer, abordaje integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer, desc text, precio integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, colo text)";
     private String TABLA_ABORDAJE = "create table abordado(cupon integer, barco text, fecha datetime, hora text)";
@@ -104,6 +108,41 @@ public class DBhelper extends SQLiteOpenHelper {
             nombre=cursor.getString(cursor.getColumnIndex("nombre"));
         }
         return nombre;
+    }
+
+    public ArrayList<modelo_lista_orden> getSearch_Cupones( String name, String date, String producto, String operacion){
+        ArrayList<modelo_lista_orden> datos = new ArrayList<>();
+        String consulta_where=" where orden_servicio!=0 ";
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        // Armado de where dinamico
+        if(name.length()!=0){consulta_where=consulta_where+" and nombre_cliente like '%"+name+"%'";}
+        if(date.length()!=0){consulta_where=consulta_where+" and fecha = '"+date+"'";}
+        if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
+        if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
+
+        String consulta = "select cupon,agencia,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe from reservas "+ consulta_where;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+
+            String cupon=cursor.getString(cursor.getColumnIndex("cupon"));
+            String agencia=cursor.getString(cursor.getColumnIndex("agencia"));
+            String producto1=cursor.getString(cursor.getColumnIndex("producto"));
+            int adulto=cursor.getInt(cursor.getColumnIndex("adulto"));
+            int menor=cursor.getInt(cursor.getColumnIndex("menor"));
+            int infante=cursor.getInt(cursor.getColumnIndex("infante"));
+            String nombre_cliente=cursor.getString(cursor.getColumnIndex("nombre_cliente"));
+            String hotel=cursor.getString(cursor.getColumnIndex("hotel"));
+            String habi=cursor.getString(cursor.getColumnIndex("habi"));
+            int importe=cursor.getInt(cursor.getColumnIndex("importe"));
+
+            datos.add(new modelo_lista_orden(cupon,agencia,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe));
+
+        }
+
+        return datos;
+
     }
 
 }

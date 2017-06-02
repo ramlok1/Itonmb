@@ -46,20 +46,20 @@
             android:layout_marginTop="50dp">
 
             <EditText
-                android:id="@+id/txt_bus_date"
-                android:focusable="false"
+                android:id="@+id/txt_busc_date"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/calendar40"
                 android:drawablePadding="20dp"
                 android:ems="10"
+                android:focusable="false"
                 android:hint="Fecha"
                 android:inputType="date"
                 android:textSize="30sp" />
         </android.support.design.widget.TextInputLayout>
 
         <Spinner
-            android:id="@+id/spi_prod"
+            android:id="@+id/spi_busc_prod"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -80,7 +80,7 @@
             android:layout_marginTop="50dp">
 
             <EditText
-                android:id="@+id/txt_id_oper"
+                android:id="@+id/txt_busc_id_oper"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/shuttle"

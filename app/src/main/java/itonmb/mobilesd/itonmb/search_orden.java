@@ -3,6 +3,7 @@ package itonmb.mobilesd.itonmb;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,21 +11,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.Snackmsg;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+
 public class search_orden extends BaseMenu {
     Button btn_search;
-    EditText txt_fecha;
+    EditText txt_fecha,txt_name,txt_id_oper;
     Calendar calendario;
+    Spinner spi_producto;
+    DBhelper dbs ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,22 +42,25 @@ public class search_orden extends BaseMenu {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_search_orden, contentFrameLayout);
         toolbar.setTitle("Ingresa número de la Orden de Servicio");
+        dbs = new DBhelper(getApplicationContext());
 
         // Asigna customa lay al spinner de productos
-        Spinner spinner_productos = (Spinner) findViewById(R.id.spi_prod);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(search_orden.this, R.array.arqueo_array, R.layout.style_spinner_item);
-        spinner_productos.setAdapter(adapter);
+
+
 
         findviews();
         set_triggers();
+        prepara_spinner();
 
 
     }
 
     private void findviews() {
-        txt_fecha = (EditText) findViewById(R.id.txt_bus_date);
+        txt_name = (EditText) findViewById(R.id.txt_busc_name);
+        txt_fecha = (EditText) findViewById(R.id.txt_busc_date);
+        txt_id_oper = (EditText) findViewById(R.id.txt_busc_id_oper);
         btn_search = (Button) findViewById(R.id.btn_search_orden);
-
+        spi_producto = (Spinner) findViewById(R.id.spi_busc_prod);
     }
 
     private void set_triggers(){
@@ -56,9 +69,23 @@ public class search_orden extends BaseMenu {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Se pasan a variables para que se coloque "" en vez de null
+                String name= txt_name.getText().toString();
+                String fecha= txt_fecha.getText().toString();
+                String operacion= txt_id_oper.getText().toString();
+                String producto = spi_producto.getSelectedItem().toString();
+                if(producto=="Producto"){producto="";}
+                ArrayList<modelo_lista_orden> data = dbs.getSearch_Cupones(name,fecha,producto,operacion);
 
-                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
-                startActivity(intent);
+                if(data==null){
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v, "No se encontro información.", R.drawable.error, "#fe3939").show();
+
+                }else {
+                    Intent intent = new Intent(getApplicationContext(), listado_orden.class);
+                    intent.putExtra("datos",data);
+                    startActivity(intent);
+                }
 
             }
         });
@@ -91,6 +118,34 @@ public class search_orden extends BaseMenu {
             }
         });
 
+    }
+
+    private void prepara_spinner(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View v = super.getView(position, convertView, parent);
+
+
+                return v;
+            }
+
+            @Override
+            public int getCount() {
+                return super.getCount()-1; // you dont display last item. It is used as hint.
+            }
+
+        };
+
+        adapter.setDropDownViewResource(R.layout.style_spinner_item);
+        adapter.add("Isla M. Plus");
+        adapter.add("Cozumel");
+        adapter.add("Producto");
+
+        spi_producto.setAdapter(adapter);
+       spi_producto.setSelection(adapter.getCount()); //display hint
     }
 }
 

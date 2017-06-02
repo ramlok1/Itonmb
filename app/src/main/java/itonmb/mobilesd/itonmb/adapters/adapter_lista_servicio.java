@@ -87,9 +87,9 @@ public class adapter_lista_servicio extends BaseAdapter {
         // Capture position and set to the TextViews
         tview_cupon.setText(lista.get(position).cupon);
         tview_agencia.setText(lista.get(position).agencia);
-        tview_tour.setText(lista.get(position).tour);
+        tview_tour.setText(lista.get(position).producto);
         tview_adulto.setText(Integer.toString(lista.get(position).adulto));
-        tview_nino.setText(Integer.toString(lista.get(position).nino));
+        tview_nino.setText(Integer.toString(lista.get(position).menor));
         tview_infante.setText(Integer.toString(lista.get(position).infante));
         tview_nombre.setText(lista.get(position).nombre);
         tview_hotel.setText(lista.get(position).hotel);
