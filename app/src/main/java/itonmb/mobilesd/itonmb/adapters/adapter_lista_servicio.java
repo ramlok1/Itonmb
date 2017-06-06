@@ -136,6 +136,10 @@ public class adapter_lista_servicio extends BaseAdapter {
                         }
                         if (id == R.id.upgrade) {
                             Intent anIntent = new Intent(context, upgrade.class);
+                            anIntent.putExtra("cupon",lista.get(position).cupon);
+                            anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
+                            anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
+                            anIntent.putExtra("infante",Integer.toString(lista.get(position).infante));
                             context.startActivity(anIntent);
                             return true;
                         }

@@ -44,13 +44,14 @@ public class DBhelper extends SQLiteOpenHelper {
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime, status integer, abordaje integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer, desc text, precio integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, colo text)";
-    private String TABLA_ABORDAJE = "create table abordado(cupon integer, barco text, fecha datetime, hora text)";
-    private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon integer, adulto integer, menor integer," +
+    private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
+    private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon text, adulto integer, menor integer," +
             "infante integer, usuario text, descuento integer, aut_descuento text, precio integer, total integer, fecha datetime, hora text, pagado integer)";
     private String TABLA_DET_UPGRADE = "create table detalle_upgrade(id_det_upgr integer PRIMARY KEY, id_upgr integer, brazalete text)";
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY, id_upgr integer, forma text, monto integer, descuento integer, recibido integer," +
             " cambio integer, fecha datetime, hora text, usuario text)";
     private String TABLA_BOTES = "create table botes(nombre text, capacidad integer, reservas integer, abordado integer)";
+    private String TABLA_UPG_TEMPORAL   = "create table temporal_upg(cupon text, id_producto integer, producto_desc text, adulto integer,menor integer,infante integer)";
 
 
 
@@ -70,6 +71,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_DET_UPGRADE);
         db.execSQL(TABLA_FORMA_PAGO);
         db.execSQL(TABLA_BOTES);
+        db.execSQL(TABLA_UPG_TEMPORAL);
 
 
     }
@@ -89,6 +91,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists detalle_upgrade");
         db.execSQL("drop table if exists forma_de_pago");
         db.execSQL("drop table if exists botes");
+        db.execSQL("drop table if exists temporal_upg");
 
 
         onCreate(db);
@@ -125,7 +128,7 @@ public class DBhelper extends SQLiteOpenHelper {
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
-
+do{
             String cupon=cursor.getString(cursor.getColumnIndex("cupon"));
             String agencia=cursor.getString(cursor.getColumnIndex("agencia"));
             String producto1=cursor.getString(cursor.getColumnIndex("producto"));
@@ -138,7 +141,7 @@ public class DBhelper extends SQLiteOpenHelper {
             int importe=cursor.getInt(cursor.getColumnIndex("importe"));
 
             datos.add(new modelo_lista_orden(cupon,agencia,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe));
-
+        }while(cursor.moveToNext());
         }
 
         return datos;

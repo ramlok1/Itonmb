@@ -3,8 +3,8 @@ package itonmb.mobilesd.itonmb.modelo;
 /**
  * Created by Conrado on 09/05/2017.
  */
-
-public class modelo_lista_orden {
+import java.io.Serializable;
+public class modelo_lista_orden implements Serializable {
     public String cupon;
     public String agencia;
     public String producto;
