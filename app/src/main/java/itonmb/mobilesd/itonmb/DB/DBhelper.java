@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb.DB;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 
 public class DBhelper extends SQLiteOpenHelper {
@@ -40,9 +42,9 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_USUARIOS = "create table usuarios(id_usr integer PRIMARY KEY, usuario text, password text, nombre text, tipo integer, status integer)";
     private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer,monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer, monto integer, forma_ingreso integer)";
-    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,producto text," +
+    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,id_producto_padre integer,producto text," +
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime, status integer, abordaje integer )";
-    private String TABLA_PRODUCTOS = "create table productos(id_producto integer, desc text, precio integer)";
+    private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, precio integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, colo text)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
     private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon text, adulto integer, menor integer," +
@@ -110,6 +112,7 @@ public class DBhelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             nombre=cursor.getString(cursor.getColumnIndex("nombre"));
         }
+        dbs.close();
         return nombre;
     }
 
@@ -124,27 +127,60 @@ public class DBhelper extends SQLiteOpenHelper {
         if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
         if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
 
-        String consulta = "select cupon,agencia,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe from reservas "+ consulta_where;
+        String consulta = "select cupon,agencia,id_producto_padre,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe from reservas "+ consulta_where;
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
-do{
-            String cupon=cursor.getString(cursor.getColumnIndex("cupon"));
-            String agencia=cursor.getString(cursor.getColumnIndex("agencia"));
-            String producto1=cursor.getString(cursor.getColumnIndex("producto"));
-            int adulto=cursor.getInt(cursor.getColumnIndex("adulto"));
-            int menor=cursor.getInt(cursor.getColumnIndex("menor"));
-            int infante=cursor.getInt(cursor.getColumnIndex("infante"));
-            String nombre_cliente=cursor.getString(cursor.getColumnIndex("nombre_cliente"));
-            String hotel=cursor.getString(cursor.getColumnIndex("hotel"));
-            String habi=cursor.getString(cursor.getColumnIndex("habi"));
-            int importe=cursor.getInt(cursor.getColumnIndex("importe"));
+            do{
+                String cupon=cursor.getString(cursor.getColumnIndex("cupon"));
+                String agencia=cursor.getString(cursor.getColumnIndex("agencia"));
+                int id_prodcuto_padre=cursor.getInt(cursor.getColumnIndex("id_producto_padre"));
+                String producto1=cursor.getString(cursor.getColumnIndex("producto"));
+                int adulto=cursor.getInt(cursor.getColumnIndex("adulto"));
+                int menor=cursor.getInt(cursor.getColumnIndex("menor"));
+                int infante=cursor.getInt(cursor.getColumnIndex("infante"));
+                String nombre_cliente=cursor.getString(cursor.getColumnIndex("nombre_cliente"));
+                String hotel=cursor.getString(cursor.getColumnIndex("hotel"));
+                String habi=cursor.getString(cursor.getColumnIndex("habi"));
+                int importe=cursor.getInt(cursor.getColumnIndex("importe"));
 
-            datos.add(new modelo_lista_orden(cupon,agencia,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe));
-        }while(cursor.moveToNext());
+                datos.add(new modelo_lista_orden(cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe));
+             }while(cursor.moveToNext());
         }
-
+        dbs.close();
         return datos;
+
+    }
+    public ArrayList<modelo_spinner_productos_upg> getProductos_upgrade( int producto_padre){
+        ArrayList<modelo_spinner_productos_upg> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_producto,desc from productos where id_producto_padre="+producto_padre;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc")),cursor.getInt(cursor.getColumnIndex("id_producto"))));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+    public void inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("cupon",cupon);
+        cv.put("id_producto",id_producto);
+        cv.put("producto_desc",producto);
+        cv.put("adulto", adulto);
+        cv.put("menor", menor);
+        cv.put("infante", infante);
+        dbs.insert("temporal_upg", null, cv);
+
 
     }
 

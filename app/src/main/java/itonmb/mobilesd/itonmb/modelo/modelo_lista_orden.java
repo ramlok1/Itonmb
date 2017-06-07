@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class modelo_lista_orden implements Serializable {
     public String cupon;
     public String agencia;
+    public int producto_padre;
     public String producto;
     public int adulto;
     public int menor;
@@ -16,7 +17,7 @@ public class modelo_lista_orden implements Serializable {
     public String habi;
     public double importe;
 
-    public modelo_lista_orden(String cupon,String agencia,String producto, int adulto, int menor, int infante, String nombre, String hotel, String habi, double importe) {
+    public modelo_lista_orden(String cupon,String agencia,int producto_padre,String producto, int adulto, int menor, int infante, String nombre, String hotel, String habi, double importe) {
         this.cupon = cupon;
         this.agencia = agencia;
         this.producto = producto;
@@ -27,6 +28,7 @@ public class modelo_lista_orden implements Serializable {
         this.hotel = hotel;
         this.habi = habi;
         this.importe = importe;
+        this.producto_padre = producto_padre;
 
     }
 

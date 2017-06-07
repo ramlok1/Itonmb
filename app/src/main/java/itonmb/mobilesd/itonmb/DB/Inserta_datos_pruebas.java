@@ -55,6 +55,7 @@ public class Inserta_datos_pruebas {
                 cv1.put("orden_servicio", 261548);
                 cv1.put("cupon", cupon);
                 cv1.put("agencia", agencias[numero]);
+                cv1.put("id_producto_padre", 13);
                 cv1.put("producto", "Isla M. Plus");
                 cv1.put("adulto", 2);
                 cv1.put("menor", 1);
@@ -75,7 +76,15 @@ public class Inserta_datos_pruebas {
         //Datos de productos
         ContentValues cv2 = new ContentValues();
         cv2.put("id_producto",132);
+        cv2.put("id_producto_padre",13);
         cv2.put("desc","Isla M. Plus");
+        cv2.put("precio", 247);
+        dbs.insert("productos", null, cv2);
+
+        cv2 = new ContentValues();
+        cv2.put("id_producto",130);
+        cv2.put("id_producto_padre",13);
+        cv2.put("desc","Isla M. VIP");
         cv2.put("precio", 247);
         dbs.insert("productos", null, cv2);
     }

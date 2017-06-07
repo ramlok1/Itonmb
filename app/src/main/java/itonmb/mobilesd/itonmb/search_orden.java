@@ -1,9 +1,11 @@
 package itonmb.mobilesd.itonmb;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -75,7 +77,7 @@ public class search_orden extends BaseMenu {
                 String operacion= txt_id_oper.getText().toString();
                 String producto = spi_producto.getSelectedItem().toString();
                 if(producto=="Producto"){producto="";}
-                ArrayList<modelo_lista_orden> data = dbs.getSearch_Cupones(name,fecha,producto,operacion);
+                ArrayList<modelo_lista_orden> data= dbs.getSearch_Cupones(name,fecha,producto,operacion);
 
                 if(data==null){
                     Snackmsg bar = new Snackmsg();
@@ -147,6 +149,43 @@ public class search_orden extends BaseMenu {
         spi_producto.setAdapter(adapter);
        spi_producto.setSelection(adapter.getCount()); //display hint
     }
+
+    public class datosmesas extends AsyncTask<String, String, String> {
+
+        final ProgressDialog progressDialog = new ProgressDialog(search_orden.this);
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Trabajando...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+
+            super.onPostExecute(resp);
+            progressDialog.dismiss();
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+
+
+
+            return resp;
+        }
+    }
+
+
+
 }
 
 

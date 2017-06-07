@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,32 +12,42 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
+import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 public class upgrade extends BaseMenu {
 
     Button btn_fp_upgrade,btn_menos_a,btn_mas_a,btn_menos_n,btn_mas_n,btn_menos_infante,btn_mas_infante,btn_add_upg;
     TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante;
     String cupon;
-    int ad_cupon,me_cupon,in_cupon;
+    int ad_cupon,me_cupon,in_cupon,id_producto_padre;
     Spinner spi_productos_upg;
+    DBhelper dbs ;
+    int[] id_producto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_upgrade, contentFrameLayout);
-
         toolbar.setTitle("Upgrade");
+        dbs = new DBhelper(getApplicationContext());
+
+        //Obtengo valores enviados por el activity anterior
         Bundle extras = getIntent().getExtras();
         cupon= extras.getString("cupon");
         ad_cupon=Integer.parseInt(extras.getString("adulto"));
         me_cupon=Integer.parseInt(extras.getString("menor"));
         in_cupon=Integer.parseInt(extras.getString("infante"));
+        in_cupon=Integer.parseInt(extras.getString("infante"));
+        id_producto_padre=Integer.parseInt(extras.getString("producto_padre"));
 
         findviews();
         set_triggers();
@@ -71,6 +82,7 @@ public class upgrade extends BaseMenu {
         btn_mas_n = (Button) findViewById(R.id.btn_mas_n);
         btn_menos_infante = (Button) findViewById(R.id.btn_menos_infante);
         btn_mas_infante = (Button) findViewById(R.id.btn_mas_infante);
+        btn_add_upg = (Button) findViewById(R.id.btn_add_upg);
 
         txt_upgrade_adultos = (TextView) findViewById(R.id.txt_upgrade_adultos);
         txt_upgrade_nino = (TextView) findViewById(R.id.txt_upgrade_nino);
@@ -181,10 +193,34 @@ public class upgrade extends BaseMenu {
         });
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+        btn_add_upg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int upg_adulto =Integer.parseInt(txt_upgrade_adultos.getText().toString());
+                int upg_menor =Integer.parseInt(txt_upgrade_nino.getText().toString());
+                int upg_infante =Integer.parseInt(txt_upgrade_infante.getText().toString());
+                String producto_selecc = spi_productos_upg.getSelectedItem().toString();
+                int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
+
+                if(upg_adulto==0&&upg_menor==0&&upg_infante==0){
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v, "No se ha indicado pax's.", R.drawable.error, "#fe3939").show();
+                }else{
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v,producto_selecc+" "+producto_id, R.drawable.error, "#fe3939").show();
+
+                }
+            }
+        });
 
     }
 
     private void prepara_spinner(){
+
+        int c=0;
+        // Obtener datos para la lista de productos
+        ArrayList<modelo_spinner_productos_upg> data= dbs.getProductos_upgrade(id_producto_padre);
+        id_producto= new int[data.size()];
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
             @Override
@@ -204,9 +240,11 @@ public class upgrade extends BaseMenu {
         };
 
         adapter.setDropDownViewResource(R.layout.style_spinner_item);
-        adapter.add("Isla M. Plus");
-        adapter.add("Cozumel Plus");
-        adapter.add("Cozumel Vip");
+        for (modelo_spinner_productos_upg producto: data) {
+            adapter.add(producto.descripcion);
+            id_producto[c]=producto.id;
+            c++;
+        }
         adapter.add("Producto");
 
         spi_productos_upg.setAdapter(adapter);

@@ -37,8 +37,8 @@ public class login_main extends AppCompatActivity {
         dbs = new DBhelper(getApplicationContext());
 
         //genera datos prueba
-       /* datos = new Inserta_datos_pruebas(getApplicationContext());
-        datos.inserta_datos_pruebas();*/
+       datos = new Inserta_datos_pruebas(getApplicationContext());
+        datos.inserta_datos_pruebas();
         /////////////////////////////////////////////////////
     }
 
@@ -78,7 +78,7 @@ public class login_main extends AppCompatActivity {
                                 Intent intent =
                                         new Intent(getApplicationContext(), apertura_caja.class);
                                 startActivity(intent);
-                            }}, 2000);
+                            }}, 1500);
 
 
 
