@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.barcos_abordar;
 import itonmb.mobilesd.itonmb.upgrade;
 import itonmb.mobilesd.itonmb.R;
@@ -138,7 +140,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                         }
                         if (id == R.id.upgrade) {
                             Intent anIntent = new Intent(context, upgrade.class);
-                            anIntent.putExtra("cupon",lista.get(position).cupon);
+                            Global.cupon=lista.get(position).cupon;
                             anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
                             anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
                             anIntent.putExtra("infante",Integer.toString(lista.get(position).infante));

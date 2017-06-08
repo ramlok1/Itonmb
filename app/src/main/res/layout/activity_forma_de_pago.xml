@@ -28,7 +28,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="323dp"
+            android:layout_height="400dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
@@ -47,27 +47,45 @@
                     android:layout_height="70dp"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="20dp"
-                    android:entries="@array/caja_array"
+                    android:prompt="@string/formas_de_pago"
                     android:spinnerMode="dialog"
                     android:textColor="@color/colortxt"
                     tools:layout_editor_absoluteX="8dp"
                     tools:layout_editor_absoluteY="10dp" />
 
-                <EditText
+                <TextView
+                    android:id="@+id/textView27"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Importe:"
+                    android:textSize="30sp" />
+
+                <TextView
                     android:id="@+id/txt_monto_forma_pago"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="15dp"
-                    android:focusable="false"
+                    android:layout_marginTop="5dp"
                     android:drawableLeft="@drawable/dollar"
                     android:drawablePadding="10dp"
                     android:ems="10"
-                    android:hint="Monto"
-                    android:inputType="textPersonName"
-                    android:textSize="30sp" />
+                    android:focusable="false"
+                    android:paddingTop="20dp"
+                    android:textAlignment="textEnd"
+                    android:textSize="36sp" />
 
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Recibido:"
+                    android:textSize="30sp" />
 
                 <EditText
                     android:id="@+id/txt_recibido_forma_pago"
@@ -75,13 +93,14 @@
                     android:layout_height="70dp"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="5dp"
                     android:drawableLeft="@drawable/dollar"
                     android:drawablePadding="10dp"
                     android:ems="10"
-                    android:hint="Recibido"
-                    android:inputType="textPersonName"
-                    android:textSize="30sp" />
+                    android:inputType="textPersonName|number"
+                    android:text="0"
+                    android:textAlignment="textEnd"
+                    android:textSize="36sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,37 +116,56 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginRight="20dp"
-                    android:entries="@array/caja_array"
+                    android:prompt="@string/comprobante"
                     android:spinnerMode="dialog"
                     android:textColor="@color/colortxt"
                     tools:layout_editor_absoluteX="8dp"
                     tools:layout_editor_absoluteY="10dp" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Descuento:"
+                    android:textSize="30sp" />
 
                 <EditText
                     android:id="@+id/txt_descuento_forma_pago"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="5dp"
                     android:drawableLeft="@drawable/porcent"
                     android:drawablePadding="10dp"
                     android:ems="10"
-                    android:hint="Descuento"
-                    android:inputType="textPersonName"
+                    android:inputType="textPersonName|number"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textSize="36sp" />
+
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Cambio:"
                     android:textSize="30sp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/txt_cambio_forma_pago"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="5dp"
                     android:drawableLeft="@drawable/dollar"
                     android:drawablePadding="10dp"
                     android:ems="10"
-                    android:hint="Cambio"
-                    android:inputType="textPersonName"
-                    android:textSize="30sp" />
+                    android:focusable="false"
+                    android:paddingTop="20dp"
+                    android:text="0"
+                    android:textAlignment="textEnd"
+                    android:textSize="36sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -139,7 +177,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="80dp"
         android:background="@android:color/white"
         android:orientation="horizontal">
 
@@ -150,7 +188,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="15dp"
             android:text="Total a pagar:"
-            android:textSize="32dp" />
+            android:textSize="38sp" />
 
         <TextView
             android:id="@+id/txt_total_pago_upgrade_fp"
@@ -158,8 +196,10 @@
             android:layout_height="40dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
+            android:focusable="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/colorAccent"
-            android:textSize="26sp" />
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/btn_cancelar_upgrade"

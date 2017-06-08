@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
@@ -25,12 +27,13 @@ import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 public class upgrade extends BaseMenu {
 
     Button btn_fp_upgrade,btn_menos_a,btn_mas_a,btn_menos_n,btn_mas_n,btn_menos_infante,btn_mas_infante,btn_add_upg;
-    TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante;
+    TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante,txt_total_pago_upgrade;
     String cupon;
-    int ad_cupon,me_cupon,in_cupon,id_producto_padre;
+    int ad_cupon,me_cupon,in_cupon,id_producto_padre,total;
     Spinner spi_productos_upg;
     DBhelper dbs ;
-    int[] id_producto;
+    int[] id_producto,importe_producto;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,7 @@ public class upgrade extends BaseMenu {
 
         //Obtengo valores enviados por el activity anterior
         Bundle extras = getIntent().getExtras();
-        cupon= extras.getString("cupon");
+        cupon= Global.cupon;
         ad_cupon=Integer.parseInt(extras.getString("adulto"));
         me_cupon=Integer.parseInt(extras.getString("menor"));
         in_cupon=Integer.parseInt(extras.getString("infante"));
@@ -53,20 +56,20 @@ public class upgrade extends BaseMenu {
         set_triggers();
         genera_lista_productos_seleccionados();
         prepara_spinner();
+
+        // Oculta teclado
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
     }
 
     private void genera_lista_productos_seleccionados() {
 
-        final ArrayList<modelo_lista_upgrade_productos> datos = new ArrayList<>();
+        ArrayList<modelo_lista_upgrade_productos> datos = dbs.getUpgrade_seleccionados(cupon);
 
-        datos.add(new modelo_lista_upgrade_productos("Isla M. Regular F-II",4,2,0,300,300));
-        datos.add(new modelo_lista_upgrade_productos("Isla M. PLUS",4,2,0,450,450));
-        datos.add(new modelo_lista_upgrade_productos("Cozumel Plus",4,2,0,550,550));
-
-
-
-
-
+        //Coloca total a pagar
+        total = dbs.getTotal_upgrade(cupon);
+        txt_total_pago_upgrade.setText(Integer.toString(total));
 
         ListView lay_upgrades = (ListView) findViewById(R.id.list_productos_upgrade);
         adapter_lista_upgrade_productos adapter = new adapter_lista_upgrade_productos(upgrade.this, datos);
@@ -87,6 +90,7 @@ public class upgrade extends BaseMenu {
         txt_upgrade_adultos = (TextView) findViewById(R.id.txt_upgrade_adultos);
         txt_upgrade_nino = (TextView) findViewById(R.id.txt_upgrade_nino);
         txt_upgrade_infante = (TextView) findViewById(R.id.txt_upgrade_infante);
+        txt_total_pago_upgrade = (TextView) findViewById(R.id.txt_total_pago_upgrade);
 
         spi_productos_upg = (Spinner) findViewById(R.id.spin_producto_upg);
     }
@@ -97,8 +101,14 @@ public class upgrade extends BaseMenu {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
-                startActivity(intent);
+                if (total == 0){
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v, "Ningun upgrade seleccionado.", R.drawable.warn, "#f9db59").show();
+                }else {
+                    Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
+                    intent.putExtra("total",total);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -199,16 +209,24 @@ public class upgrade extends BaseMenu {
                 int upg_adulto =Integer.parseInt(txt_upgrade_adultos.getText().toString());
                 int upg_menor =Integer.parseInt(txt_upgrade_nino.getText().toString());
                 int upg_infante =Integer.parseInt(txt_upgrade_infante.getText().toString());
+
+                ///variables del producto
                 String producto_selecc = spi_productos_upg.getSelectedItem().toString();
-                int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
 
-                if(upg_adulto==0&&upg_menor==0&&upg_infante==0){
+
+                if (producto_selecc.equals("Producto"))
+                {
                     Snackmsg bar = new Snackmsg();
-                    bar.getBar(v, "No se ha indicado pax's.", R.drawable.error, "#fe3939").show();
+                    bar.getBar(v, "Favor de Seleccionar un Producto.", R.drawable.warn, "#f9db59").show();
+                }
+                else if(upg_adulto==0&&upg_menor==0&&upg_infante==0){
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v, "Favor de indicar pax.", R.drawable.warn, "#f9db59").show();
                 }else{
-                    Snackmsg bar = new Snackmsg();
-                    bar.getBar(v,producto_selecc+" "+producto_id, R.drawable.error, "#fe3939").show();
-
+                    int producto_importe = importe_producto[spi_productos_upg.getSelectedItemPosition()];
+                    int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
+                    dbs.inserta_upgrade_temporal(cupon,producto_id,producto_selecc,upg_adulto,upg_menor,upg_infante,producto_importe);
+                    genera_lista_productos_seleccionados();
                 }
             }
         });
@@ -221,6 +239,7 @@ public class upgrade extends BaseMenu {
         // Obtener datos para la lista de productos
         ArrayList<modelo_spinner_productos_upg> data= dbs.getProductos_upgrade(id_producto_padre);
         id_producto= new int[data.size()];
+        importe_producto= new int[data.size()];
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
             @Override
@@ -243,6 +262,7 @@ public class upgrade extends BaseMenu {
         for (modelo_spinner_productos_upg producto: data) {
             adapter.add(producto.descripcion);
             id_producto[c]=producto.id;
+            importe_producto[c]=producto.importe;
             c++;
         }
         adapter.add("Producto");

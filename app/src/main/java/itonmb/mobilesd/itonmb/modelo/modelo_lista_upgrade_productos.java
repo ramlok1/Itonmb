@@ -6,22 +6,24 @@ package itonmb.mobilesd.itonmb.modelo;
 
 public class modelo_lista_upgrade_productos {
 
+    public int id_tmp;
     public String descripcion;
     public int adulto;
     public int nino;
     public int infante;
     public int importe;
-    public int pago;
 
 
-    public modelo_lista_upgrade_productos(String descripcion, int adulto, int nino, int infante, int importe, int pago ) {
 
+    public modelo_lista_upgrade_productos(int id_tmp,String descripcion, int adulto, int nino, int infante, int importe ) {
+
+        this.id_tmp = id_tmp;
         this.descripcion = descripcion;
         this.adulto = adulto;
         this.nino = nino;
         this.infante = infante;
         this.importe = importe;
-        this.pago = pago;
+
 
     }
 

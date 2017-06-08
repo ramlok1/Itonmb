@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -28,6 +29,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 
@@ -54,6 +56,11 @@ public class search_orden extends BaseMenu {
         set_triggers();
         prepara_spinner();
 
+        // Oculta teclado
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
+
 
     }
 
@@ -76,8 +83,11 @@ public class search_orden extends BaseMenu {
                 String fecha= txt_fecha.getText().toString();
                 String operacion= txt_id_oper.getText().toString();
                 String producto = spi_producto.getSelectedItem().toString();
+
                 if(producto=="Producto"){producto="";}
+
                 ArrayList<modelo_lista_orden> data= dbs.getSearch_Cupones(name,fecha,producto,operacion);
+                Global.data = data;
 
                 if(data==null){
                     Snackmsg bar = new Snackmsg();
@@ -85,7 +95,6 @@ public class search_orden extends BaseMenu {
 
                 }else {
                     Intent intent = new Intent(getApplicationContext(), listado_orden.class);
-                    intent.putExtra("datos",data);
                     startActivity(intent);
                 }
 

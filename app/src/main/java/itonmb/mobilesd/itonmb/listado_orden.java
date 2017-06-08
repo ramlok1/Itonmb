@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb;
 
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_servicio;
 import itonmb.mobilesd.itonmb.modelo.*;
 
@@ -18,7 +19,7 @@ public class listado_orden extends BaseMenu {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_listado_orden, contentFrameLayout);
         toolbar.setTitle("Apertura de Caja");
-        data = (ArrayList<modelo_lista_orden>)getIntent().getSerializableExtra("datos");
+        data = Global.data;
 
 
         genera_lista_servicio();

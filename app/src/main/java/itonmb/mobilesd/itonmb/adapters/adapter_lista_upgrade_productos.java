@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.R;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 
@@ -21,6 +22,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 public class adapter_lista_upgrade_productos extends BaseAdapter {
     TextView tview_desc, tview_adulto,tview_nino,tview_infante,tview_importe,tview_pago;
     Button btn_delete;
+    DBhelper dbs ;
 
 
     // Declare Variables
@@ -31,6 +33,8 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
     public adapter_lista_upgrade_productos(Context context, ArrayList<modelo_lista_upgrade_productos> lista) {
         this.context = context;
         this.lista = lista;
+        dbs = new DBhelper(context);
+
     }
 
     @Override
@@ -52,6 +56,7 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
     public View getView(final int position, final View convertView, ViewGroup parent) {
 
         // Declare Variables
+        final int id_tmp = lista.get(position).id_tmp;
 
 
 
@@ -66,20 +71,25 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
         tview_infante = (TextView) itemView.findViewById(R.id.tview_upgrade_infante);
         tview_importe = (TextView) itemView.findViewById(R.id.tview_upgrade_importe);
         tview_pago = (TextView) itemView.findViewById(R.id.tview_upgrade_pago);
-
-
-
+        ////
         btn_delete = (Button) itemView.findViewById(R.id.btn_upgrade_delete);
+        ////
         tview_desc.setText(lista.get(position).descripcion);
         tview_adulto.setText(Integer.toString(lista.get(position).adulto));
         tview_nino.setText(Integer.toString(lista.get(position).nino));
         tview_infante.setText(Integer.toString(lista.get(position).infante));
         tview_importe.setText(Integer.toString(lista.get(position).importe));
-        tview_pago.setText(Integer.toString(lista.get(position).pago));
+        tview_pago.setText(Integer.toString(lista.get(position).importe));
 
-
-
-
+        ///// Trigger para boton eliminar linea
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbs.borra_elemento_upg(id_tmp);
+                lista.remove(position);
+                adapter_lista_upgrade_productos.this.notifyDataSetChanged();
+            }
+        });
 
 
         return itemView;

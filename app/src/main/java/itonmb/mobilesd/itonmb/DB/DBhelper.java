@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 
@@ -40,20 +41,24 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     private String TABLA_USUARIOS = "create table usuarios(id_usr integer PRIMARY KEY, usuario text, password text, nombre text, tipo integer, status integer)";
-    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer,monto_final integer, status integer)";
-    private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer, monto integer, forma_ingreso integer)";
+    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer," +
+            "monto_final integer, status integer)";
+    private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer," +
+            " monto integer, forma_ingreso integer)";
     private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,id_producto_padre integer,producto text," +
-            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime, status integer, abordaje integer )";
-    private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, precio integer)";
+            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
+            " status integer, abordaje integer )";
+    private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, colo text)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
-    private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon text, adulto integer, menor integer," +
-            "infante integer, usuario text, descuento integer, aut_descuento text, precio integer, total integer, fecha datetime, hora text, pagado integer)";
+    private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon text, adulto integer," +
+            " menor integer,infante integer, usuario text, descuento integer, aut_descuento text, precio integer, total integer, fecha datetime, hora text, pagado integer)";
     private String TABLA_DET_UPGRADE = "create table detalle_upgrade(id_det_upgr integer PRIMARY KEY, id_upgr integer, brazalete text)";
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY, id_upgr integer, forma text, monto integer, descuento integer, recibido integer," +
             " cambio integer, fecha datetime, hora text, usuario text)";
     private String TABLA_BOTES = "create table botes(nombre text, capacidad integer, reservas integer, abordado integer)";
-    private String TABLA_UPG_TEMPORAL   = "create table temporal_upg(cupon text, id_producto integer, producto_desc text, adulto integer,menor integer,infante integer)";
+    private String TABLA_UPG_TEMPORAL   = "create table temporal_upg(id_tmp integer PRIMARY KEY, cupon text, id_producto integer, producto_desc text," +
+            " adulto integer,menor integer,infante integer, importe integer)";
 
 
 
@@ -151,6 +156,7 @@ public class DBhelper extends SQLiteOpenHelper {
         return datos;
 
     }
+
     public ArrayList<modelo_spinner_productos_upg> getProductos_upgrade( int producto_padre){
         ArrayList<modelo_spinner_productos_upg> datos = new ArrayList<>();
 
@@ -158,19 +164,21 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_producto,desc from productos where id_producto_padre="+producto_padre;
+        String consulta = "select id_producto,desc,importe from productos where id_producto_padre="+producto_padre;
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
-                datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc")),cursor.getInt(cursor.getColumnIndex("id_producto"))));
+                datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc"))
+                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),cursor.getInt(cursor.getColumnIndex("importe"))));
             }while(cursor.moveToNext());
         }
         dbs.close();
         return datos;
 
     }
-    public void inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante){
+
+    public void inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, int importe_producto){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("cupon",cupon);
@@ -179,9 +187,62 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("adulto", adulto);
         cv.put("menor", menor);
         cv.put("infante", infante);
+        cv.put("importe", importe_producto);
         dbs.insert("temporal_upg", null, cv);
 
 
+    }
+
+    public ArrayList<modelo_lista_upgrade_productos> getUpgrade_seleccionados(String cupon){
+
+        ArrayList<modelo_lista_upgrade_productos> datos = new ArrayList<>();
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        String consulta = "select id_tmp,producto_desc,adulto,menor,infante,importe from temporal_upg where cupon="+cupon;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+
+                String producto_desc = cursor.getString(cursor.getColumnIndex("producto_desc"));
+                int adulto = cursor.getInt(cursor.getColumnIndex("adulto"));
+                int menor = cursor.getInt(cursor.getColumnIndex("menor"));
+                int infante = cursor.getInt(cursor.getColumnIndex("infante"));
+                int importe = cursor.getInt(cursor.getColumnIndex("importe"));
+                int id_tmp = cursor.getInt(cursor.getColumnIndex("id_tmp"));
+                // Se cargan datos de la bd en el arraylist
+                datos.add(new modelo_lista_upgrade_productos(id_tmp,producto_desc,adulto,menor,infante,importe));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
+    public void borra_elemento_upg(int id_tmp){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.delete("temporal_upg", "id_tmp=" + id_tmp, null);
+        dbs.close();
+    }
+
+    public void cancela_upgrade(String cupon){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.delete("temporal_upg", "cupon='" + cupon+"'", null);
+        dbs.close();
+    }
+
+    public int getTotal_upgrade(String cupon){
+        int total=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        String query = "select sum(importe) as total from temporal_upg where cupon="+cupon;
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            total=cursor.getInt(cursor.getColumnIndex("total"));
+        }
+        dbs.close();
+        return total;
     }
 
 }

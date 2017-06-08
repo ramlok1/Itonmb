@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -37,9 +38,13 @@ public class login_main extends AppCompatActivity {
         dbs = new DBhelper(getApplicationContext());
 
         //genera datos prueba
-       datos = new Inserta_datos_pruebas(getApplicationContext());
-        datos.inserta_datos_pruebas();
+      /* datos = new Inserta_datos_pruebas(getApplicationContext());
+        datos.inserta_datos_pruebas();*/
         /////////////////////////////////////////////////////
+        // Oculta teclado
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
     }
 
     private void findviews(){
