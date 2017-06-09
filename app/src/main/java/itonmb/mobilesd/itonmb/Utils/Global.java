@@ -12,4 +12,6 @@ public  class Global {
 
     public static ArrayList<modelo_lista_orden> data;
     public static String cupon;
+    public static String usuario="Conrado";
+    public static int orden_de_servicio=12356;
 }

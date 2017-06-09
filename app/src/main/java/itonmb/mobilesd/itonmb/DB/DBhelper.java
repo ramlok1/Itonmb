@@ -9,8 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
@@ -19,6 +23,8 @@ import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 public class DBhelper extends SQLiteOpenHelper {
 
     private static DBhelper mInstance = null;
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date date = new Date();
 
     public static DBhelper getInstance(Context ctx) {
 
@@ -49,15 +55,23 @@ public class DBhelper extends SQLiteOpenHelper {
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
             " status integer, abordaje integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
-    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, colo text)";
+    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
-    private String TABLA_ENC_UPGRADE = "create table encabezado_upgrade(id_ugr integer PRIMARY KEY, id_producto integer, desc_producto text ,cupon text, adulto integer," +
-            " menor integer,infante integer, usuario text, descuento integer, aut_descuento text, precio integer, total integer, fecha datetime, hora text, pagado integer)";
-    private String TABLA_DET_UPGRADE = "create table detalle_upgrade(id_det_upgr integer PRIMARY KEY, id_upgr integer, brazalete text)";
-    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY, id_upgr integer, forma text, monto integer, descuento integer, recibido integer," +
-            " cambio integer, fecha datetime, hora text, usuario text)";
-    private String TABLA_BOTES = "create table botes(nombre text, capacidad integer, reservas integer, abordado integer)";
+
+    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total integer, fecha datetime)";
+
+    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon integer,id_producto integer, brazalete text)";
+    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text, monto double, descuento integer, recibido integer," +
+            " cambio double, fecha datetime, usuario text)";
+    private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer)";
+
+    private String TABLA_CHECKIN = "create table checkin(orden_servicio integer, cupon text, folio_brazalete text, adulto integer, menor integer, infante integer, " +
+            "id_bote integer, fecha datetime, usuario text, abordado integer)";
+
     private String TABLA_UPG_TEMPORAL   = "create table temporal_upg(id_tmp integer PRIMARY KEY, cupon text, id_producto integer, producto_desc text," +
+            " adulto integer,menor integer,infante integer, importe integer)";
+
+    private String TABLA_UPG_DETALLE   = "create table upgrade_detalle(id_tmp integer PRIMARY KEY,id_upg integer, cupon text, id_producto integer, producto_desc text," +
             " adulto integer,menor integer,infante integer, importe integer)";
 
 
@@ -74,11 +88,13 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_PRODUCTOS);
         db.execSQL(TABLA_BRAZALETES);
         db.execSQL(TABLA_ABORDAJE);
-        db.execSQL(TABLA_ENC_UPGRADE);
-        db.execSQL(TABLA_DET_UPGRADE);
+        db.execSQL(TABLA_UPGRADE);
+        db.execSQL(TABLA_BRAZALETE_ASIGNACION);
         db.execSQL(TABLA_FORMA_PAGO);
         db.execSQL(TABLA_BOTES);
         db.execSQL(TABLA_UPG_TEMPORAL);
+        db.execSQL(TABLA_CHECKIN);
+        db.execSQL(TABLA_UPG_DETALLE);
 
 
     }
@@ -94,11 +110,13 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists productos");
         db.execSQL("drop table if exists brazaletes");
         db.execSQL("drop table if exists abordado");
-        db.execSQL("drop table if exists encabezado_upgrade");
-        db.execSQL("drop table if exists detalle_upgrade");
+        db.execSQL("drop table if exists upgrade");
+        db.execSQL("drop table if exists brazalete_asignacion");
         db.execSQL("drop table if exists forma_de_pago");
         db.execSQL("drop table if exists botes");
         db.execSQL("drop table if exists temporal_upg");
+        db.execSQL("drop table if exists checkin");
+        db.execSQL("drop table if exists upgrade_detalle");
 
 
         onCreate(db);
@@ -243,6 +261,76 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         dbs.close();
         return total;
+    }
+
+    public void inserta_forma_pago(int id_upg,String cupon, String forma,double monto, int descuento, int recibido, double cambio ){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("id_upg",id_upg);
+        cv.put("cupon",cupon);
+        cv.put("forma",forma);
+        cv.put("monto",monto);
+        cv.put("descuento", descuento);
+        cv.put("recibido", recibido);
+        cv.put("cambio", cambio);
+        cv.put("fecha", dateFormat.format(date));
+        cv.put("usuario", Global.usuario);
+        dbs.insert("forma_de_pago", null, cv);
+
+    }
+
+    public int inserta_upgrade (String cupon, int total){
+
+        int id_upg=0;
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        ContentValues cv = new ContentValues();
+        cv.put("orden_servicio",Global.orden_de_servicio);
+        cv.put("cupon",cupon);
+        cv.put("usuario",Global.usuario);
+        cv.put("total",total);
+        cv.put("fecha", dateFormat.format(date));
+        dbs.insert("upgrade", null, cv);
+
+        //Inserta detalle de upgrade
+        String consulta = "select id_producto,producto_desc,adulto,menor,infante,importe from temporal_upg where cupon="+cupon;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+
+                int id_producto = cursor.getInt(cursor.getColumnIndex("id_producto"));
+                String producto_desc = cursor.getString(cursor.getColumnIndex("producto_desc"));
+                int adulto = cursor.getInt(cursor.getColumnIndex("adulto"));
+                int menor = cursor.getInt(cursor.getColumnIndex("menor"));
+                int infante = cursor.getInt(cursor.getColumnIndex("infante"));
+                int importe = cursor.getInt(cursor.getColumnIndex("importe"));
+
+
+                cv = new ContentValues();
+                cv.put("id_upg",id_upg);
+                cv.put("cupon",cupon);
+                cv.put("id_producto",id_producto);
+                cv.put("producto_desc",producto_desc);
+                cv.put("adulto", adulto);
+                cv.put("menor", menor);
+                cv.put("infante", infante);
+                cv.put("importe", importe);
+                dbs.insert("upgrade_detalle", null, cv);
+
+
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+
+
+                return id_upg;
+
     }
 
 }
