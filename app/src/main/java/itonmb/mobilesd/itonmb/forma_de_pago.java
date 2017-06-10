@@ -96,7 +96,7 @@ public class forma_de_pago extends BaseMenu {
                 int recibido = Integer.parseInt(txt_recibido_forma_pago.getText().toString());
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
 
-                int id_upg = dbs.inserta_upgrade(cupon);
+                int id_upg = dbs.inserta_upgrade(cupon,importe_final);
                 dbs.inserta_forma_pago(id_upg,cupon,forma_pago,monto,descuento,recibido,cambio);
 
                 Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);

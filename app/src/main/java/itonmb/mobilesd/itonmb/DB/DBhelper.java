@@ -58,7 +58,7 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
-    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total integer, fecha datetime)";
+    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
 
     private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon integer,id_producto integer, brazalete text)";
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text, monto double, descuento integer, recibido integer," +
@@ -279,13 +279,13 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public int inserta_upgrade (String cupon, int total){
+    public int inserta_upgrade (String cupon, double total){
 
         int id_upg=0;
 
         SQLiteDatabase dbs = this.getWritableDatabase();
 
-
+        // inserta encabezado upgrade
         ContentValues cv = new ContentValues();
         cv.put("orden_servicio",Global.orden_de_servicio);
         cv.put("cupon",cupon);
@@ -294,9 +294,19 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("fecha", dateFormat.format(date));
         dbs.insert("upgrade", null, cv);
 
+
+        String sql_max_id = "Select max(id_ugr) as id_upg from upgrade";
+        Cursor cursor = dbs.rawQuery(sql_max_id, null);
+        if (cursor.moveToFirst()) {
+            do{
+                id_upg = cursor.getInt(cursor.getColumnIndex("id_upg"));
+            }while(cursor.moveToNext());
+            }
+        cursor.close();
+
         //Inserta detalle de upgrade
         String consulta = "select id_producto,producto_desc,adulto,menor,infante,importe from temporal_upg where cupon="+cupon;
-        Cursor cursor = dbs.rawQuery(consulta, null);
+        cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
@@ -326,8 +336,9 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-
-
+        cancela_upgrade(cupon);
+        cursor.close();
+         dbs.close();
 
                 return id_upg;
 
