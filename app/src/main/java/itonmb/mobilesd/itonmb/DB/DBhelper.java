@@ -26,6 +26,7 @@ public class DBhelper extends SQLiteOpenHelper {
     private static DBhelper mInstance = null;
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     Date date = new Date();
+    String tipo_brazalete_ban;
 
     public static DBhelper getInstance(Context ctx) {
 
@@ -56,7 +57,7 @@ public class DBhelper extends SQLiteOpenHelper {
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
             " status integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
-    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer)";
+    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer, status integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
     private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
@@ -342,33 +343,37 @@ public class DBhelper extends SQLiteOpenHelper {
 
         cancela_upgrade(cupon);
         cursor.close();
-         dbs.close();
+        dbs.close();
 
                 return id_upg;
 
     }
 
-    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon){
+    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int infante){
 
         String encontrado = "nada";
 
         SQLiteDatabase dbs = this.getWritableDatabase();
 
 
-        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour;
+        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour+" and status=0";
         Cursor cursor = dbs.rawQuery(sql_brazalete, null);
         if (cursor.moveToFirst()) {
             do{
-                 String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
+                String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
+                boolean continua = validaPax_brazalete(adulto,menor,infante,tipo);
 
-                // inserta datos de brazalete
-                ContentValues cv = new ContentValues();
-                cv.put("cupon",cupon);
-                cv.put("folio",folio);
-                cv.put("producto_desc",producto_desc);
-                cv.put("color",cursor.getString(cursor.getColumnIndex("color")));
-                dbs.insert("brazalete_asignacion", null, cv);
-                encontrado="ok";
+                if(continua) {
+                    // inserta datos de brazalete
+                    ContentValues cv = new ContentValues();
+                    cv.put("cupon", cupon);
+                    cv.put("folio", folio);
+                    cv.put("producto_desc", producto_desc);
+                    cv.put("color", cursor.getString(cursor.getColumnIndex("color")));
+                    dbs.insert("brazalete_asignacion", null, cv);
+                }else
+                {return tipo_brazalete_ban;}
+
             }while(cursor.moveToNext());
         }
 
@@ -401,6 +406,32 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.close();
         return datos;
 
+    }
+
+    private boolean validaPax_brazalete(int adulto, int menor, int infante, String tipo){
+        boolean ban = true;
+        tipo_brazalete_ban="N";
+
+        switch (tipo){
+            case "adulto":
+                if(adulto==0){ban=false;tipo_brazalete_ban="adultox";}
+                else{tipo_brazalete_ban=tipo;}
+                break;
+            case "menor":
+                if(menor==0){ban=false;tipo_brazalete_ban="menorx";}
+                else{tipo_brazalete_ban=tipo;}
+                break;
+            case "infante":
+                if(infante==0){ban=false;tipo_brazalete_ban="infantex";}
+                else{tipo_brazalete_ban=tipo;}
+                break;
+        }
+
+
+
+
+
+        return ban;
     }
 
 }
