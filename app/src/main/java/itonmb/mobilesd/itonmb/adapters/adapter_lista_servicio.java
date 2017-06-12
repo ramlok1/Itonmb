@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
+import itonmb.mobilesd.itonmb.agregar_brazalete;
 import itonmb.mobilesd.itonmb.barcos_abordar;
 import itonmb.mobilesd.itonmb.upgrade;
 import itonmb.mobilesd.itonmb.R;
@@ -68,6 +69,7 @@ public class adapter_lista_servicio extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final View itemView = inflater.inflate(R.layout.lista_datos_servicio, parent, false);
+        final int status = lista.get(position).status;
 
         tview_cupon = (TextView) itemView.findViewById(R.id.tview_cupon);
         tview_agencia = (TextView) itemView.findViewById(R.id.tview_agencia);
@@ -125,7 +127,13 @@ public class adapter_lista_servicio extends BaseAdapter {
 
                         //noinspection SimplifiableIfStatement
                         if (id == R.id.abordar) {
-                            Intent anIntent = new Intent(context, barcos_abordar.class);
+                            Intent anIntent = new Intent(context, agregar_brazalete.class);
+                            anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
+                            anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
+                            anIntent.putExtra("infante",Integer.toString(lista.get(position).infante));
+                            anIntent.putExtra("producto_desc",lista.get(position).producto);
+                            anIntent.putExtra("id_producto",Integer.toString(lista.get(position).producto_padre));
+                            Global.cupon=lista.get(position).cupon;
                             context.startActivity(anIntent);
                             return true;
                         }

@@ -9,12 +9,15 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 
 public class agregar_brazalete extends BaseMenu {
 
     Button btn_asignar,btn_aceptar;
+    int ad_cupon,me_cupon,in_cupon,id_tour;
+    String cupon,producto_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,17 @@ public class agregar_brazalete extends BaseMenu {
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_agregar_brazalete, contentFrameLayout);
         toolbar.setTitle("Upgrade");
+
+
+        //Obtengo valores enviados por el activity anterior
+        Bundle extras = getIntent().getExtras();
+        cupon= Global.cupon;
+        ad_cupon=Integer.parseInt(extras.getString("adulto"));
+        me_cupon=Integer.parseInt(extras.getString("menor"));
+        in_cupon=Integer.parseInt(extras.getString("infante"));
+        in_cupon=Integer.parseInt(extras.getString("infante"));
+        id_tour=Integer.parseInt(extras.getString("producto_padre"));
+        producto_desc=extras.getString("producto_padre");
 
         findviews();
         set_triggers();
@@ -32,9 +46,9 @@ public class agregar_brazalete extends BaseMenu {
 
         final ArrayList<modelo_lista_agregar_brazalete> datos = new ArrayList<>();
 
-        datos.add(new modelo_lista_agregar_brazalete("03156634","Isla M. Regular F-II","#e0920c"));
+       /* datos.add(new modelo_lista_agregar_brazalete("03156634","Isla M. Regular F-II","#e0920c"));
         datos.add(new modelo_lista_agregar_brazalete("03156635","Isla M. Regular F-II","#e0920c"));
-        datos.add(new modelo_lista_agregar_brazalete("03156636","Isla M. Regular F-II","#e0920c"));
+        datos.add(new modelo_lista_agregar_brazalete("03156636","Isla M. Regular F-II","#e0920c"));*/
 
 
 
@@ -60,6 +74,13 @@ public class agregar_brazalete extends BaseMenu {
 
                 Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
                 startActivity(intent);
+            }
+        });
+
+        btn_asignar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 

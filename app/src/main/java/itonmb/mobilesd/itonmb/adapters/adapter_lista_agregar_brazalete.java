@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.R;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 
@@ -21,6 +22,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 public class adapter_lista_agregar_brazalete extends BaseAdapter {
     TextView tview_folio, tview_producto;
     Button btn_del_brazalete, btn_color;
+    DBhelper dbs ;
 
 
     // Declare Variables
@@ -31,6 +33,7 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
     public adapter_lista_agregar_brazalete(Context context, ArrayList<modelo_lista_agregar_brazalete> lista) {
         this.context = context;
         this.lista = lista;
+        dbs = new DBhelper(context);
     }
 
     @Override
@@ -56,6 +59,7 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
 
         View itemView = inflater.inflate(R.layout.lista_agregar_brazaletes, parent, false);
 
+        final int id_br=lista.get(position).id_br;
         tview_folio = (TextView) itemView.findViewById(R.id.tview_folio_brazalete);
         tview_producto = (TextView) itemView.findViewById(R.id.tview_producto);
 
@@ -69,7 +73,15 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
 
         btn_color.setBackgroundColor(Color.parseColor(lista.get(position).color));
 
-
+        ///// Trigger para boton eliminar linea
+        btn_del_brazalete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbs.borra_elemento_upg(id_br);
+                lista.remove(position);
+                adapter_lista_agregar_brazalete.this.notifyDataSetChanged();
+            }
+        });
 
 
 

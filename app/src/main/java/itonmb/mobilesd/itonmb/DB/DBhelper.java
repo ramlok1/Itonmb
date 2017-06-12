@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
@@ -53,14 +54,15 @@ public class DBhelper extends SQLiteOpenHelper {
             " monto integer, forma_ingreso integer)";
     private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,id_producto_padre integer,producto text," +
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
-            " status integer, abordaje integer )";
+            " status integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
     private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
 
-    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon integer,id_producto integer, brazalete text)";
+    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon integer,folio text,producto_desc text, color text)";
+
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text, monto double, descuento integer, recibido integer," +
             " cambio double, fecha datetime, usuario text)";
     private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer)";
@@ -150,7 +152,7 @@ public class DBhelper extends SQLiteOpenHelper {
         if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
         if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
 
-        String consulta = "select cupon,agencia,id_producto_padre,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe from reservas "+ consulta_where;
+        String consulta = "select cupon,agencia,id_producto_padre,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status from reservas "+ consulta_where;
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -166,8 +168,9 @@ public class DBhelper extends SQLiteOpenHelper {
                 String hotel=cursor.getString(cursor.getColumnIndex("hotel"));
                 String habi=cursor.getString(cursor.getColumnIndex("habi"));
                 int importe=cursor.getInt(cursor.getColumnIndex("importe"));
+                int status=cursor.getInt(cursor.getColumnIndex("status"));
 
-                datos.add(new modelo_lista_orden(cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe));
+                datos.add(new modelo_lista_orden(cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status));
              }while(cursor.moveToNext());
         }
         dbs.close();
@@ -276,6 +279,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("fecha", dateFormat.format(date));
         cv.put("usuario", Global.usuario);
         dbs.insert("forma_de_pago", null, cv);
+        dbs.close();
 
     }
 
@@ -341,6 +345,61 @@ public class DBhelper extends SQLiteOpenHelper {
          dbs.close();
 
                 return id_upg;
+
+    }
+
+    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon){
+
+        String encontrado = "nada";
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour;
+        Cursor cursor = dbs.rawQuery(sql_brazalete, null);
+        if (cursor.moveToFirst()) {
+            do{
+                 String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
+
+                // inserta datos de brazalete
+                ContentValues cv = new ContentValues();
+                cv.put("cupon",cupon);
+                cv.put("folio",folio);
+                cv.put("producto_desc",producto_desc);
+                cv.put("color",cursor.getString(cursor.getColumnIndex("color")));
+                dbs.insert("brazalete_asignacion", null, cv);
+                encontrado="ok";
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        dbs.close();
+
+        return encontrado;
+
+    }
+
+    public ArrayList<modelo_lista_agregar_brazalete> getBrazaletes_asignados(String cupon, String producto_desc){
+        ArrayList<modelo_lista_agregar_brazalete> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto='"+producto_desc+"'";
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+
+                int id_br=cursor.getInt(cursor.getColumnIndex("id_asignacion"));
+                String folio =cursor.getString(cursor.getColumnIndex("folio"));
+                String color =cursor.getString(cursor.getColumnIndex("color"));
+                datos.add(new modelo_lista_agregar_brazalete(folio,producto_desc,color,id_br));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
 
     }
 
