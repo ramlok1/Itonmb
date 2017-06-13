@@ -17,11 +17,11 @@ import java.util.Random;
 
 public class Inserta_datos_pruebas {
 
-    private DBhelper dbhelper ;
+    DBhelper dbhelper ;
     private SQLiteDatabase dbs;
 
-    public  Inserta_datos_pruebas (Context contexto){
-        dbhelper = new DBhelper(contexto);
+    public  Inserta_datos_pruebas (Context context){
+        dbhelper = new DBhelper(context);
         dbs= dbhelper.getWritableDatabase();
     }
 
@@ -31,12 +31,16 @@ public class Inserta_datos_pruebas {
         String[]  nombre ={"Conrado Gonzalez","Baldor Baldez","Heber Cetinar","Paul Baas","Amalfi Carolina","Laura Saldaña","Seydi Espinosa"};
         String[]  hotel ={"Azul Beach","Oasis Cancun","Princess Tulum","Barcelo Playa","Sandos Caracol","IberoStar","Riu"};
         String[]  idioma ={"español","ingles","frances","aleman"};
+        String[]  fpax ={"adulto","menor","infante"};
+        String[]  color ={"#faeba6","#b7dbf3","#f8c1ba","#ace8dc"};
         int[]  importe ={279,118,124,156,258,456,124,632};
+        int[]  tours ={132,130,13};
 
 
 
         //Inerta datos usuario.
         ContentValues cv = new ContentValues();
+        cv.put("id_usr",153);
         cv.put("usuario","conrado");
         cv.put("password", new String(Hex.encodeHex(DigestUtils.sha1("musica"))));
         cv.put("nombre", "Conrado Gonzalez");
@@ -68,7 +72,6 @@ public class Inserta_datos_pruebas {
                 cv1.put("idioma", idioma[nidi]);
                 cv1.put("fecha", "01/06/17");
                 cv1.put("status", 1);
-                cv1.put("abordaje", 0);
                 dbs.insert("reservas", null, cv1);
 
         }
@@ -87,5 +90,23 @@ public class Inserta_datos_pruebas {
         cv2.put("desc","Isla M. VIP");
         cv2.put("importe", 247);
         dbs.insert("productos", null, cv2);
+
+        // Inserta Brazaletes
+        for(int i=1;i<=100;i++) {
+
+            int numero = (int) (Math.random() * 3);
+            int numero2 = (int) (Math.random() * 3);
+            int ncolor = (int) (Math.random() * 4);
+            int folio = 100000 + (int) (r.nextFloat() * 899900);
+            ContentValues cv1 = new ContentValues();
+            cv1.put("folio", Integer.toString(folio));
+            cv1.put("tipo",fpax[numero] );
+            cv1.put("color", color[ncolor]);
+            cv1.put("id_tour", tours[numero2]);
+            cv1.put("id_usr", 153);
+            cv1.put("status", 0);
+            dbs.insert("brazaletes", null, cv1);
+
+        }
     }
 }

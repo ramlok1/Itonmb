@@ -14,4 +14,5 @@ public  class Global {
     public static String cupon;
     public static String usuario="Conrado";
     public static int orden_de_servicio=12356;
+    public static int id_usr=153;
 }

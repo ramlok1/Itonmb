@@ -3,6 +3,7 @@ package itonmb.mobilesd.itonmb;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -29,7 +30,7 @@ public class agregar_brazalete extends BaseMenu {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_agregar_brazalete, contentFrameLayout);
-        toolbar.setTitle("Upgrade");
+        toolbar.setTitle("Asignar Brazaletes");
         dbs = new DBhelper(getApplicationContext());
 
         //Obtengo valores enviados por el activity anterior
@@ -39,12 +40,16 @@ public class agregar_brazalete extends BaseMenu {
         me_cupon=Integer.parseInt(extras.getString("menor"));
         in_cupon=Integer.parseInt(extras.getString("infante"));
         in_cupon=Integer.parseInt(extras.getString("infante"));
-        id_tour=Integer.parseInt(extras.getString("producto_padre"));
-        producto_desc=extras.getString("producto_padre");
+        id_tour=Integer.parseInt(extras.getString("id_producto"));
+        producto_desc=extras.getString("producto_desc");
 
         findviews();
         set_triggers();
         genera_lista_productos_seleccionados();
+
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
     }
 
     private void genera_lista_productos_seleccionados() {
@@ -98,16 +103,13 @@ public class agregar_brazalete extends BaseMenu {
         Snackmsg bar = new Snackmsg();
         switch (encontrado){
             case "adulto":
-                ad_cupon=ad_cupon-1;
                 genera_lista_productos_seleccionados();
                 break;
             case "menor":
                 genera_lista_productos_seleccionados();
-                me_cupon=me_cupon-1;
                 break;
             case "infante":
                 genera_lista_productos_seleccionados();
-                in_cupon=in_cupon-1;
                 break;
             case "adultox":
                 bar.getBar(v, "Numero de adultos superado, no se puede agregar el brazalete.", R.drawable.error, "#fe3939").show();
@@ -119,7 +121,7 @@ public class agregar_brazalete extends BaseMenu {
                 bar.getBar(v, "Numero de infantes superado, no se puede agregar el brazalete.", R.drawable.error, "#fe3939").show();
                 break;
             case "nada":
-                bar.getBar(v, "No se encontro el folio.", R.drawable.warn, "#f9db59").show();
+                bar.getBar(v, "No se encontro el folio o ya se encuentra asignado.", R.drawable.warn, "#f9db59").show();
                 break;
         }
 

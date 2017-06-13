@@ -77,7 +77,7 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
         btn_del_brazalete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbs.borra_elemento_upg(id_br);
+                dbs.borra_elemento_br(id_br,lista.get(position).folio);
                 lista.remove(position);
                 adapter_lista_agregar_brazalete.this.notifyDataSetChanged();
             }

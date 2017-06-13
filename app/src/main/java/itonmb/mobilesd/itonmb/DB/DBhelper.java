@@ -48,7 +48,7 @@ public class DBhelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private String TABLA_USUARIOS = "create table usuarios(id_usr integer PRIMARY KEY, usuario text, password text, nombre text, tipo integer, status integer)";
+    private String TABLA_USUARIOS = "create table usuarios(id_usr integer, usuario text, password text, nombre text, tipo integer, status integer)";
     private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer," +
             "monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer," +
@@ -57,7 +57,7 @@ public class DBhelper extends SQLiteOpenHelper {
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
             " status integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
-    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer, status integer)";
+    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer,id_usr integer, status integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
     private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
@@ -98,6 +98,8 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_UPG_TEMPORAL);
         db.execSQL(TABLA_CHECKIN);
         db.execSQL(TABLA_UPG_DETALLE);
+
+
 
 
     }
@@ -144,7 +146,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     public ArrayList<modelo_lista_orden> getSearch_Cupones( String name, String date, String producto, String operacion){
         ArrayList<modelo_lista_orden> datos = new ArrayList<>();
-        String consulta_where=" where orden_servicio!=0 ";
+        String consulta_where=" where 0=0";
         SQLiteDatabase dbs = this.getWritableDatabase();
 
         // Armado de where dinamico
@@ -245,6 +247,18 @@ public class DBhelper extends SQLiteOpenHelper {
         SQLiteDatabase dbs = this.getWritableDatabase();
         dbs.delete("temporal_upg", "id_tmp=" + id_tmp, null);
         dbs.close();
+    }
+    public void borra_elemento_br(int id_br, String folio){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.delete("brazalete_asignacion", "id_asignacion=" + id_br, null);
+
+        ContentValues up = new ContentValues();
+        up.put("status",0);
+        dbs.update("brazaletes",up,"folio="+folio,null);
+
+        dbs.close();
+
+
     }
 
     public void cancela_upgrade(String cupon){
@@ -353,11 +367,27 @@ public class DBhelper extends SQLiteOpenHelper {
 
         String encontrado = "nada";
 
+
         SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b where a.folio=b.folio group by a.tipo";
+        Cursor cursor = dbs.rawQuery(query, null);
 
+        if (cursor.moveToFirst()) {
+            String tipo_1=cursor.getString(cursor.getColumnIndex("tipo"));
+            if(tipo_1.equals("adulto")) {
+                adulto = adulto-cursor.getInt(cursor.getColumnIndex("cant"));
+            }
+            else if(tipo_1.equals("menor")) {
+                menor = menor-cursor.getInt(cursor.getColumnIndex("cant"));
+            }
+            else if(tipo_1.equals("infante")) {
+                infante = infante-cursor.getInt(cursor.getColumnIndex("cant"));
+            }
+        }
+        cursor.close();
 
-        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour+" and status=0";
-        Cursor cursor = dbs.rawQuery(sql_brazalete, null);
+        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour+" and status=0 and id_usr="+Global.id_usr;
+         cursor = dbs.rawQuery(sql_brazalete, null);
         if (cursor.moveToFirst()) {
             do{
                 String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
@@ -371,6 +401,11 @@ public class DBhelper extends SQLiteOpenHelper {
                     cv.put("producto_desc", producto_desc);
                     cv.put("color", cursor.getString(cursor.getColumnIndex("color")));
                     dbs.insert("brazalete_asignacion", null, cv);
+
+                    ContentValues up = new ContentValues();
+                    up.put("status",1);
+                    dbs.update("brazaletes",up,"folio="+folio,null);
+                    encontrado=tipo;
                 }else
                 {return tipo_brazalete_ban;}
 
@@ -391,7 +426,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto='"+producto_desc+"'";
+        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and producto_desc='"+producto_desc+"'";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {

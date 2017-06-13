@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".login_main">
+        <activity android:name=".login_main"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,18 +25,30 @@
             android:name=".apertura_caja"
             android:label="@string/title_activity_apertura_caja"
             android:theme="@style/AppTheme"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".search_orden" />
-        <activity android:name=".listado_orden" />
-        <activity android:name=".ingresa_efectivo_caja" />
-        <activity android:name=".retirar_efectivo_caja" />
-        <activity android:name=".cerrar_caja" />
-        <activity android:name=".barcos_disponibles" />
-        <activity android:name=".brazaletes_disponibles" />
-        <activity android:name=".barcos_abordar" />
-        <activity android:name=".upgrade" />
-        <activity android:name=".forma_de_pago"/>
-        <activity android:name=".agregar_brazalete"/>
+        <activity android:name=".search_orden"
+                  android:screenOrientation="landscape"/>
+        <activity android:name=".listado_orden"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".ingresa_efectivo_caja"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".retirar_efectivo_caja"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".cerrar_caja"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".barcos_disponibles"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".brazaletes_disponibles"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".barcos_abordar"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".upgrade"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".forma_de_pago"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".agregar_brazalete"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
