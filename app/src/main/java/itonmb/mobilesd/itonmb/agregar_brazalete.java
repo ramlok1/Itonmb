@@ -45,14 +45,14 @@ public class agregar_brazalete extends BaseMenu {
 
         findviews();
         set_triggers();
-        genera_lista_productos_seleccionados();
+        genera_lista_brazaletes_seleccionados();
 
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
     }
 
-    private void genera_lista_productos_seleccionados() {
+    private void genera_lista_brazaletes_seleccionados() {
 
         ArrayList<modelo_lista_agregar_brazalete> datos = dbs.getBrazaletes_asignados(cupon,producto_desc);
 
@@ -75,8 +75,17 @@ public class agregar_brazalete extends BaseMenu {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
-                startActivity(intent);
+                int total_pax = dbs.getTotal_pax_abordar(cupon);
+                if (total_pax!=0) {
+                    Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
+                    intent.putExtra("cupon", cupon);
+                    intent.putExtra("producto", id_tour);
+                    intent.putExtra("total_pax", total_pax);
+                    startActivity(intent);
+                }else{
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(v, "No se han asignado brazaletes.", R.drawable.warn, "#f9db59").show();
+                }
             }
         });
 
@@ -103,13 +112,13 @@ public class agregar_brazalete extends BaseMenu {
         Snackmsg bar = new Snackmsg();
         switch (encontrado){
             case "adulto":
-                genera_lista_productos_seleccionados();
+                genera_lista_brazaletes_seleccionados();
                 break;
             case "menor":
-                genera_lista_productos_seleccionados();
+                genera_lista_brazaletes_seleccionados();
                 break;
             case "infante":
-                genera_lista_productos_seleccionados();
+                genera_lista_brazaletes_seleccionados();
                 break;
             case "adultox":
                 bar.getBar(v, "Numero de adultos superado, no se puede agregar el brazalete.", R.drawable.error, "#fe3939").show();

@@ -5,13 +5,15 @@ package itonmb.mobilesd.itonmb.modelo;
  */
 
 public class modelo_lista_dbarcos {
+    public int id;
     public String nombre;
     public int capacidad;
     public int booking;
     public int abordar;
 
 
-    public modelo_lista_dbarcos(String nombre,int capacidad,int booking, int abordar) {
+    public modelo_lista_dbarcos(int id,String nombre,int capacidad,int booking, int abordar) {
+        this.id = id;
         this.nombre = nombre;
         this.capacidad = capacidad;
         this.booking = booking;

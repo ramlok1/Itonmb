@@ -225,8 +225,9 @@ public class upgrade extends BaseMenu {
                 }else{
                     int producto_importe = importe_producto[spi_productos_upg.getSelectedItemPosition()];
                     int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
-                    dbs.inserta_upgrade_temporal(cupon,producto_id,producto_selecc,upg_adulto,upg_menor,upg_infante,producto_importe);
-                    genera_lista_productos_seleccionados();
+                    String response = dbs.inserta_upgrade_temporal(cupon,producto_id,producto_selecc,upg_adulto,upg_menor,upg_infante,producto_importe,ad_cupon,me_cupon,in_cupon);
+                    valida_response(response, v);
+
                 }
             }
         });
@@ -269,5 +270,27 @@ public class upgrade extends BaseMenu {
 
         spi_productos_upg.setAdapter(adapter);
         spi_productos_upg.setSelection(adapter.getCount()); //display hint
+    }
+
+    private void valida_response(String response, View v){
+        Snackmsg bar = new Snackmsg();
+        switch (response){
+            case "ok":
+                genera_lista_productos_seleccionados();
+                break;
+            case "adultox":
+                bar.getBar(v, "Numero de adultos superado, no se puede agregar el upgrade.", R.drawable.error, "#fe3939").show();
+                break;
+            case "menorx":
+                bar.getBar(v, "Numero de menores superado, no se puede agregar el upgrade.", R.drawable.error, "#fe3939").show();
+                break;
+            case "infantex":
+                bar.getBar(v, "Numero de infantes superado, no se puede agregar el upgrade.", R.drawable.error, "#fe3939").show();
+                break;
+        }
+
+
+
+
     }
 }

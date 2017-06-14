@@ -99,7 +99,7 @@ public class forma_de_pago extends BaseMenu {
                 int id_upg = dbs.inserta_upgrade(cupon,importe_final);
                 dbs.inserta_forma_pago(id_upg,cupon,forma_pago,monto,descuento,recibido,cambio);
 
-                Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
+                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
                 startActivity(intent);
             }
         });

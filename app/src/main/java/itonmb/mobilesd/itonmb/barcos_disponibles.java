@@ -26,14 +26,14 @@ public class barcos_disponibles extends BaseMenu {
 
         final ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
 
-        datos.add(new modelo_lista_dbarcos("Don Diego",50,45,45));
-        datos.add(new modelo_lista_dbarcos("Mar y Arena",40,17,45));
-        datos.add(new modelo_lista_dbarcos("The Big",60,17,45));
-        datos.add(new modelo_lista_dbarcos("Saga Boy",70,17,45));
-        datos.add(new modelo_lista_dbarcos("Just Mars",60,17,45));
-        datos.add(new modelo_lista_dbarcos("Mar y Arena",30,17,45));
-        datos.add(new modelo_lista_dbarcos("Just Mars",50,17,45));
-        datos.add(new modelo_lista_dbarcos("The Big",40,17,45));
+        datos.add(new modelo_lista_dbarcos(13,"Don Diego",50,45,45));
+        datos.add(new modelo_lista_dbarcos(20,"Mar y Arena",40,17,45));
+        datos.add(new modelo_lista_dbarcos(20,"The Big",60,17,45));
+        datos.add(new modelo_lista_dbarcos(16,"Saga Boy",70,17,45));
+        datos.add(new modelo_lista_dbarcos(15,"Just Mars",60,17,45));
+        datos.add(new modelo_lista_dbarcos(18,"Mar y Arena",30,17,45));
+        datos.add(new modelo_lista_dbarcos(19,"Just Mars",50,17,45));
+        datos.add(new modelo_lista_dbarcos(1235,"The Big",40,17,45));
 
 
 

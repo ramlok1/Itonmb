@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.R;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
@@ -24,7 +26,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 public class adapter_lista_barcos_abordar extends BaseAdapter {
     TextView tview_nombre, tview_capacidad, tview_booking, tview_abordar;
     CheckBox chk_sel_abordar;
-
+    DBhelper dbs;
 
     // Declare Variables
     private Context context;
@@ -34,6 +36,7 @@ public class adapter_lista_barcos_abordar extends BaseAdapter {
     public adapter_lista_barcos_abordar(Context context, ArrayList<modelo_lista_dbarcos> lista) {
         this.context = context;
         this.lista = lista;
+        dbs = new DBhelper(context);
     }
 
     @Override
@@ -72,12 +75,23 @@ public class adapter_lista_barcos_abordar extends BaseAdapter {
         chk_sel_abordar = (CheckBox) itemView.findViewById(R.id.chk_sel_abordar);
 
 
-
+        final int id_bote =lista.get(position).id;
         // Capture position and set to the TextViews
         tview_nombre.setText(lista.get(position).nombre);
         tview_capacidad.setText(Integer.toString(lista.get(position).capacidad));
         tview_booking.setText(Integer.toString(lista.get(position).booking));
         tview_abordar.setText(Integer.toString(lista.get(position).abordar));
+
+        chk_sel_abordar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                dbs.update_barcos_check_clean(id_bote);
+                if (isChecked){
+                    dbs.update_barcos_check_yes(id_bote);
+                    adapter_lista_barcos_abordar.this.notifyDataSetChanged();
+                }
+            }
+        });
 
 
 

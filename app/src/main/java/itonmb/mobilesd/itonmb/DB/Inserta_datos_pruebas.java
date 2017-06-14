@@ -33,6 +33,7 @@ public class Inserta_datos_pruebas {
         String[]  idioma ={"español","ingles","frances","aleman"};
         String[]  fpax ={"adulto","menor","infante"};
         String[]  color ={"#faeba6","#b7dbf3","#f8c1ba","#ace8dc"};
+        String[]  nombre_barco ={"Don Diego","Mar y Arena","The Big","Saga Boy","Just Mars"};
         int[]  importe ={279,118,124,156,258,456,124,632};
         int[]  tours ={132,130,13};
 
@@ -93,7 +94,6 @@ public class Inserta_datos_pruebas {
 
         // Inserta Brazaletes
         for(int i=1;i<=100;i++) {
-
             int numero = (int) (Math.random() * 3);
             int numero2 = (int) (Math.random() * 3);
             int ncolor = (int) (Math.random() * 4);
@@ -106,6 +106,22 @@ public class Inserta_datos_pruebas {
             cv1.put("id_usr", 153);
             cv1.put("status", 0);
             dbs.insert("brazaletes", null, cv1);
+
+        }
+
+        // Inserta Barcos
+        for(int i=0;i<=4;i++) {
+
+            int numero2 = (int) (Math.random() * 3);
+
+            ContentValues cv1 = new ContentValues();
+            cv1.put("id_bote", i);
+            cv1.put("nombre",nombre_barco[i] );
+            cv1.put("capacidad", 50);
+            cv1.put("reservas", 50);
+            cv1.put("abordado", 0);
+            cv1.put("id_producto", tours[numero2]);
+            dbs.insert("botes", null, cv1);
 
         }
     }

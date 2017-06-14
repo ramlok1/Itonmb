@@ -9,12 +9,16 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_abordar;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
 public class barcos_abordar extends BaseMenu {
 
     Button btn_abordar;
+    DBhelper dbs;
+    int id_tour,total_pax;
     
 
     @Override
@@ -24,6 +28,10 @@ public class barcos_abordar extends BaseMenu {
         getLayoutInflater().inflate(R.layout.activity_barcos_abordar, contentFrameLayout);
         toolbar.setTitle("Abordar Barco");
 
+        dbs = new DBhelper(getApplicationContext());
+        Bundle extras = getIntent().getExtras();
+        id_tour=extras.getInt("producto");
+        total_pax=extras.getInt("total_pax");
         findviews();
         set_triggers();
         genera_lista_barcos();
@@ -31,16 +39,7 @@ public class barcos_abordar extends BaseMenu {
 
     private void genera_lista_barcos() {
 
-        final ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
-
-        datos.add(new modelo_lista_dbarcos("Don Diego",50,45,45));
-        datos.add(new modelo_lista_dbarcos("Mar y Arena",40,17,45));
-        datos.add(new modelo_lista_dbarcos("The Big",60,17,45));
-        datos.add(new modelo_lista_dbarcos("Saga Boy",70,17,45));
-        datos.add(new modelo_lista_dbarcos("Just Mars",60,17,45));
-        datos.add(new modelo_lista_dbarcos("Mar y Arena",30,17,45));
-        datos.add(new modelo_lista_dbarcos("Just Mars",50,17,45));
-        datos.add(new modelo_lista_dbarcos("The Big",40,17,45));
+        ArrayList<modelo_lista_dbarcos> datos = dbs.getBarcos_disponibles(id_tour);
 
 
 

@@ -16,6 +16,7 @@ import java.util.Date;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
@@ -62,11 +63,11 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
 
-    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon integer,folio text,producto_desc text, color text)";
+    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon text,folio text,producto_desc text, color text, usuario text,abordado integer)";
 
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text, monto double, descuento integer, recibido integer," +
             " cambio double, fecha datetime, usuario text)";
-    private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer)";
+    private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer,seleccion integer)";
 
     private String TABLA_CHECKIN = "create table checkin(orden_servicio integer, cupon text, folio_brazalete text, adulto integer, menor integer, infante integer, " +
             "id_bote integer, fecha datetime, usuario text, abordado integer)";
@@ -202,8 +203,43 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public void inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, int importe_producto){
+    public String inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, int importe_producto, int ad_cupon,int me_cupon, int in_cupon){
+
+        String response = "ok";
         SQLiteDatabase dbs = this.getWritableDatabase();
+
+        // Busca cuantos adultos, menores e infantes ya estan seleccionados para upgrade (se hace en busquedas diferentes porque no permite sqlite un full outer join)
+        String query_tmp = "select ifnull(sum(adulto),0) adultos, ifnull(sum(menor),0) menores, ifnull(sum(infante),0) infantes " +
+                "     from temporal_upg  " +
+                "where cupon='"+cupon+"'";
+        Cursor cursor = dbs.rawQuery(query_tmp, null);
+
+        if (cursor.moveToFirst()) {
+                ad_cupon = ad_cupon-cursor.getInt(cursor.getColumnIndex("adultos"));
+                me_cupon = me_cupon-cursor.getInt(cursor.getColumnIndex("menores"));
+                in_cupon = in_cupon-cursor.getInt(cursor.getColumnIndex("infantes"));
+        }
+        cursor.close();
+
+        String query_aplicados = "select ifnull(sum(adulto),0) adultos, ifnull(sum(menor),0) menores, ifnull(sum(infante),0) infantes " +
+                "     from upgrade_detalle  " +
+                "where cupon='"+cupon+"'";
+        cursor = dbs.rawQuery(query_aplicados, null);
+
+        if (cursor.moveToFirst()) {
+            ad_cupon = ad_cupon-cursor.getInt(cursor.getColumnIndex("adultos"));
+            me_cupon = me_cupon-cursor.getInt(cursor.getColumnIndex("menores"));
+            in_cupon = in_cupon-cursor.getInt(cursor.getColumnIndex("infantes"));
+        }
+        cursor.close();
+
+        // Valida numeros de pax restantes con los elegidos para upgrade
+
+        if((ad_cupon-adulto)<0){return "adultox";}
+        if((me_cupon-menor)<0){return "menorx";}
+        if((in_cupon-infante)<0){return "infantex";}
+
+
         ContentValues cv = new ContentValues();
         cv.put("cupon",cupon);
         cv.put("id_producto",id_producto);
@@ -214,7 +250,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("importe", importe_producto);
         dbs.insert("temporal_upg", null, cv);
 
-
+    return response;
     }
 
     public ArrayList<modelo_lista_upgrade_productos> getUpgrade_seleccionados(String cupon){
@@ -400,6 +436,8 @@ public class DBhelper extends SQLiteOpenHelper {
                     cv.put("folio", folio);
                     cv.put("producto_desc", producto_desc);
                     cv.put("color", cursor.getString(cursor.getColumnIndex("color")));
+                    cv.put("usuario", Global.usuario);
+                    cv.put("abordado", 0);
                     dbs.insert("brazalete_asignacion", null, cv);
 
                     ContentValues up = new ContentValues();
@@ -419,6 +457,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+
     public ArrayList<modelo_lista_agregar_brazalete> getBrazaletes_asignados(String cupon, String producto_desc){
         ArrayList<modelo_lista_agregar_brazalete> datos = new ArrayList<>();
 
@@ -436,6 +475,31 @@ public class DBhelper extends SQLiteOpenHelper {
                 String folio =cursor.getString(cursor.getColumnIndex("folio"));
                 String color =cursor.getString(cursor.getColumnIndex("color"));
                 datos.add(new modelo_lista_agregar_brazalete(folio,producto_desc,color,id_br));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
+    public ArrayList<modelo_lista_dbarcos> getBarcos_disponibles(int id_producto){
+        ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_bote,nombre,capacidad,reservas,abordado  from botes where id_producto="+id_producto;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                String nombre_barco=cursor.getString(cursor.getColumnIndex("nombre"));
+                int capac =cursor.getInt(cursor.getColumnIndex("id_bote"));
+                int id_bote =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int booking =cursor.getInt(cursor.getColumnIndex("reservas"));
+                int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
+                datos.add(new modelo_lista_dbarcos(id_bote,nombre_barco,capac,booking,aborda));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -467,6 +531,46 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         return ban;
+    }
+
+    public int getTotal_pax_abordar(String cupon){
+        int total_pax=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select count(folio) as cant from brazalete_asignacion  where cupon='"+cupon+"' and abordado=0";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            total_pax = cursor.getInt(cursor.getColumnIndex("cant"));
+        }
+        cursor.close();
+
+        return total_pax;
+    }
+
+    public void update_barcos_check_clean(int id_bote){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        ContentValues up = new ContentValues();
+        up.put("seleccion",0);
+        dbs.update("botes",up,null,null);
+
+        dbs.close();
+
+
+    }
+
+    public void update_barcos_check_yes(int id_bote){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        ContentValues up = new ContentValues();
+        up.put("seleccion",1);
+        dbs.update("botes",up,"id_bote="+id_bote,null);
+
+        dbs.close();
+
+
     }
 
 }
