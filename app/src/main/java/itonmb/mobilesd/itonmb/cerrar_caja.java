@@ -1,8 +1,9 @@
 package itonmb.mobilesd.itonmb;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+
+import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 
 public class cerrar_caja extends BaseMenu {
 

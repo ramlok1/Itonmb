@@ -7,6 +7,8 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
+import itonmb.mobilesd.itonmb.Utils.BaseMenu;
+
 
 public class apertura_caja extends BaseMenu
       {

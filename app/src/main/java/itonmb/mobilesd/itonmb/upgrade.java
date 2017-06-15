@@ -1,8 +1,6 @@
 package itonmb.mobilesd.itonmb;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +11,11 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_upgrade_productos;

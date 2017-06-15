@@ -1,4 +1,4 @@
-package itonmb.mobilesd.itonmb;
+package itonmb.mobilesd.itonmb.Utils;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import itonmb.mobilesd.itonmb.R;
+import itonmb.mobilesd.itonmb.barcos_disponibles;
+import itonmb.mobilesd.itonmb.brazaletes_disponibles;
+import itonmb.mobilesd.itonmb.cerrar_caja;
+import itonmb.mobilesd.itonmb.ingresa_efectivo_caja;
+import itonmb.mobilesd.itonmb.retirar_efectivo_caja;
+import itonmb.mobilesd.itonmb.search_orden;
+
 /**
  * Created by Conrado on 15/05/2017.
  */
@@ -20,7 +28,7 @@ public class BaseMenu extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    Toolbar toolbar;
+    public Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

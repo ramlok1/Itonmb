@@ -3,13 +3,11 @@ package itonmb.mobilesd.itonmb;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +15,9 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
-import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 public class forma_de_pago extends BaseMenu {
 

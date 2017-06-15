@@ -61,6 +61,7 @@ public class Inserta_datos_pruebas {
                 cv1.put("cupon", cupon);
                 cv1.put("agencia", agencias[numero]);
                 cv1.put("id_producto_padre", 13);
+                cv1.put("id_producto", 13);
                 cv1.put("producto", "Isla M. Plus");
                 cv1.put("adulto", 2);
                 cv1.put("menor", 1);

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_agregar_brazalete;
@@ -54,7 +55,7 @@ public class agregar_brazalete extends BaseMenu {
 
     private void genera_lista_brazaletes_seleccionados() {
 
-        ArrayList<modelo_lista_agregar_brazalete> datos = dbs.getBrazaletes_asignados(cupon,producto_desc);
+        ArrayList<modelo_lista_agregar_brazalete> datos = dbs.getBrazaletes_asignados(cupon,id_tour,producto_desc);
 
         ListView lay_upgrades = (ListView) findViewById(R.id.list_brazaletes_agregados);
         adapter_lista_agregar_brazalete adapter = new adapter_lista_agregar_brazalete(agregar_brazalete.this, datos);
@@ -74,12 +75,12 @@ public class agregar_brazalete extends BaseMenu {
         btn_aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Obtener total de brazaletes asignados.
                 int total_pax = dbs.getTotal_pax_abordar(cupon);
                 if (total_pax!=0) {
                     Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
-                    intent.putExtra("cupon", cupon);
                     intent.putExtra("producto", id_tour);
+                    intent.putExtra("total_pax_cupon", ad_cupon+me_cupon+in_cupon);
                     intent.putExtra("total_pax", total_pax);
                     startActivity(intent);
                 }else{

@@ -85,7 +85,7 @@ public class adapter_lista_barcos_abordar extends BaseAdapter {
         chk_sel_abordar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                dbs.update_barcos_check_clean(id_bote);
+                dbs.update_barcos_check_clean();
                 if (isChecked){
                     dbs.update_barcos_check_yes(id_bote);
                     adapter_lista_barcos_abordar.this.notifyDataSetChanged();
