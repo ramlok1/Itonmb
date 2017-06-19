@@ -39,8 +39,8 @@ public class login_main extends AppCompatActivity {
 
         /////////////////////////////////////////////////////
         // Datos pruebas
-           Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
-           datos.inserta_datos_pruebas();
+          /* Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
+           datos.inserta_datos_pruebas();*/
         // Oculta teclado
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -61,7 +61,7 @@ public class login_main extends AppCompatActivity {
                Intent intent =
                         new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent);
-              /* String v_user = txt_usr.getText().toString().toLowerCase();
+               /*String v_user = txt_usr.getText().toString().toLowerCase();
                 String v_pwd = txt_pwd.getText().toString().toLowerCase();
 
                 if (v_user.equals("")||v_pwd.equals("")) {

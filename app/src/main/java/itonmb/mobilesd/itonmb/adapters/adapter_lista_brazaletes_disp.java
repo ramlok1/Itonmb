@@ -22,7 +22,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
  */
 
 public class adapter_lista_brazaletes_disp extends BaseAdapter {
-    TextView tview_cantidad, tview_tipo;
+    TextView tview_folio, tview_tipo,tview_tour;
     Button btn_color;
 
 
@@ -63,8 +63,9 @@ public class adapter_lista_brazaletes_disp extends BaseAdapter {
 
         View itemView = inflater.inflate(R.layout.lista_brazaletes_disponibles, parent, false);
 
-        tview_cantidad = (TextView) itemView.findViewById(R.id.tview_cantidad_braz);
+        tview_folio = (TextView) itemView.findViewById(R.id.tview_folio_brazalete);
         tview_tipo = (TextView) itemView.findViewById(R.id.tview_tipo_braz);
+        tview_tour = (TextView) itemView.findViewById(R.id.tview_tour_brazalete);
 
 
 
@@ -74,8 +75,9 @@ public class adapter_lista_brazaletes_disp extends BaseAdapter {
 
         // Capture position and set to the TextViews
         String colors=lista.get(position).color;
-        tview_cantidad.setText(Integer.toString(lista.get(position).cantidad));
+        tview_folio.setText(lista.get(position).folio);
         tview_tipo.setText(lista.get(position).tipo);
+        tview_tour.setText(lista.get(position).tour);
         btn_color.setBackgroundColor(Color.parseColor(colors));
 
 

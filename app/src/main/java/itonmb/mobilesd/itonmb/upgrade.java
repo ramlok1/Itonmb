@@ -27,7 +27,7 @@ public class upgrade extends BaseMenu {
     Button btn_fp_upgrade,btn_menos_a,btn_mas_a,btn_menos_n,btn_mas_n,btn_menos_infante,btn_mas_infante,btn_add_upg;
     TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante,txt_total_pago_upgrade;
     String cupon;
-    int ad_cupon,me_cupon,in_cupon,id_producto_padre,total;
+    int ad_cupon,me_cupon,in_cupon,id_producto_padre,total,id_rva;
     Spinner spi_productos_upg;
     DBhelper dbs ;
     int[] id_producto,importe_producto;
@@ -47,7 +47,7 @@ public class upgrade extends BaseMenu {
         ad_cupon=Integer.parseInt(extras.getString("adulto"));
         me_cupon=Integer.parseInt(extras.getString("menor"));
         in_cupon=Integer.parseInt(extras.getString("infante"));
-        in_cupon=Integer.parseInt(extras.getString("infante"));
+        id_rva=Integer.parseInt(extras.getString("id_rva"));
         id_producto_padre=Integer.parseInt(extras.getString("producto_padre"));
 
         findviews();
@@ -105,6 +105,7 @@ public class upgrade extends BaseMenu {
                 }else {
                     Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
                     intent.putExtra("total",total);
+                    intent.putExtra("id_rva",id_rva);
                     startActivity(intent);
                 }
             }

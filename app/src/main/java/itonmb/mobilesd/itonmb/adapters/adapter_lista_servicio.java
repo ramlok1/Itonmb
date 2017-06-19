@@ -153,6 +153,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                             anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
                             anIntent.putExtra("infante",Integer.toString(lista.get(position).infante));
                             anIntent.putExtra("producto_padre",Integer.toString(lista.get(position).producto_padre));
+                            anIntent.putExtra("id_rva",Integer.toString(lista.get(position).id_rva));
                             context.startActivity(anIntent);
                             return true;
                         }

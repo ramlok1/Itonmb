@@ -71,6 +71,7 @@ public class search_orden extends BaseMenu {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String consulta_where=" where 0=0";
                 // Se pasan a variables para que se coloque "" en vez de null
                 String name= txt_name.getText().toString();
                 String fecha= txt_fecha.getText().toString();
@@ -79,8 +80,14 @@ public class search_orden extends BaseMenu {
 
                 if(producto=="Producto"){producto="";}
 
-                ArrayList<modelo_lista_orden> data= dbs.getSearch_Cupones(name,fecha,producto,operacion);
-                Global.data = data;
+                // Armado de where dinamico
+                if(name.length()!=0){consulta_where=consulta_where+" and nombre_cliente like '%"+name+"%'";}
+                if(fecha.length()!=0){consulta_where=consulta_where+" and fecha = '"+fecha+"'";}
+                if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
+                if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
+                Global.consulta_where=consulta_where;
+                ArrayList<modelo_lista_orden> data= dbs.getSearch_Cupones(consulta_where);
+
 
                 if(data==null){
                     Snackmsg bar = new Snackmsg();
@@ -152,39 +159,7 @@ public class search_orden extends BaseMenu {
        spi_producto.setSelection(adapter.getCount()); //display hint
     }
 
-    public class datosmesas extends AsyncTask<String, String, String> {
 
-        final ProgressDialog progressDialog = new ProgressDialog(search_orden.this);
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage("Trabajando...");
-            progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(String resp) {
-
-            super.onPostExecute(resp);
-            progressDialog.dismiss();
-
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String resp="";
-
-
-
-            return resp;
-        }
-    }
 
 
 
