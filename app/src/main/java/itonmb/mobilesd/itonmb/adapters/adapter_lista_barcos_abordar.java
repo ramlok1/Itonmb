@@ -88,7 +88,6 @@ public class adapter_lista_barcos_abordar extends BaseAdapter {
                 dbs.update_barcos_check_clean();
                 if (isChecked){
                     dbs.update_barcos_check_yes(id_bote);
-                    adapter_lista_barcos_abordar.this.notifyDataSetChanged();
                 }
             }
         });

@@ -18,8 +18,11 @@ public class modelo_lista_orden implements Serializable {
     public double importe;
     public int status;
     public int id_rva;
+    public String obs;
+    public int idioma;
+    public int idioma_icono;
 
-    public modelo_lista_orden(int id_rva,String cupon,String agencia,int producto_padre,String producto, int adulto, int menor, int infante, String nombre, String hotel, String habi, double importe, int status) {
+    public modelo_lista_orden(int id_rva,String cupon,String agencia,int producto_padre,String producto, int adulto, int menor, int infante, String nombre, String hotel, String habi, double importe, int status, String obs, int idioma, int idioma_icono) {
         this.cupon = cupon;
         this.agencia = agencia;
         this.producto = producto;
@@ -33,6 +36,9 @@ public class modelo_lista_orden implements Serializable {
         this.producto_padre = producto_padre;
         this.status = status;
         this.id_rva = id_rva;
+        this.obs = obs;
+        this.idioma = idioma;
+        this.idioma_icono=idioma_icono;
 
     }
 

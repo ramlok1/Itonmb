@@ -3,6 +3,7 @@ package itonmb.mobilesd.itonmb.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
+import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.agregar_brazalete;
 import itonmb.mobilesd.itonmb.barcos_abordar;
 import itonmb.mobilesd.itonmb.upgrade;
@@ -101,18 +103,40 @@ public class adapter_lista_servicio extends BaseAdapter {
         tview_habi.setText(lista.get(position).habi);
         tview_importe.setText(Double.toString(lista.get(position).importe));
 
+        /// Verifica status del cupon
+
+        switch (lista.get(position).status){
+            case 10:
+                btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.go_show));
+                break;
+            case 11:
+                btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.noshow));
+                break;
+            case 14:
+                btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.abordar));
+                break;
+            case 13:
+                btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.pendiente));
+                break;
+        }
+
+        // Coloca bandera de idioma
+        btn_flag.setBackground(ContextCompat.getDrawable(context,lista.get(position).idioma_icono));
+
+
 
 
         btn_obs_ver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, lista.get(position).cupon.toString(), Toast.LENGTH_LONG).show();
+                Snackmsg bar = new Snackmsg();
+                bar.getBar(v,lista.get(position).obs.toString(), R.drawable.obs, "#88d2f2").show();
             }
         });
 
         btn_menu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 //Creating the instance of PopupMenu
                 PopupMenu popup = new PopupMenu(context, v);
                 //Inflating the Popup using xml file
@@ -127,6 +151,12 @@ public class adapter_lista_servicio extends BaseAdapter {
 
                         //noinspection SimplifiableIfStatement
                         if (id == R.id.abordar) {
+
+                            if(lista.get(position).status==14){
+                                Snackmsg bar = new Snackmsg();
+                                bar.getBar(v,"Cupon ya abordado, no se pueden realizar cambios", R.drawable.error, "#fe3939").show();
+                                return false;
+                            }
                             Intent anIntent = new Intent(context, agregar_brazalete.class);
                             anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
                             anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
@@ -147,6 +177,11 @@ public class adapter_lista_servicio extends BaseAdapter {
                             return true;
                         }
                         if (id == R.id.upgrade) {
+                            if(lista.get(position).status==14){
+                                Snackmsg bar = new Snackmsg();
+                                bar.getBar(v,"Cupon ya abordado, no se pueden realizar cambios", R.drawable.error, "#fe3939").show();
+                                return false;
+                            }
                             Intent anIntent = new Intent(context, upgrade.class);
                             Global.cupon=lista.get(position).cupon;
                             anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));

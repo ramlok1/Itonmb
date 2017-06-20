@@ -13,6 +13,7 @@
     <string name="cancelar">Cancelar</string>
     <string name="no_show">No Show</string>
     <string name="upgrade">Upgrade</string>
+    <string name="muelle">Pago Muelle</string>
 
     <string name="list_caja_prompt">Caja</string>
     <string name="list_t_arqueo">Tipo Arqueo</string>

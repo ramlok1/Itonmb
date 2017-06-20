@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="10dp"
                 android:text="Cupón"
                 android:textAlignment="textStart"
                 android:textSize="20sp" />
@@ -47,7 +47,7 @@
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="30dp"
 
                 android:text="Agencia"
                 android:textAlignment="textStart"
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="100dp"
                 android:text="Tour"
                 android:textAlignment="center"
                 android:textSize="20sp" />
@@ -67,7 +67,7 @@
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="135dp"
+                android:layout_marginLeft="70dp"
 
                 android:text="A"
                 android:textAlignment="center"
@@ -77,7 +77,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="16dp"
 
                 android:text="N"
                 android:textAlignment="center"
@@ -87,7 +87,7 @@
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="21dp"
 
                 android:text="I"
                 android:textAlignment="center"
@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="30dp"
                 android:text="Observaciones"
                 android:textAlignment="textEnd"
                 android:textSize="18sp" />
@@ -150,7 +150,7 @@
     <ListView
         android:id="@+id/lv_datos_servicio"
         android:layout_width="match_parent"
-        android:layout_height="379dp"
+        android:layout_height="450dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="5dp"
@@ -163,33 +163,84 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="1"
         android:background="@android:color/background_light"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OPCION"
-            android:textAlignment="center" />
+        <ImageView
+            android:id="@+id/img_abordar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="80dp"
+            app:srcCompat="@drawable/abordar" />
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/lbl_abordar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OPCION"
-            android:textAlignment="center" />
+            android:layout_marginTop="20dp"
+            android:text="Abordado"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/img_noshow"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="80dp"
+            app:srcCompat="@drawable/noshow" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/lbl_noshow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OPCION"
-            android:textAlignment="center" />
+            android:layout_marginTop="20dp"
+            android:text="No Show"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/img_goshow"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="80dp"
+            app:srcCompat="@drawable/go_show" />
+
+        <TextView
+            android:id="@+id/lbl_goshow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Go Show"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/img_abordo_sin_cupon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="80dp"
+            app:srcCompat="@drawable/abordo_sin_cupon" />
+
+        <TextView
+            android:id="@+id/lbl_abordo_sin_cupon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Abordado Sin Cupon"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/img_pendiente"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="80dp"
+            app:srcCompat="@drawable/pendiente" />
+
+        <TextView
+            android:id="@+id/pendiente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Pendiente"
+            android:textSize="14sp" />
+
 
     </LinearLayout>
 </LinearLayout>

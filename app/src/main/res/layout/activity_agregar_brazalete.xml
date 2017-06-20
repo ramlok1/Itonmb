@@ -91,29 +91,32 @@
                 android:id="@+id/textView26"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="24sp" />
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:text="Folio"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="24sp" />
+                android:layout_marginLeft="270dp"
+                android:layout_marginTop="10dp"
+                android:text="Producto"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="24sp" />
+                android:layout_marginLeft="350dp"
+                android:layout_marginTop="10dp"
+                android:text="Color"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="24sp" />
         </LinearLayout>
 
         <ListView

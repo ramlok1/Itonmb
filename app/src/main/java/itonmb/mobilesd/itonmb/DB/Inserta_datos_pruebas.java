@@ -30,12 +30,15 @@ public class Inserta_datos_pruebas {
         String[] agencias ={"Best Day","Expedia","Magnnicharter","Sunwing","Funjet","GoGo","PriceTravel"};
         String[]  nombre ={"Conrado Gonzalez","Baldor Baldez","Heber Cetinar","Paul Baas","Amalfi Carolina","Laura Saldaña","Seydi Espinosa"};
         String[]  hotel ={"Azul Beach","Oasis Cancun","Princess Tulum","Barcelo Playa","Sandos Caracol","IberoStar","Riu"};
-        String[]  idioma ={"español","ingles","frances","aleman"};
+
         String[]  fpax ={"adulto","menor","infante"};
         String[]  color ={"#faeba6","#b7dbf3","#f8c1ba","#ace8dc"};
         String[]  nombre_barco ={"Don Diego","Mar y Arena","The Big","Saga Boy","Just Mars"};
         int[]  importe ={279,118,124,156,258,456,124,632};
+        int[]  idioma ={2,3,4};
+        int[]  idioma_icono ={2130837608,2130837609,2130837589,2130837617};
         int[]  tours ={132,130,13};
+        int[]  status ={10,11,14,13};
 
 
 
@@ -54,6 +57,7 @@ public class Inserta_datos_pruebas {
 
                 int numero = (int) (Math.random() * 7);
                 int nidi = (int) (Math.random() * 3);
+                int nst = (int) (Math.random() * 4);
                 int cupon = 100000 + (int) (r.nextFloat() * 899900);
                 int room = 1000 + (int) (r.nextFloat() * 9000);
                 ContentValues cv1 = new ContentValues();
@@ -62,7 +66,7 @@ public class Inserta_datos_pruebas {
                 cv1.put("agencia", agencias[numero]);
                 cv1.put("id_producto_padre", 13);
                 cv1.put("id_producto", 13);
-                cv1.put("producto", "Isla M. Plus");
+                cv1.put("producto", "Isla M.");
                 cv1.put("adulto", 2);
                 cv1.put("menor", 1);
                 cv1.put("infante", 0);
@@ -72,8 +76,9 @@ public class Inserta_datos_pruebas {
                 cv1.put("observaciones", "Obsercación de cupon: " + Integer.toString(cupon));
                 cv1.put("importe", importe[numero]);
                 cv1.put("idioma", idioma[nidi]);
+                cv1.put("idioma_icono", idioma_icono[nst]);
                 cv1.put("fecha", "01/06/17");
-                cv1.put("status", 1);
+                cv1.put("status", status[nst]);
                 dbs.insert("reservas", null, cv1);
 
         }
@@ -90,6 +95,13 @@ public class Inserta_datos_pruebas {
         cv2.put("id_producto",130);
         cv2.put("id_producto_padre",13);
         cv2.put("desc","Isla M. VIP");
+        cv2.put("importe", 247);
+        dbs.insert("productos", null, cv2);
+
+        cv2 = new ContentValues();
+        cv2.put("id_producto",13);
+        cv2.put("id_producto_padre",13);
+        cv2.put("desc","Isla M.");
         cv2.put("importe", 247);
         dbs.insert("productos", null, cv2);
 

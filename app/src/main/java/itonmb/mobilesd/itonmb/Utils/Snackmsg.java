@@ -20,7 +20,7 @@ public class Snackmsg {
         bar.getView().setBackgroundColor(Color.parseColor(color));
         TextView tv = (TextView) bar.getView().findViewById(android.support.design.R.id.snackbar_text);
         tv.setText(texto);
-        tv.setTextSize(18);
+        tv.setTextSize(20);
         tv.setCompoundDrawablesWithIntrinsicBounds(icono, 0, 0, 0);
 
         return bar;

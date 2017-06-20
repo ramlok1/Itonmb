@@ -56,7 +56,7 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer," +
             " monto integer, forma_ingreso integer)";
     private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,id_producto_padre integer, id_producto integer,producto text," +
-            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma text, fecha datetime," +
+            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma integer,idioma_icono integer, fecha datetime," +
             " status integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer,id_usr integer, status integer)";
@@ -154,7 +154,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_rva,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status from reservas "+ consulta_where+ " order by cupon";
+        String consulta = "select id_rva,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,observaciones,idioma,idioma_icono from reservas "+ consulta_where+ " order by cupon";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -172,8 +172,11 @@ public class DBhelper extends SQLiteOpenHelper {
                 String habi=cursor.getString(cursor.getColumnIndex("habi"));
                 int importe=cursor.getInt(cursor.getColumnIndex("importe"));
                 int status=cursor.getInt(cursor.getColumnIndex("status"));
+                String obs=cursor.getString(cursor.getColumnIndex("observaciones"));
+                int idioma=cursor.getInt(cursor.getColumnIndex("idioma"));
+                int idioma_icono=cursor.getInt(cursor.getColumnIndex("idioma_icono"));
 
-                datos.add(new modelo_lista_orden(id_rva,cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status));
+                datos.add(new modelo_lista_orden(id_rva,cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,obs,idioma,idioma_icono));
              }while(cursor.moveToNext());
         }
         dbs.close();
@@ -383,7 +386,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 dbs.insert("upgrade_detalle", null, cv);
 
 
-                String query = "select adulto,menor,infante,agencia,id_producto_padre,nombre_cliente,hotel,habi,observaciones,idioma from reservas where id_rva="+id_rva;
+                String query = "select adulto,menor,infante,agencia,id_producto_padre,nombre_cliente,hotel,habi,observaciones,idioma,idioma_icono,status from reservas where id_rva="+id_rva;
                 Cursor cur = dbs.rawQuery(query, null);
 
 
@@ -399,6 +402,8 @@ public class DBhelper extends SQLiteOpenHelper {
                     int adulto_o = cur.getInt(cur.getColumnIndex("adulto"));
                     int menor_o = cur.getInt(cur.getColumnIndex("menor"));
                     int infante_o = cur.getInt(cur.getColumnIndex("infante"));
+                    int idioma_icono = cur.getInt(cur.getColumnIndex("idioma_icono"));
+                    int status = cur.getInt(cur.getColumnIndex("status"));
 
 
                     cv = new ContentValues();
@@ -417,8 +422,9 @@ public class DBhelper extends SQLiteOpenHelper {
                     cv.put("observaciones",observaciones );
                     cv.put("importe", importe);
                     cv.put("idioma",idioma );
+                    cv.put("idioma_icono",idioma_icono );
                     cv.put("fecha", dateFormat.format(date));
-                    cv.put("status", 0);
+                    cv.put("status", status);
                     dbs.insert("reservas", null, cv);
 
                     cv = new ContentValues();
@@ -480,6 +486,7 @@ public class DBhelper extends SQLiteOpenHelper {
                     ContentValues cv = new ContentValues();
                     cv.put("cupon", cupon);
                     cv.put("folio", folio);
+                    cv.put("id_producto", id_tour);
                     cv.put("producto_desc", producto_desc);
                     cv.put("color", cursor.getString(cursor.getColumnIndex("color")));
                     cv.put("usuario", Global.usuario);
@@ -511,7 +518,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto='"+id_tour+"'";
+        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto="+id_tour+"";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -541,8 +548,8 @@ public class DBhelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do{
                 String nombre_barco=cursor.getString(cursor.getColumnIndex("nombre"));
-                int capac =cursor.getInt(cursor.getColumnIndex("id_bote"));
-                int id_bote =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int capac =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int id_bote =cursor.getInt(cursor.getColumnIndex("id_bote"));
                 int booking =cursor.getInt(cursor.getColumnIndex("reservas"));
                 int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
                 datos.add(new modelo_lista_dbarcos(id_bote,nombre_barco,capac,booking,aborda));
@@ -643,12 +650,12 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         // Obtener id de bote seleccionado
-        String consulta_id_bote = "select id_bote,abordados from botes where selecccion=1 and id_producto="+id_tour;
+        String consulta_id_bote = "select id_bote,abordado from botes where seleccion=1 and id_producto="+id_tour;
         Cursor cb = dbs.rawQuery(consulta_id_bote, null);
 
         if (cb.moveToFirst()) {
                 id_bote = cb.getInt(cb.getColumnIndex("id_bote"));
-                abordados = cb.getInt(cb.getColumnIndex("abordados"));
+                abordados = cb.getInt(cb.getColumnIndex("abordado"));
         }
         // obtener folios de brazaletes seleccionados
         String consulta = "select folio from brazalete_asignacion where cupon='"+cupon+"' and id_producto="+id_tour;
@@ -678,13 +685,13 @@ public class DBhelper extends SQLiteOpenHelper {
         // Marcar status de cupon en tabla de reservas
         up = new ContentValues();
         if(total_pax==total_pax_cupon){
-            up.put("status",1);
-        }else{up.put("status",2);}
+            up.put("status",14);
+        }else{up.put("status",13);}
         dbs.update("reservas",up,"cupon="+cupon+" and id_producto="+id_tour,null);
 
         // Aumenta numero de abordados
         up = new ContentValues();
-        up.put("abordados",abordados+total_pax);
+        up.put("abordado",abordados+total_pax);
         dbs.update("botes",up,"id_bote="+id_bote,null);
 
         dbs.close();
