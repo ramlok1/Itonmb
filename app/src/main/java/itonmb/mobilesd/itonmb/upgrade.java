@@ -106,6 +106,7 @@ public class upgrade extends BaseMenu {
                     Intent intent = new Intent(getApplicationContext(), forma_de_pago.class);
                     intent.putExtra("total",total);
                     intent.putExtra("id_rva",id_rva);
+                    intent.putExtra("tipo",1);
                     startActivity(intent);
                 }
             }

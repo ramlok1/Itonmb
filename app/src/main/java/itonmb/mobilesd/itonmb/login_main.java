@@ -39,8 +39,8 @@ public class login_main extends AppCompatActivity {
 
         /////////////////////////////////////////////////////
         // Datos pruebas
-          /* Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
-           datos.inserta_datos_pruebas();*/
+           Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
+           datos.inserta_datos_pruebas();
         // Oculta teclado
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN

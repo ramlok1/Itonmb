@@ -98,10 +98,15 @@ public class agregar_brazalete extends BaseMenu {
                 if(!folio.equals("")) {
                     String encontrado = dbs.busca_brazalete(folio,id_tour,producto_desc,cupon,ad_cupon,me_cupon,in_cupon);
                     valida_encontrado(encontrado,v);
+                    txt_folio_brazalete.setText("");
                 }else{
                     Snackmsg bar = new Snackmsg();
                     bar.getBar(v, "Favor de Seleccionar un Folio.", R.drawable.warn, "#f9db59").show();
                 }
+                // Oculta teclado
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+                );
 
             }
         });

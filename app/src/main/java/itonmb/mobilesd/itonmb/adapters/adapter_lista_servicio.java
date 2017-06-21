@@ -19,6 +19,9 @@ import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.agregar_brazalete;
 import itonmb.mobilesd.itonmb.barcos_abordar;
+import itonmb.mobilesd.itonmb.cancelar;
+import itonmb.mobilesd.itonmb.forma_de_pago;
+import itonmb.mobilesd.itonmb.noshow;
 import itonmb.mobilesd.itonmb.upgrade;
 import itonmb.mobilesd.itonmb.R;
 import itonmb.mobilesd.itonmb.ingresa_efectivo_caja;
@@ -169,11 +172,13 @@ public class adapter_lista_servicio extends BaseAdapter {
                         }
 
                         if (id == R.id.cancelar) {
-                            Toast.makeText(context,"En construcción...",Toast.LENGTH_SHORT).show();
+                            Intent anIntent = new Intent(context, cancelar.class);
+                            context.startActivity(anIntent);
                             return true;
                         }
                         if (id == R.id.no_show) {
-                            Toast.makeText(context,"En construcción...",Toast.LENGTH_SHORT).show();
+                            Intent anIntent = new Intent(context, noshow.class);
+                            context.startActivity(anIntent);
                             return true;
                         }
                         if (id == R.id.upgrade) {
@@ -190,6 +195,18 @@ public class adapter_lista_servicio extends BaseAdapter {
                             anIntent.putExtra("producto_padre",Integer.toString(lista.get(position).producto_padre));
                             anIntent.putExtra("id_rva",Integer.toString(lista.get(position).id_rva));
                             context.startActivity(anIntent);
+                            return true;
+                        }
+
+                        if (id==R.id.muelle){
+
+                            int total = (lista.get(position).adulto+lista.get(position).menor+lista.get(position).infante)*10;
+                            Intent intent = new Intent(context, forma_de_pago.class);
+                            intent.putExtra("total",total);
+                            intent.putExtra("id_rva",lista.get(position).id_rva);
+                            intent.putExtra("tipo",2);
+                            context.startActivity(intent);
+
                             return true;
                         }
                         return true;

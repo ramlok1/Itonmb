@@ -24,7 +24,7 @@ public class forma_de_pago extends BaseMenu {
     DBhelper dbs ;
     String cupon,autoriza_descuento;
     Button btn_pagar,btn_cancelar_upgrade ;
-    int importe_total,id_rva;
+    int importe_total,id_rva,tipo,id_upg=9999999;
     double importe_final;
     Spinner spi_forma_pago,spi_comprobante;
     TextView txt_monto_forma_pago,txt_cambio_forma_pago,txt_total_pago_upgrade_fp;
@@ -42,6 +42,7 @@ public class forma_de_pago extends BaseMenu {
         importe_total= extras.getInt("total");
         importe_final= extras.getInt("total");
         id_rva= extras.getInt("id_rva");
+        tipo= extras.getInt("tipo");
 
         findview();
         set_triggers();
@@ -93,7 +94,9 @@ public class forma_de_pago extends BaseMenu {
                 int recibido = Integer.parseInt(txt_recibido_forma_pago.getText().toString());
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
 
-                int id_upg = dbs.inserta_upgrade(cupon,importe_final,id_rva);
+                if(tipo==1) {
+                    id_upg = dbs.inserta_upgrade(cupon, importe_final, id_rva);
+                }
                 dbs.inserta_forma_pago(id_upg,cupon,forma_pago,monto,descuento,recibido,cambio);
 
                 Intent intent = new Intent(getApplicationContext(), listado_orden.class);
