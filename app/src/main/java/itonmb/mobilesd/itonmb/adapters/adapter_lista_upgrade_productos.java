@@ -20,7 +20,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
  */
 
 public class adapter_lista_upgrade_productos extends BaseAdapter {
-    TextView tview_desc, tview_adulto,tview_nino,tview_infante,tview_importe,tview_pago;
+    TextView tview_desc, tview_adulto,tview_nino,tview_infante,tview_importe;
     Button btn_delete;
     DBhelper dbs ;
 
@@ -70,7 +70,6 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
         tview_nino = (TextView) itemView.findViewById(R.id.tview_upgrade_nino);
         tview_infante = (TextView) itemView.findViewById(R.id.tview_upgrade_infante);
         tview_importe = (TextView) itemView.findViewById(R.id.tview_upgrade_importe);
-        tview_pago = (TextView) itemView.findViewById(R.id.tview_upgrade_pago);
         ////
         btn_delete = (Button) itemView.findViewById(R.id.btn_upgrade_delete);
         ////
@@ -79,7 +78,6 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
         tview_nino.setText(Integer.toString(lista.get(position).nino));
         tview_infante.setText(Integer.toString(lista.get(position).infante));
         tview_importe.setText(Integer.toString(lista.get(position).importe));
-        tview_pago.setText(Integer.toString(lista.get(position).importe));
 
         ///// Trigger para boton eliminar linea
         btn_delete.setOnClickListener(new View.OnClickListener() {

@@ -37,11 +37,10 @@ public class agregar_brazalete extends BaseMenu {
         //Obtengo valores enviados por el activity anterior
         Bundle extras = getIntent().getExtras();
         cupon= Global.cupon;
-        ad_cupon=Integer.parseInt(extras.getString("adulto"));
-        me_cupon=Integer.parseInt(extras.getString("menor"));
-        in_cupon=Integer.parseInt(extras.getString("infante"));
-        in_cupon=Integer.parseInt(extras.getString("infante"));
-        id_tour=Integer.parseInt(extras.getString("id_producto"));
+        ad_cupon=extras.getInt("adulto");
+        me_cupon=extras.getInt("menor");
+        in_cupon=extras.getInt("infante");
+        id_tour=extras.getInt("id_producto");
         producto_desc=extras.getString("producto_desc");
 
         findviews();

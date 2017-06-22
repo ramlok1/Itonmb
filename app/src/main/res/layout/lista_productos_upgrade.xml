@@ -37,13 +37,8 @@
         android:id="@+id/tview_upgrade_importe"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:textAlignment="center"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/tview_upgrade_pago"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_marginLeft="100dp"
+        android:drawableLeft="@drawable/pesos"
         android:textAlignment="center"
         android:textSize="30sp" />
 

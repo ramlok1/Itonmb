@@ -22,10 +22,5 @@
         android:orderInCategory="100"
         android:title="@string/upgrade"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/muelle"
-        android:orderInCategory="100"
-        android:title="@string/muelle"
-        app:showAsAction="never" />
 
 </menu>

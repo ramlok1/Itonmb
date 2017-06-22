@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -19,6 +22,8 @@ public class Inserta_datos_pruebas {
 
     DBhelper dbhelper ;
     private SQLiteDatabase dbs;
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date date = new Date();
 
     public  Inserta_datos_pruebas (Context context){
         dbhelper = new DBhelper(context);
@@ -36,7 +41,7 @@ public class Inserta_datos_pruebas {
         String[]  nombre_barco ={"Don Diego","Mar y Arena","The Big","Saga Boy","Just Mars"};
         int[]  importe ={279,118,124,156,258,456,124,632};
         int[]  idioma ={2,3,4};
-        int[]  idioma_icono ={2130837608,2130837609,2130837589,2130837617};
+        int[]  idioma_icono ={2130837609,2130837610,2130837589,2130837618};
         int[]  tours ={132,130,13};
         int[]  status ={10,11,14,13};
 
@@ -77,7 +82,7 @@ public class Inserta_datos_pruebas {
                 cv1.put("importe", importe[numero]);
                 cv1.put("idioma", idioma[nidi]);
                 cv1.put("idioma_icono", idioma_icono[nst]);
-                cv1.put("fecha", "01/06/17");
+                cv1.put("fecha", dateFormat.format(date).toString());
                 cv1.put("status", status[nst]);
                 dbs.insert("reservas", null, cv1);
 

@@ -31,7 +31,7 @@
                 android:layout_weight=".2"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Cantidad"
+                android:text="Folio"
                 android:textSize="30sp" />
 
             <TextView
@@ -52,6 +52,16 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text="Color"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Producto"
                 android:textSize="30sp" />
 
         </LinearLayout>

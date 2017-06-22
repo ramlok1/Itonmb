@@ -26,7 +26,7 @@ public class upgrade extends BaseMenu {
 
     Button btn_fp_upgrade,btn_menos_a,btn_mas_a,btn_menos_n,btn_mas_n,btn_menos_infante,btn_mas_infante,btn_add_upg;
     TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante,txt_total_pago_upgrade;
-    String cupon;
+    String cupon,producto_selecc;
     int ad_cupon,me_cupon,in_cupon,id_producto_padre,total,id_rva;
     Spinner spi_productos_upg;
     DBhelper dbs ;
@@ -107,6 +107,12 @@ public class upgrade extends BaseMenu {
                     intent.putExtra("total",total);
                     intent.putExtra("id_rva",id_rva);
                     intent.putExtra("tipo",1);
+
+                    intent.putExtra("adulto",0);
+                    intent.putExtra("menor",0);
+                    intent.putExtra("infante",0);
+                    intent.putExtra("producto_desc",producto_selecc);
+                    intent.putExtra("id_producto",id_producto[spi_productos_upg.getSelectedItemPosition()]);
                     startActivity(intent);
                 }
             }
@@ -211,7 +217,8 @@ public class upgrade extends BaseMenu {
                 int upg_infante =Integer.parseInt(txt_upgrade_infante.getText().toString());
 
                 ///variables del producto
-                String producto_selecc = spi_productos_upg.getSelectedItem().toString();
+                producto_selecc = spi_productos_upg.getSelectedItem().toString();
+                spi_productos_upg.setEnabled(false);
 
 
                 if (producto_selecc.equals("Producto"))

@@ -15,9 +15,11 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
@@ -28,7 +30,9 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 
 public class search_orden extends BaseMenu {
     Button btn_search;
-    EditText txt_fecha,txt_name,txt_id_oper;
+    EditText txt_fecha,txt_name,txt_id_oper, txt_cupon;
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date date = new Date();
     Calendar calendario;
     Spinner spi_producto;
     DBhelper dbs ;
@@ -49,6 +53,8 @@ public class search_orden extends BaseMenu {
         set_triggers();
         prepara_spinner();
 
+        txt_fecha.setText(dateFormat.format(date).toString());
+
         // Oculta teclado
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -61,6 +67,7 @@ public class search_orden extends BaseMenu {
         txt_name = (EditText) findViewById(R.id.txt_busc_name);
         txt_fecha = (EditText) findViewById(R.id.txt_busc_date);
         txt_id_oper = (EditText) findViewById(R.id.txt_busc_id_oper);
+        txt_cupon = (EditText) findViewById(R.id.txt_busc_cupon);
         btn_search = (Button) findViewById(R.id.btn_search_orden);
         spi_producto = (Spinner) findViewById(R.id.spi_busc_prod);
     }
@@ -77,6 +84,7 @@ public class search_orden extends BaseMenu {
                 String fecha= txt_fecha.getText().toString();
                 String operacion= txt_id_oper.getText().toString();
                 String producto = spi_producto.getSelectedItem().toString();
+                String cupon = txt_cupon.getText().toString();
 
                 if(producto=="Producto"){producto="";}
 
@@ -85,6 +93,7 @@ public class search_orden extends BaseMenu {
                 if(fecha.length()!=0){consulta_where=consulta_where+" and fecha = '"+fecha+"'";}
                 if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
                 if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
+                if(cupon.length()!=0){consulta_where=consulta_where+" and cupon='"+cupon+"'";}
                 Global.consulta_where=consulta_where;
                 ArrayList<modelo_lista_orden> data= dbs.getSearch_Cupones(consulta_where);
 
@@ -132,6 +141,7 @@ public class search_orden extends BaseMenu {
     }
 
     private void prepara_spinner(){
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
             @Override

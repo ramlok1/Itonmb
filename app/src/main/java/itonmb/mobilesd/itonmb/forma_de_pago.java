@@ -22,13 +22,14 @@ import itonmb.mobilesd.itonmb.Utils.Global;
 public class forma_de_pago extends BaseMenu {
 
     DBhelper dbs ;
-    String cupon,autoriza_descuento;
+    String cupon,autoriza_descuento,producto_desc;
     Button btn_pagar,btn_cancelar_upgrade ;
-    int importe_total,id_rva,tipo,id_upg=9999999;
+    int importe_total,id_rva,tipo,id_upg=9999999,adulto,menor,infante,id_producto;
     double importe_final;
     Spinner spi_forma_pago,spi_comprobante;
     TextView txt_monto_forma_pago,txt_cambio_forma_pago,txt_total_pago_upgrade_fp;
     EditText txt_descuento_forma_pago,txt_recibido_forma_pago;
+    int[] upg_datos  = new int[4];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +44,16 @@ public class forma_de_pago extends BaseMenu {
         importe_final= extras.getInt("total");
         id_rva= extras.getInt("id_rva");
         tipo= extras.getInt("tipo");
+        adulto = extras.getInt("adulto");
+        menor =extras.getInt("menor");
+        infante = extras.getInt("infante");
+        producto_desc = extras.getString("prodcuto_desc");
+        id_producto = extras.getInt("id_producto");
 
         findview();
         set_triggers();
         prepara_spinner();
+
 
         txt_monto_forma_pago.setText(Integer.toString(importe_total));
         txt_total_pago_upgrade_fp.setText(Double.toString(importe_final));
@@ -95,11 +102,20 @@ public class forma_de_pago extends BaseMenu {
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
 
                 if(tipo==1) {
-                    id_upg = dbs.inserta_upgrade(cupon, importe_final, id_rva);
+                    upg_datos = dbs.inserta_upgrade(cupon, importe_final, id_rva);
+                    id_upg=upg_datos[0];
+                    adulto=upg_datos[1];
+                    menor=upg_datos[2];
+                    infante=upg_datos[3];
                 }
                 dbs.inserta_forma_pago(id_upg,cupon,forma_pago,monto,descuento,recibido,cambio);
 
-                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
+                Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
+                intent.putExtra("adulto",adulto);
+                intent.putExtra("menor",menor);
+                intent.putExtra("infante",infante);
+                intent.putExtra("producto_desc",producto_desc);
+                intent.putExtra("id_producto",id_producto);
                 startActivity(intent);
             }
         });

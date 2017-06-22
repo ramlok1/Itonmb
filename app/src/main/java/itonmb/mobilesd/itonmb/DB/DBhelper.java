@@ -26,7 +26,8 @@ import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 public class DBhelper extends SQLiteOpenHelper {
 
     private static DBhelper mInstance = null;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    DateFormat dateFormat_reserva = new SimpleDateFormat("dd/MM/yyyy");
     Date date = new Date();
     String tipo_brazalete_ban;
 
@@ -336,9 +337,10 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public int inserta_upgrade (String cupon, double total, int id_rva){
+    public int[] inserta_upgrade (String cupon, double total, int id_rva){
 
         int id_upg=0;
+        int[] upg_datos = new int[4];
 
         SQLiteDatabase dbs = this.getWritableDatabase();
 
@@ -357,6 +359,7 @@ public class DBhelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do{
                 id_upg = cursor.getInt(cursor.getColumnIndex("id_upg"));
+                upg_datos[0] = id_upg;
             }while(cursor.moveToNext());
             }
         cursor.close();
@@ -373,6 +376,11 @@ public class DBhelper extends SQLiteOpenHelper {
                 int menor = cursor.getInt(cursor.getColumnIndex("menor"));
                 int infante = cursor.getInt(cursor.getColumnIndex("infante"));
                 int importe = cursor.getInt(cursor.getColumnIndex("importe"));
+
+                //Datos upgrade para brazalete
+                upg_datos[1] = adulto;
+                upg_datos[2] = menor;
+                upg_datos[3] = infante;
 
                 cv = new ContentValues();
                 cv.put("id_upg",id_upg);
@@ -423,7 +431,7 @@ public class DBhelper extends SQLiteOpenHelper {
                     cv.put("importe", importe);
                     cv.put("idioma",idioma );
                     cv.put("idioma_icono",idioma_icono );
-                    cv.put("fecha", dateFormat.format(date));
+                    cv.put("fecha", dateFormat_reserva.format(date));
                     cv.put("status", status);
                     dbs.insert("reservas", null, cv);
 
@@ -447,7 +455,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cursor.close();
         dbs.close();
 
-                return id_upg;
+                return upg_datos;
 
     }
 

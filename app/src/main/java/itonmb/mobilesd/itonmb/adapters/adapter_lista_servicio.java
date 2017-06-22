@@ -74,7 +74,7 @@ public class adapter_lista_servicio extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final View itemView = inflater.inflate(R.layout.lista_datos_servicio, parent, false);
-        final int status = lista.get(position).status;
+
 
         tview_cupon = (TextView) itemView.findViewById(R.id.tview_cupon);
         tview_agencia = (TextView) itemView.findViewById(R.id.tview_agencia);
@@ -123,6 +123,11 @@ public class adapter_lista_servicio extends BaseAdapter {
                 break;
         }
 
+        //Revisar id de drawer idioma
+       /* int esp = R.drawable.espa;
+        int fr = R.drawable.french;
+        int al = R.drawable.aleman;
+        int ing = R.drawable.ingles;*/
         // Coloca bandera de idioma
         btn_flag.setBackground(ContextCompat.getDrawable(context,lista.get(position).idioma_icono));
 
@@ -160,14 +165,20 @@ public class adapter_lista_servicio extends BaseAdapter {
                                 bar.getBar(v,"Cupon ya abordado, no se pueden realizar cambios", R.drawable.error, "#fe3939").show();
                                 return false;
                             }
-                            Intent anIntent = new Intent(context, agregar_brazalete.class);
-                            anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
-                            anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));
-                            anIntent.putExtra("infante",Integer.toString(lista.get(position).infante));
-                            anIntent.putExtra("producto_desc",lista.get(position).producto);
-                            anIntent.putExtra("id_producto",Integer.toString(lista.get(position).producto_padre));
+                            int total = (lista.get(position).adulto+lista.get(position).menor+lista.get(position).infante)*10;
+                            Intent intent = new Intent(context, forma_de_pago.class);
+                            //datos para cobro muelle
+                            intent.putExtra("total",total);
+                            intent.putExtra("id_rva",lista.get(position).id_rva);
+                            intent.putExtra("tipo",2);
+                            /////datos para abordaje
+                            intent.putExtra("adulto",lista.get(position).adulto);
+                            intent.putExtra("menor",lista.get(position).menor);
+                            intent.putExtra("infante",lista.get(position).infante);
+                            intent.putExtra("producto_desc",lista.get(position).producto);
+                            intent.putExtra("id_producto",lista.get(position).producto_padre);
                             Global.cupon=lista.get(position).cupon;
-                            context.startActivity(anIntent);
+                            context.startActivity(intent);
                             return true;
                         }
 
@@ -198,7 +209,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                             return true;
                         }
 
-                        if (id==R.id.muelle){
+                      /*  if (id==R.id.muelle){
 
                             int total = (lista.get(position).adulto+lista.get(position).menor+lista.get(position).infante)*10;
                             Intent intent = new Intent(context, forma_de_pago.class);
@@ -208,7 +219,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                             context.startActivity(intent);
 
                             return true;
-                        }
+                        }*/
                         return true;
                     }
                 });
