@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
  */
 
 public class adapter_lista_upgrade_productos extends BaseAdapter {
-    TextView tview_desc, tview_adulto,tview_nino,tview_infante,tview_importe;
+    TextView tview_desc, tview_adulto,tview_nino,tview_infante,tview_importe, tview_total;
     Button btn_delete;
     DBhelper dbs ;
 
@@ -60,10 +61,17 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
 
 
 
-        //http://developer.android.com/intl/es/reference/android/view/LayoutInflater.html
+
+
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View itemView = inflater.inflate(R.layout.lista_productos_upgrade, parent, false);
+
+
+        //txtview del total en el activity de upgrade
+        tview_total = (TextView) ((Activity) context).findViewById(R.id.txt_total_pago_upgrade);
+
+
 
         tview_desc = (TextView) itemView.findViewById(R.id.tview_desc_producto);
         tview_adulto = (TextView) itemView.findViewById(R.id.tview_upgrade_adulto);
@@ -86,6 +94,9 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
                 dbs.borra_elemento_upg(id_tmp);
                 lista.remove(position);
                 adapter_lista_upgrade_productos.this.notifyDataSetChanged();
+                if (position!=0) {
+                    tview_total.setText(Integer.toString(dbs.getTotal_upgrade(lista.get(0).cupon)));
+                }else{tview_total.setText(Integer.toString(0));}
             }
         });
 

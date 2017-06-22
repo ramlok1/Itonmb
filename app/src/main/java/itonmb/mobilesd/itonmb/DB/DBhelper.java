@@ -132,6 +132,24 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+    public void clean_database(){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.execSQL("delete from usuarios");
+        dbs.execSQL("delete from encabezado_caja");
+        dbs.execSQL("delete from detalle_caja");
+        dbs.execSQL("delete from reservas");
+        dbs.execSQL("delete from productos");
+        dbs.execSQL("delete from brazaletes");
+        dbs.execSQL("delete from abordado");
+        dbs.execSQL("delete from upgrade");
+        dbs.execSQL("delete from brazalete_asignacion");
+        dbs.execSQL("delete from forma_de_pago");
+        dbs.execSQL("delete from botes");
+        dbs.execSQL("delete from checkin");
+        dbs.execSQL("delete from temporal_upg");
+        dbs.execSQL("delete from upgrade_detalle");
+    }
+
     public String getLogin(String usr, String pwd){
 
         String shapwd = new String(Hex.encodeHex(DigestUtils.sha1(pwd)));
@@ -206,6 +224,27 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<modelo_spinner_productos_upg> getProductos(){
+        ArrayList<modelo_spinner_productos_upg> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_producto,desc,importe from productos";
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc"))
+                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),cursor.getInt(cursor.getColumnIndex("importe"))));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
     public String inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, int importe_producto, int ad_cupon,int me_cupon, int in_cupon){
 
         String response = "ok";
@@ -261,7 +300,7 @@ public class DBhelper extends SQLiteOpenHelper {
         ArrayList<modelo_lista_upgrade_productos> datos = new ArrayList<>();
         SQLiteDatabase dbs = this.getWritableDatabase();
 
-        String consulta = "select id_tmp,producto_desc,adulto,menor,infante,importe from temporal_upg where cupon="+cupon;
+        String consulta = "select id_tmp,producto_desc,adulto,menor,infante,importe from temporal_upg where cupon='"+cupon+"'";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -274,7 +313,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 int importe = cursor.getInt(cursor.getColumnIndex("importe"));
                 int id_tmp = cursor.getInt(cursor.getColumnIndex("id_tmp"));
                 // Se cargan datos de la bd en el arraylist
-                datos.add(new modelo_lista_upgrade_productos(id_tmp,producto_desc,adulto,menor,infante,importe));
+                datos.add(new modelo_lista_upgrade_productos(id_tmp,producto_desc,adulto,menor,infante,importe,cupon));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -456,6 +495,30 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.close();
 
                 return upg_datos;
+
+    }
+
+    public int getUpgrade_total_pax (String cupon){
+
+
+        int pax_datos=0;
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        //Inserta detalle de upgrade
+        String consulta = "select id_producto,sum(adulto)+sum(menor)+sum(infante) pax from temporal_upg where cupon="+cupon+" group by id_producto";
+       Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                 pax_datos = cursor.getInt(cursor.getColumnIndex("pax"));
+
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        dbs.close();
+
+        return pax_datos;
 
     }
 

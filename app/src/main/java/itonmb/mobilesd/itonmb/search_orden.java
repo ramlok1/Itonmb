@@ -14,6 +14,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,10 +30,12 @@ import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 public class search_orden extends BaseMenu {
     Button btn_search;
-    EditText txt_fecha,txt_name,txt_id_oper, txt_cupon;
+    EditText txt_name,txt_id_oper, txt_cupon;
+    TextView txt_fecha;
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     Date date = new Date();
     Calendar calendario;
@@ -65,7 +70,7 @@ public class search_orden extends BaseMenu {
 
     private void findviews() {
         txt_name = (EditText) findViewById(R.id.txt_busc_name);
-        txt_fecha = (EditText) findViewById(R.id.txt_busc_date);
+        txt_fecha = (TextView) findViewById(R.id.txt_busc_date);
         txt_id_oper = (EditText) findViewById(R.id.txt_busc_id_oper);
         txt_cupon = (EditText) findViewById(R.id.txt_busc_cupon);
         btn_search = (Button) findViewById(R.id.btn_search_orden);
@@ -78,7 +83,7 @@ public class search_orden extends BaseMenu {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String consulta_where=" where 0=0";
+                String consulta_where=" where status!=14";
                 // Se pasan a variables para que se coloque "" en vez de null
                 String name= txt_name.getText().toString();
                 String fecha= txt_fecha.getText().toString();
@@ -110,37 +115,11 @@ public class search_orden extends BaseMenu {
             }
         });
 
-        txt_fecha.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //To show current date in the datepicker
-                calendario = Calendar.getInstance();
-                int mYear = calendario.get(Calendar.YEAR);
-                int mMonth = calendario.get(Calendar.MONTH);
-                int mDay = calendario.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog mDatePicker = new DatePickerDialog(search_orden.this, new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                        // TODO Auto-generated method stub
-                        calendario.set(Calendar.YEAR, selectedyear);
-                        calendario.set(Calendar.MONTH, selectedmonth);
-                        calendario.set(Calendar.DAY_OF_MONTH, selectedday);
-                        String myFormat = "dd/MM/yy"; //In which you need put here
-                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-                        txt_fecha.setText(sdf.format(calendario.getTime()));
-                    }
-                }, mYear, mMonth, mDay);
-                mDatePicker.setTitle("Selecciona fecha:");
-                mDatePicker.show();
-            }
-        });
-
     }
 
     private void prepara_spinner(){
+
+        ArrayList<modelo_spinner_productos_upg> data= dbs.getProductos();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
@@ -161,8 +140,9 @@ public class search_orden extends BaseMenu {
         };
 
         adapter.setDropDownViewResource(R.layout.style_spinner_item);
-        adapter.add("Isla M. Plus");
-        adapter.add("Cozumel");
+        for (modelo_spinner_productos_upg producto: data) {
+            adapter.add(producto.descripcion);
+        }
         adapter.add("Producto");
 
         spi_producto.setAdapter(adapter);

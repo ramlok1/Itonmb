@@ -8,6 +8,7 @@ public class modelo_lista_upgrade_productos {
 
     public int id_tmp;
     public String descripcion;
+    public String cupon;
     public int adulto;
     public int nino;
     public int infante;
@@ -15,7 +16,7 @@ public class modelo_lista_upgrade_productos {
 
 
 
-    public modelo_lista_upgrade_productos(int id_tmp,String descripcion, int adulto, int nino, int infante, int importe ) {
+    public modelo_lista_upgrade_productos(int id_tmp,String descripcion, int adulto, int nino, int infante, int importe, String cupon ) {
 
         this.id_tmp = id_tmp;
         this.descripcion = descripcion;
@@ -23,6 +24,7 @@ public class modelo_lista_upgrade_productos {
         this.nino = nino;
         this.infante = infante;
         this.importe = importe;
+        this.cupon = cupon;
 
 
     }

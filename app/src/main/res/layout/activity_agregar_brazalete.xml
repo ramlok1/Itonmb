@@ -69,6 +69,58 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:id="@+id/textView33"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Adultos:"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/txt_br_adultos"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView35"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Menores:"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/txt_br_menores"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView37"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Infantes:"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/txt_br_infantes"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

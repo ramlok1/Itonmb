@@ -24,12 +24,13 @@ public class forma_de_pago extends BaseMenu {
     DBhelper dbs ;
     String cupon,autoriza_descuento,producto_desc;
     Button btn_pagar,btn_cancelar_upgrade ;
-    int importe_total,id_rva,tipo,id_upg=9999999,adulto,menor,infante,id_producto;
+    int importe_total,id_rva,tipo,id_upg=9999999,adulto,menor,infante,id_producto,total_pax, impuesto_muelle;
     double importe_final;
     Spinner spi_forma_pago,spi_comprobante;
     TextView txt_monto_forma_pago,txt_cambio_forma_pago,txt_total_pago_upgrade_fp;
     EditText txt_descuento_forma_pago,txt_recibido_forma_pago;
     int[] upg_datos  = new int[4];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +48,15 @@ public class forma_de_pago extends BaseMenu {
         adulto = extras.getInt("adulto");
         menor =extras.getInt("menor");
         infante = extras.getInt("infante");
-        producto_desc = extras.getString("prodcuto_desc");
+        producto_desc = extras.getString("producto_desc");
         id_producto = extras.getInt("id_producto");
 
         findview();
         set_triggers();
         prepara_spinner();
-
+        total_pax = dbs.getUpgrade_total_pax(cupon);
+        impuesto_muelle = total_pax*Global.importe_muelle;
+        importe_final=importe_final+impuesto_muelle;
 
         txt_monto_forma_pago.setText(Integer.toString(importe_total));
         txt_total_pago_upgrade_fp.setText(Double.toString(importe_final));
@@ -86,7 +89,9 @@ public class forma_de_pago extends BaseMenu {
         btn_cancelar_upgrade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(tipo==1) {
                 dbs.cancela_upgrade(cupon);
+                }
                 Intent intent = new Intent(getApplicationContext(), listado_orden.class);
                 startActivity(intent);
             }
@@ -141,7 +146,7 @@ public class forma_de_pago extends BaseMenu {
                         public void onClick(DialogInterface dialog, int which) {
                             autoriza_descuento = input.getText().toString();
                             int descuento = Integer.parseInt(txt_descuento_forma_pago.getText().toString());
-                            importe_final= importe_total - Math.round(((descuento/100.0)*importe_total));
+                            importe_final= impuesto_muelle+importe_total - Math.round(((descuento/100.0)*importe_total));
                             txt_total_pago_upgrade_fp.setText(Double.toString(importe_final));
                         }
                     });

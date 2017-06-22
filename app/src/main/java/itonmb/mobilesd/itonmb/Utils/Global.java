@@ -16,4 +16,5 @@ public  class Global {
     public static String consulta_where;
     public static int orden_de_servicio=12356;
     public static int id_usr=153;
+    public static int importe_muelle=10;
 }

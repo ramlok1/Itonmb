@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -80,6 +81,12 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
                 dbs.borra_elemento_br(id_br,lista.get(position).folio);
                 lista.remove(position);
                 adapter_lista_agregar_brazalete.this.notifyDataSetChanged();
+                ((Activity)context).runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        //settext here
+                    }
+                });
             }
         });
 

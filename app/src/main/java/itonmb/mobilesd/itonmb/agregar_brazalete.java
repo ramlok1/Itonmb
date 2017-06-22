@@ -23,7 +23,7 @@ public class agregar_brazalete extends BaseMenu {
     Button btn_asignar,btn_aceptar;
     int ad_cupon,me_cupon,in_cupon,id_tour;
     String cupon,producto_desc;
-    TextView txt_folio_brazalete;
+    TextView txt_folio_brazalete, txt_br_adultos,txt_br_menores,txt_br_infantes;
     DBhelper dbs;
 
     @Override
@@ -47,6 +47,11 @@ public class agregar_brazalete extends BaseMenu {
         set_triggers();
         genera_lista_brazaletes_seleccionados();
 
+
+        txt_br_adultos.setText(Integer.toString(ad_cupon));
+        txt_br_menores.setText(Integer.toString(me_cupon));
+        txt_br_infantes.setText(Integer.toString(in_cupon));
+
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
@@ -67,6 +72,10 @@ public class agregar_brazalete extends BaseMenu {
         btn_aceptar = (Button) findViewById(R.id.btn_aceptar_brazalete);
 
         txt_folio_brazalete = (TextView) findViewById(R.id.txt_folio_brazalete);
+        txt_br_adultos = (TextView) findViewById(R.id.txt_br_adultos);
+        txt_br_menores = (TextView) findViewById(R.id.txt_br_menores);
+        txt_br_infantes = (TextView) findViewById(R.id.txt_br_infantes);
+
     }
 
     private void set_triggers (){

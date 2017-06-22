@@ -39,6 +39,7 @@ public class login_main extends AppCompatActivity {
 
         /////////////////////////////////////////////////////
         // Datos pruebas
+        dbs.clean_database();
            Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
            datos.inserta_datos_pruebas();
         // Oculta teclado

@@ -46,6 +46,7 @@
         android:id="@+id/btn_upgrade_delete"
         android:layout_width="40dp"
         android:layout_height="40dp"
+
         android:layout_marginLeft="50dp"
         android:background="@drawable/delete"
         android:elevation="0dp" />

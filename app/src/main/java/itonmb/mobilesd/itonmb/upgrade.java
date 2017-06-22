@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -24,6 +25,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 public class upgrade extends BaseMenu {
 
+    boolean tmp_rdy = false;
     Button btn_fp_upgrade,btn_menos_a,btn_mas_a,btn_menos_n,btn_mas_n,btn_menos_infante,btn_mas_infante,btn_add_upg;
     TextView txt_upgrade_adultos,txt_upgrade_nino,txt_upgrade_infante,txt_total_pago_upgrade;
     String cupon,producto_selecc;
@@ -55,6 +57,15 @@ public class upgrade extends BaseMenu {
         genera_lista_productos_seleccionados();
         prepara_spinner();
 
+
+
+
+        txt_upgrade_adultos.setText(extras.getString("adulto"));
+        txt_upgrade_nino.setText(extras.getString("menor"));
+        txt_upgrade_infante.setText(extras.getString("infante"));
+
+
+
         // Oculta teclado
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -65,6 +76,10 @@ public class upgrade extends BaseMenu {
 
         ArrayList<modelo_lista_upgrade_productos> datos = dbs.getUpgrade_seleccionados(cupon);
 
+        if(datos.size()!=0){
+            producto_selecc =  datos.get(0).descripcion;
+            tmp_rdy=true;
+        }
         //Coloca total a pagar
         total = dbs.getTotal_upgrade(cupon);
         txt_total_pago_upgrade.setText(Integer.toString(total));
@@ -72,6 +87,7 @@ public class upgrade extends BaseMenu {
         ListView lay_upgrades = (ListView) findViewById(R.id.list_productos_upgrade);
         adapter_lista_upgrade_productos adapter = new adapter_lista_upgrade_productos(upgrade.this, datos);
         lay_upgrades.setAdapter(adapter);
+
     }
 
     private void findviews(){
@@ -277,6 +293,12 @@ public class upgrade extends BaseMenu {
 
         spi_productos_upg.setAdapter(adapter);
         spi_productos_upg.setSelection(adapter.getCount()); //display hint
+
+        if(tmp_rdy) {
+            int spinnerPosition = adapter.getPosition(producto_selecc);
+            spi_productos_upg.setSelection(spinnerPosition);
+            spi_productos_upg.setEnabled(false);
+        }
     }
 
     private void valida_response(String response, View v){
