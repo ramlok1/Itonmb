@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_item_barco_disponible"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/tview_forma_pago"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:textAlignment="textStart"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tview_moneda"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tview_monto_moneda"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:drawableLeft="@drawable/pesos"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tview_monto_mn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:drawableLeft="@drawable/pesos"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+</LinearLayout>

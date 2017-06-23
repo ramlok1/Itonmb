@@ -12,23 +12,29 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
+import itonmb.mobilesd.itonmb.adapters.adapter_lista_formas_de_pago;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
+
 
 public class forma_de_pago extends BaseMenu {
 
     DBhelper dbs ;
     String cupon,autoriza_descuento,producto_desc;
-    Button btn_pagar,btn_cancelar_upgrade ;
+    Button btn_pago_fp,btn_cancelar_fp,btn_finalizar_fp,btn_descuento ;
     int importe_total,id_rva,tipo,id_upg=9999999,adulto,menor,infante,id_producto,total_pax, impuesto_muelle;
     double importe_final;
-    Spinner spi_forma_pago,spi_comprobante;
-    TextView txt_monto_forma_pago,txt_cambio_forma_pago,txt_total_pago_upgrade_fp;
-    EditText txt_descuento_forma_pago,txt_recibido_forma_pago;
+    Spinner spi_forma_pago,spi_divisa;
+    TextView txt_cambio_forma_pago,txt_total_fp,txt_subtotal,txt_descuento,txt_imp_muelle,txt_saldo,txt_total_pagado;
+    EditText txt_monto_forma_pago,txt_recibido_forma_pago;
     int[] upg_datos  = new int[4];
 
 
@@ -58,8 +64,18 @@ public class forma_de_pago extends BaseMenu {
         impuesto_muelle = total_pax*Global.importe_muelle;
         importe_final=importe_final+impuesto_muelle;
 
-        txt_monto_forma_pago.setText(Integer.toString(importe_total));
-        txt_total_pago_upgrade_fp.setText(Double.toString(importe_final));
+        txt_subtotal.setText(Integer.toString(importe_total));
+        txt_total_fp.setText(Double.toString(importe_final));
+        txt_imp_muelle.setText(Integer.toString(impuesto_muelle));
+        txt_descuento.setText(Integer.toString(0));
+        txt_saldo.setText(Integer.toString(0));
+        txt_total_pagado.setText(Integer.toString(0));
+        txt_cambio_forma_pago.setText(Integer.toString(0));
+        txt_recibido_forma_pago.setText(Integer.toString(0));
+
+        if(tipo==2){
+            btn_descuento.setEnabled(false);
+        }
 
         // Oculta teclado
         getWindow().setSoftInputMode(
@@ -67,26 +83,47 @@ public class forma_de_pago extends BaseMenu {
         );
     }
 
+    private void genera_lista_pagos() {
+
+        ArrayList<modelo_lista_formas_de_pago> datos = dbs.getPagos(cupon);
+
+        //Coloca total a pagar
+       double total = dbs.getTotal_pagado(cupon);
+        txt_total_pagado.setText(Double.toString(total));
+
+        ListView lista_formas_pago = (ListView) findViewById(R.id.list_formas_pago);
+        adapter_lista_formas_de_pago adapter = new adapter_lista_formas_de_pago(forma_de_pago.this, datos);
+        lista_formas_pago.setAdapter(adapter);
+
+    }
+
     private void findview (){
 
-        btn_pagar= (Button) findViewById(R.id.btn_pagar_upgrade);
-        btn_cancelar_upgrade= (Button) findViewById(R.id.btn_cancelar_upgrade);
+        btn_pago_fp= (Button) findViewById(R.id.btn_pago_fp);
+        btn_cancelar_fp= (Button) findViewById(R.id.btn_cancelar_fp);
+        btn_finalizar_fp= (Button) findViewById(R.id.btn_finalizar_fp);
+        btn_descuento= (Button) findViewById(R.id.btn_descuento);
 
-        spi_comprobante= (Spinner) findViewById(R.id.spi_comprobante);
+        spi_divisa= (Spinner) findViewById(R.id.spi_divisa);
         spi_forma_pago= (Spinner) findViewById(R.id.spi_forma_pago);
 
-        txt_monto_forma_pago = (TextView) findViewById(R.id.txt_monto_forma_pago);
-        txt_cambio_forma_pago = (TextView) findViewById(R.id.txt_cambio_forma_pago);
-        txt_total_pago_upgrade_fp = (TextView) findViewById(R.id.txt_total_pago_upgrade_fp);
-
-        txt_descuento_forma_pago = (EditText) findViewById(R.id.txt_descuento_forma_pago);
+        txt_monto_forma_pago = (EditText) findViewById(R.id.txt_monto_forma_pago);
         txt_recibido_forma_pago = (EditText) findViewById(R.id.txt_recibido_forma_pago);
+
+        txt_cambio_forma_pago = (TextView) findViewById(R.id.txt_cambio_forma_pago);
+        txt_total_fp = (TextView) findViewById(R.id.txt_total_fp);
+        txt_subtotal = (TextView) findViewById(R.id.txt_subtotal);
+        txt_descuento = (TextView) findViewById(R.id.txt_descuento);
+        txt_imp_muelle = (TextView) findViewById(R.id.txt_imp_muelle);
+
+        txt_saldo = (TextView) findViewById(R.id.txt_saldo_fp);
+        txt_total_pagado = (TextView) findViewById(R.id.txt_total_pagado);
 
     }
 
     private void set_triggers(){
 
-        btn_cancelar_upgrade.setOnClickListener(new View.OnClickListener() {
+        btn_cancelar_fp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(tipo==1) {
@@ -97,35 +134,38 @@ public class forma_de_pago extends BaseMenu {
             }
         });
 
-        btn_pagar.setOnClickListener(new View.OnClickListener() {
+        btn_pago_fp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String forma_pago = spi_forma_pago.getSelectedItem().toString();
-                double monto = importe_final;
-                int descuento = Integer.parseInt(txt_descuento_forma_pago.getText().toString());
+                String moneda = spi_divisa.getSelectedItem().toString();
+                double monto_moneda = Integer.parseInt(txt_monto_forma_pago.getText().toString());
+                double monto_mn = monto_moneda*18.45;
                 int recibido = Integer.parseInt(txt_recibido_forma_pago.getText().toString());
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
 
-                if(tipo==1) {
+              /*  if(tipo==1) {
                     upg_datos = dbs.inserta_upgrade(cupon, importe_final, id_rva);
                     id_upg=upg_datos[0];
                     adulto=upg_datos[1];
                     menor=upg_datos[2];
                     infante=upg_datos[3];
-                }
-                dbs.inserta_forma_pago(id_upg,cupon,forma_pago,monto,descuento,recibido,cambio);
+                }*/
+                dbs.inserta_forma_pago(999991,cupon,forma_pago,monto_moneda,monto_mn,18.45,moneda,recibido,cambio);
+                genera_lista_pagos();
 
-                Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
+
+               /* Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
                 intent.putExtra("adulto",adulto);
                 intent.putExtra("menor",menor);
                 intent.putExtra("infante",infante);
                 intent.putExtra("producto_desc",producto_desc);
                 intent.putExtra("id_producto",id_producto);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
-        txt_descuento_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+       /* txt_descuento_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(!b){
@@ -162,7 +202,7 @@ public class forma_de_pago extends BaseMenu {
 
                 }
             }
-        });
+        });*/
 
         txt_recibido_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -196,11 +236,12 @@ public class forma_de_pago extends BaseMenu {
         adapter_fp.setDropDownViewResource(R.layout.style_spinner_item);
 
         adapter_fp.add("Efectivo");
-        adapter_fp.add("Efectivo");
+        adapter_fp.add("Tarjeta");
+
 
 
         spi_forma_pago.setAdapter(adapter_fp);
-        spi_forma_pago.setSelection(adapter_fp.getCount()); //display hint
+        spi_forma_pago.setSelection(1); //display hint
 
         ArrayAdapter<String> adapter_cp = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
             @Override
@@ -217,11 +258,12 @@ public class forma_de_pago extends BaseMenu {
         };
         adapter_cp.setDropDownViewResource(R.layout.style_spinner_item);
 
-        adapter_cp.add("Ticket");
-        adapter_cp.add("Ticket");
+        adapter_cp.add("Euro");
+        adapter_cp.add("Dolar");
+        adapter_cp.add("MXN");
 
 
-        spi_comprobante.setAdapter(adapter_cp);
-        spi_comprobante.setSelection(adapter_cp.getCount()); //display hint
+        spi_divisa.setAdapter(adapter_cp);
+        spi_divisa.setSelection(2); //display hint
     }
 }

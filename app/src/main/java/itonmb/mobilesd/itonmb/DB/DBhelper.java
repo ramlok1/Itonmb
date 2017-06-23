@@ -18,6 +18,7 @@ import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
@@ -63,11 +64,11 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer,id_usr integer, status integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
-    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,total double, fecha datetime)";
+    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,subtotal double,descuento double,total double, fecha datetime)";
 
     private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon text,folio text,id_producto integer ,producto_desc text, color text, usuario text,abordado integer)";
 
-    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text, monto double, descuento integer, recibido integer," +
+    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text,moneda text,monto_moneda double,tc double, monto_mn double,recibido integer," +
             " cambio double, fecha datetime, usuario text)";
     private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer,seleccion integer)";
 
@@ -321,11 +322,38 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<modelo_lista_formas_de_pago> getPagos(String cupon){
+
+        ArrayList<modelo_lista_formas_de_pago> datos = new ArrayList<>();
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        String consulta = "select forma,moneda,monto_moneda,monto_mn from forma_de_pago where cupon='"+cupon+"' and id_upg=999991";
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+
+                String forma_pago = cursor.getString(cursor.getColumnIndex("forma"));
+                String moneda = cursor.getString(cursor.getColumnIndex("moneda"));
+                double monto_moneda = cursor.getInt(cursor.getColumnIndex("monto_moneda"));
+                double monto_mn = cursor.getInt(cursor.getColumnIndex("monto_mn"));
+
+                // Se cargan datos de la bd en el arraylist
+                datos.add(new modelo_lista_formas_de_pago(forma_pago,moneda,monto_moneda,monto_mn));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
     public void borra_elemento_upg(int id_tmp){
         SQLiteDatabase dbs = this.getWritableDatabase();
         dbs.delete("temporal_upg", "id_tmp=" + id_tmp, null);
         dbs.close();
     }
+
     public void borra_elemento_br(int id_br, String folio){
         SQLiteDatabase dbs = this.getWritableDatabase();
         dbs.delete("brazalete_asignacion", "id_asignacion=" + id_br, null);
@@ -359,14 +387,30 @@ public class DBhelper extends SQLiteOpenHelper {
         return total;
     }
 
-    public void inserta_forma_pago(int id_upg,String cupon, String forma,double monto, int descuento, int recibido, double cambio ){
+    public double getTotal_pagado(String cupon){
+        double total=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        String query = "select sum(monto_mn) as total from forma_de_pago where cupon='"+cupon+"' and id_upg=999991";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            total=cursor.getDouble(cursor.getColumnIndex("total"));
+        }
+        dbs.close();
+        return total;
+    }
+
+    public void inserta_forma_pago(int id_upg,String cupon, String forma,double monto_moneda,double monto_mn,double tc, String moneda, int recibido, double cambio ){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("id_upg",id_upg);
         cv.put("cupon",cupon);
         cv.put("forma",forma);
-        cv.put("monto",monto);
-        cv.put("descuento", descuento);
+        cv.put("moneda", moneda);
+        cv.put("monto_moneda",monto_moneda);
+        cv.put("tc",tc);
+        cv.put("monto_mn",monto_mn);
         cv.put("recibido", recibido);
         cv.put("cambio", cambio);
         cv.put("fecha", dateFormat.format(date));
