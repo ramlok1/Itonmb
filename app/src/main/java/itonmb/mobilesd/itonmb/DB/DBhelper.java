@@ -64,11 +64,11 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer,id_usr integer, status integer)";
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
-    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,subtotal double,descuento double,total double, fecha datetime)";
+    private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,subtotal double,descuento double,total double, fecha datetime, firma blob, autoriza_descuento text)";
 
     private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon text,folio text,id_producto integer ,producto_desc text, color text, usuario text,abordado integer)";
 
-    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text,moneda text,monto_moneda double,tc double, monto_mn double,recibido integer," +
+    private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text,moneda text,monto_moneda double,tc double, monto_mn double,recibido double," +
             " cambio double, fecha datetime, usuario text)";
     private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, reservas integer, abordado integer, id_producto integer,seleccion integer)";
 
@@ -336,8 +336,8 @@ public class DBhelper extends SQLiteOpenHelper {
 
                 String forma_pago = cursor.getString(cursor.getColumnIndex("forma"));
                 String moneda = cursor.getString(cursor.getColumnIndex("moneda"));
-                double monto_moneda = cursor.getInt(cursor.getColumnIndex("monto_moneda"));
-                double monto_mn = cursor.getInt(cursor.getColumnIndex("monto_mn"));
+                double monto_moneda = cursor.getDouble(cursor.getColumnIndex("monto_moneda"));
+                double monto_mn = cursor.getDouble(cursor.getColumnIndex("monto_mn"));
 
                 // Se cargan datos de la bd en el arraylist
                 datos.add(new modelo_lista_formas_de_pago(forma_pago,moneda,monto_moneda,monto_mn));
@@ -377,7 +377,7 @@ public class DBhelper extends SQLiteOpenHelper {
         int total=0;
         SQLiteDatabase dbs = this.getWritableDatabase();
 
-        String query = "select sum(importe) as total from temporal_upg where cupon="+cupon;
+        String query = "select sum(importe) as total from temporal_upg where cupon='"+cupon+"'";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
@@ -401,7 +401,7 @@ public class DBhelper extends SQLiteOpenHelper {
         return total;
     }
 
-    public void inserta_forma_pago(int id_upg,String cupon, String forma,double monto_moneda,double monto_mn,double tc, String moneda, int recibido, double cambio ){
+    public void inserta_forma_pago(int id_upg,String cupon, String forma,double monto_moneda,double monto_mn,double tc, String moneda, double recibido, double cambio ){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("id_upg",id_upg);
@@ -420,7 +420,30 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public int[] inserta_upgrade (String cupon, double total, int id_rva){
+    public void update_forma_pago(int id_upg,String cupon ){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("id_upg",id_upg);
+        dbs.update("forma_de_pago",cv,"cupon='"+cupon+"'",null);
+        dbs.close();
+
+    }
+
+    public boolean valida_muelle_pagado(String cupon){
+        boolean ban=false;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        String query = "select id_fp from forma_de_pago where cupon='"+cupon+"' and id_upg=9999999";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            ban=true;
+        }
+        dbs.close();
+        return ban;
+    }
+
+    public int[] inserta_upgrade (String cupon, double total, int id_rva,double descuento, String autoriza_desc, byte[] firma){
 
         int id_upg=0;
         int[] upg_datos = new int[4];
@@ -433,7 +456,11 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("cupon",cupon);
         cv.put("usuario",Global.usuario);
         cv.put("total",total);
+        cv.put("subtotal",total);
         cv.put("fecha", dateFormat.format(date));
+        cv.put("descuento",descuento);
+        cv.put("firma",firma);
+        cv.put("autoriza_descuento",autoriza_desc);
         dbs.insert("upgrade", null, cv);
 
 
@@ -448,7 +475,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cursor.close();
 
         //Inserta detalle de upgrade
-        String consulta = "select id_producto,producto_desc,sum(adulto) adulto,sum(menor) menor,sum(infante) infante,importe from temporal_upg where cupon="+cupon+" group by id_producto";
+        String consulta = "select id_producto,producto_desc,sum(adulto) adulto,sum(menor) menor,sum(infante) infante,importe from temporal_upg where cupon='"+cupon+"' group by id_producto";
         cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -550,7 +577,7 @@ public class DBhelper extends SQLiteOpenHelper {
         SQLiteDatabase dbs = this.getWritableDatabase();
 
         //Inserta detalle de upgrade
-        String consulta = "select id_producto,sum(adulto)+sum(menor)+sum(infante) pax from temporal_upg where cupon="+cupon+" group by id_producto";
+        String consulta = "select id_producto,sum(adulto)+sum(menor)+sum(infante) pax from temporal_upg where cupon='"+cupon+"' group by id_producto";
        Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -795,14 +822,14 @@ public class DBhelper extends SQLiteOpenHelper {
 
         // Marcar brazaletes como abordados
         up.put("abordado",1);
-        dbs.update("brazalete_asignacion",up,"cupon="+cupon,null);
+        dbs.update("brazalete_asignacion",up,"cupon='"+cupon+"'",null);
 
         // Marcar status de cupon en tabla de reservas
         up = new ContentValues();
         if(total_pax==total_pax_cupon){
             up.put("status",14);
         }else{up.put("status",13);}
-        dbs.update("reservas",up,"cupon="+cupon+" and id_producto="+id_tour,null);
+        dbs.update("reservas",up,"cupon='"+cupon+"' and id_producto="+id_tour,null);
 
         // Aumenta numero de abordados
         up = new ContentValues();

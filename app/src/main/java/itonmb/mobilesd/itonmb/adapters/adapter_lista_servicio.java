@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.agregar_brazalete;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 public class adapter_lista_servicio extends BaseAdapter {
     TextView tview_cupon, tview_agencia, tview_tour, tview_adulto, tview_nino, tview_infante, tview_nombre, tview_hotel, tview_habi, tview_importe,hidden_producto_padre;
     Button btn_obs_ver, btn_flag, btn_status, btn_menu;
-
+    DBhelper dbs ;
 
     // Declare Variables
     private Context context;
@@ -46,6 +47,7 @@ public class adapter_lista_servicio extends BaseAdapter {
     public adapter_lista_servicio(Context context, ArrayList<modelo_lista_orden> lista) {
         this.context = context;
         this.lista = lista;
+        dbs = new DBhelper(context);
     }
 
     @Override
@@ -74,6 +76,8 @@ public class adapter_lista_servicio extends BaseAdapter {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final View itemView = inflater.inflate(R.layout.lista_datos_servicio, parent, false);
+        final String cupon = lista.get(position).cupon;
+
 
 
         tview_cupon = (TextView) itemView.findViewById(R.id.tview_cupon);
@@ -165,20 +169,33 @@ public class adapter_lista_servicio extends BaseAdapter {
                                 bar.getBar(v,"Cupon ya abordado, no se pueden realizar cambios", R.drawable.error, "#fe3939").show();
                                 return false;
                             }
-                            int total = (lista.get(position).adulto+lista.get(position).menor+lista.get(position).infante)*10;
-                            Intent intent = new Intent(context, forma_de_pago.class);
-                            //datos para cobro muelle
-                            intent.putExtra("total",total);
-                            intent.putExtra("id_rva",lista.get(position).id_rva);
-                            intent.putExtra("tipo",2);
-                            /////datos para abordaje
-                            intent.putExtra("adulto",lista.get(position).adulto);
-                            intent.putExtra("menor",lista.get(position).menor);
-                            intent.putExtra("infante",lista.get(position).infante);
-                            intent.putExtra("producto_desc",lista.get(position).producto);
-                            intent.putExtra("id_producto",lista.get(position).producto_padre);
-                            Global.cupon=lista.get(position).cupon;
-                            context.startActivity(intent);
+                             if(dbs.valida_muelle_pagado(cupon)){
+
+                                 Intent intent = new Intent(context, agregar_brazalete.class);
+                                 intent.putExtra("adulto", lista.get(position).adulto);
+                                 intent.putExtra("menor", lista.get(position).menor);
+                                 intent.putExtra("infante", lista.get(position).infante);
+                                 intent.putExtra("producto_desc", lista.get(position).producto);
+                                 intent.putExtra("id_producto", lista.get(position).producto_padre);
+                                 Global.cupon=cupon;
+                                 context.startActivity(intent);
+                             }
+                              else {
+                                 Intent intent = new Intent(context, forma_de_pago.class);
+                                 //datos para cobro muelle
+                                 intent.putExtra("total",0);
+                                 intent.putExtra("id_rva",lista.get(position).id_rva);
+                                 intent.putExtra("tipo",2);
+                                 /////datos para abordaje
+                                 intent.putExtra("adulto",lista.get(position).adulto);
+                                 intent.putExtra("menor",lista.get(position).menor);
+                                 intent.putExtra("infante",lista.get(position).infante);
+                                 intent.putExtra("producto_desc",lista.get(position).producto);
+                                 intent.putExtra("id_producto",lista.get(position).producto_padre);
+                                 Global.cupon=cupon;
+                                 context.startActivity(intent);
+
+                                 }
                             return true;
                         }
 

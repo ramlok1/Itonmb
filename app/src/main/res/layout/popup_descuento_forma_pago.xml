@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sign="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_principal_pop"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/round_shape_shadow"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_shape"
+
+
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnxpop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:drawable/ic_menu_close_clear_cancel" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/p_descuento"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:drawableRight="@drawable/porcent"
+                android:ems="10"
+                android:gravity="right"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btn_aplicar_desc"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="200dp"
+                android:background="@android:color/holo_blue_light"
+                android:text="Aplicar"
+                android:textColor="@color/cardview_light_background"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/txt_autoriza_desc"
+            android:layout_width="540dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:hint="Quien Autoriza"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:textSize="36sp" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Firma"
+            android:textAlignment="center"
+            android:textColor="@color/colorfondo"
+            android:textSize="30sp" />
+
+        <com.kyanogen.signatureview.SignatureView
+            android:id="@+id/signature_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.44"
+            sign:backgroundColor="#ffffff"
+            sign:enableSignature="true"
+            sign:penColor="#000000"
+            sign:penSize="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
@@ -22,7 +23,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 
 public class adapter_lista_formas_de_pago extends BaseAdapter {
     TextView tview_forma_pago,tview_moneda,tview_monto_moneda,tview_monto_mn;
-
+    DecimalFormat precision = new DecimalFormat("0.00");
     DBhelper dbs ;
 
 
@@ -69,8 +70,8 @@ public class adapter_lista_formas_de_pago extends BaseAdapter {
         ////
         tview_forma_pago.setText(lista.get(position).forma_papgo);
         tview_moneda.setText(lista.get(position).moneda);
-        tview_monto_moneda.setText(Double.toString(lista.get(position).monto_moneda));
-        tview_monto_mn.setText(Double.toString(lista.get(position).monto_mn));
+        tview_monto_moneda.setText(precision.format(lista.get(position).monto_moneda));
+        tview_monto_mn.setText(precision.format(lista.get(position).monto_mn));
 
         return itemView;
 
