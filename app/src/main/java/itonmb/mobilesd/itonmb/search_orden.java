@@ -83,7 +83,7 @@ public class search_orden extends BaseMenu {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String consulta_where=" where status!=14";
+                String consulta_where=" where status not in (14,2)";
                 // Se pasan a variables para que se coloque "" en vez de null
                 String name= txt_name.getText().toString();
                 String fecha= txt_fecha.getText().toString();

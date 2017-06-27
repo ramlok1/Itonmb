@@ -1,6 +1,8 @@
 package itonmb.mobilesd.itonmb.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.ContextCompat;
@@ -128,7 +130,7 @@ public class adapter_lista_servicio extends BaseAdapter {
         }
 
         //Revisar id de drawer idioma
-       /* int esp = R.drawable.espa;
+     /*   int esp = R.drawable.espa;
         int fr = R.drawable.french;
         int al = R.drawable.aleman;
         int ing = R.drawable.ingles;*/
@@ -200,8 +202,30 @@ public class adapter_lista_servicio extends BaseAdapter {
                         }
 
                         if (id == R.id.cancelar) {
-                            Intent anIntent = new Intent(context, cancelar.class);
-                            context.startActivity(anIntent);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Cancelar Reserva: ")
+                            .setMessage("Esta seguro desea cancelar la reserva del Cupon: "+cupon);
+                            builder.setCancelable(false);
+
+                            // Set up the buttons
+                            builder.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                        dbs.cancela_Cupon(cupon);
+                                    lista.remove(position);
+                                    adapter_lista_servicio.this.notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
+
+
                             return true;
                         }
                         if (id == R.id.no_show) {

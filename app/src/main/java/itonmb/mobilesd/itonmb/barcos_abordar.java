@@ -42,7 +42,10 @@ public class barcos_abordar extends BaseMenu {
         set_triggers();
         genera_lista_barcos();
     }
-
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
     private void genera_lista_barcos() {
 
         ArrayList<modelo_lista_dbarcos> datos = dbs.getBarcos_disponibles(id_tour);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
@@ -25,6 +26,10 @@ import android.widget.Toast;
 import com.kyanogen.signatureview.SignatureView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -77,6 +82,8 @@ public class forma_de_pago extends BaseMenu {
         prepara_spinner();
         if (tipo == 1) {
             total_pax = dbs.getUpgrade_total_pax(cupon);
+            //Cancela boton de descuento en caso de que exista descuento aplicado
+            if(Global.ban_desc){btn_descuento.setEnabled(false);}
         } else {
             total_pax = adulto + menor + infante;
             btn_descuento.setVisibility(View.GONE);
@@ -87,12 +94,13 @@ public class forma_de_pago extends BaseMenu {
             impuesto_muelle = total_pax * Global.importe_muelle;
             }
 
-        importe_final=importe_total+impuesto_muelle;
+        importe_final=importe_total+impuesto_muelle-Global.valor_descuento;
 
+        //Llenado de valores iniciales
         txt_subtotal.setText(precision.format(importe_total));
         txt_total_fp.setText(precision.format(importe_final));
         txt_imp_muelle.setText(precision.format(impuesto_muelle));
-        txt_descuento.setText(precision.format(0));
+        txt_descuento.setText(precision.format(Global.valor_descuento));
         txt_saldo.setText(precision.format(importe_final));
         txt_total_pagado.setText(precision.format(0));
         txt_cambio_forma_pago.setText(precision.format(0));
@@ -106,6 +114,10 @@ public class forma_de_pago extends BaseMenu {
         );
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
     private void genera_lista_pagos() {
 
         ArrayList<modelo_lista_formas_de_pago> datos = dbs.getPagos(cupon);
@@ -167,14 +179,22 @@ public class forma_de_pago extends BaseMenu {
                   }else{
 
                     if(tipo==1) {
-                        upg_datos = dbs.inserta_upgrade(cupon, importe_final, id_rva,importe_descuento,autoriza_descuento,byteArray);
+                        upg_datos = dbs.inserta_upgrade(cupon, importe_final,importe_total, id_rva,importe_descuento,autoriza_descuento,byteArray);
                         id_upg = upg_datos[0];
                         adulto = upg_datos[1];
                         menor = upg_datos[2];
                         infante = upg_datos[3];
                     }
                     dbs.update_forma_pago(id_upg,cupon);
+                    // Resetea variables de descuento
+                    Global.ban_desc=false;
+                    Global.valor_descuento=0;
+                    /////////////////////////////////////////////////////////
 
+                    new forma_de_pago.imprime_test().execute();
+
+
+                    /////////////////////////////////////////////////////////
                     Intent intent = new Intent(getApplicationContext(), agregar_brazalete.class);
                       intent.putExtra("adulto",adulto);
                       intent.putExtra("menor",menor);
@@ -191,6 +211,8 @@ public class forma_de_pago extends BaseMenu {
             public void onClick(View v) {
                 String forma_pago = spi_forma_pago.getSelectedItem().toString();
                 String moneda = spi_divisa.getSelectedItem().toString();
+
+
                 double monto_moneda = Double.parseDouble(txt_monto_forma_pago.getText().toString());
                 double monto_mn;
                 // revisa moneda
@@ -204,6 +226,11 @@ public class forma_de_pago extends BaseMenu {
 
                 double recibido = Double.parseDouble(txt_recibido_forma_pago.getText().toString());
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
+
+                    if(recibido!=0) {
+                        double importe_cambio = recibido - monto_moneda;
+                        txt_cambio_forma_pago.setText(Double.toString(importe_cambio));
+                    }
 
                 if (monto_mn + total_pagado > importe_final) {
                     Snackmsg bar = new Snackmsg();
@@ -229,16 +256,13 @@ public class forma_de_pago extends BaseMenu {
 
 
 
-        txt_recibido_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        txt_monto_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b){
-                    int recibido = Integer.parseInt(txt_recibido_forma_pago.getText().toString());
-                    if(recibido!=0) {
-                        int importe_cambio = recibido - importe_total;
-                        txt_cambio_forma_pago.setText(Integer.toString(importe_cambio));
-                    }
-                }
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                txt_recibido_forma_pago.setText("0.00");
+                    txt_cambio_forma_pago.setText("0.00");
+
             }
         });
     }
@@ -334,8 +358,13 @@ public class forma_de_pago extends BaseMenu {
                 importe_descuento= (p_descuento/100.00)*importe_total;
                 txt_descuento.setText(precision.format(importe_descuento));
 
+                //Cambio de importe total
                 importe_final=(importe_total+impuesto_muelle)-importe_descuento;
                 txt_total_fp.setText(precision.format(importe_final));
+
+                //Cambio de importe saldo
+                double saldo = importe_final - total_pagado;
+                txt_saldo.setText(precision.format(saldo));
 
             // Tratamiento de imagen de firma
                 Bitmap bmp= signatureView.getSignatureBitmap();
@@ -344,10 +373,54 @@ public class forma_de_pago extends BaseMenu {
                 byteArray = stream.toByteArray();
 
                 btn_descuento.setEnabled(false);
+                Global.ban_desc=true;
+                Global.valor_descuento=importe_descuento;
 
                 pwindo.dismiss();
             }
         });
         return pwindo;
+    }
+
+    private class imprime_test extends AsyncTask<String, String, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+
+            super.onPostExecute(resp);
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            try
+            {
+                Socket sock = new Socket("192.168.100.21",9100);
+                PrintWriter oStream = new PrintWriter(sock.getOutputStream());
+                oStream.println("HI,test from Android Device");
+                oStream.println("\n\n\n");
+                oStream.close();
+                sock.close();
+            }
+            catch (UnknownHostException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+
+            return resp;
+        }
     }
 }

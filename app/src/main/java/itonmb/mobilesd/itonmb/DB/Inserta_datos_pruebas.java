@@ -41,7 +41,7 @@ public class Inserta_datos_pruebas {
         String[]  nombre_barco ={"Don Diego","Mar y Arena","The Big","Saga Boy","Just Mars"};
         int[]  importe ={279,118,124,156,258,456,124,632};
         int[]  idioma ={2,3,4};
-        int[]  idioma_icono ={2130837609,2130837610,2130837589,2130837618};
+        int[]  idioma_icono ={2130837610,2130837611,2130837589,2130837619};
         int[]  tours ={132,130,13};
         int[]  status ={10,11,14,13};
 

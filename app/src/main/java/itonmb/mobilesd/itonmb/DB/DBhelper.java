@@ -443,7 +443,7 @@ public class DBhelper extends SQLiteOpenHelper {
         return ban;
     }
 
-    public int[] inserta_upgrade (String cupon, double total, int id_rva,double descuento, String autoriza_desc, byte[] firma){
+    public int[] inserta_upgrade (String cupon, double total,double subtotal, int id_rva,double descuento, String autoriza_desc, byte[] firma){
 
         int id_upg=0;
         int[] upg_datos = new int[4];
@@ -456,7 +456,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("cupon",cupon);
         cv.put("usuario",Global.usuario);
         cv.put("total",total);
-        cv.put("subtotal",total);
+        cv.put("subtotal",subtotal);
         cv.put("fecha", dateFormat.format(date));
         cv.put("descuento",descuento);
         cv.put("firma",firma);
@@ -865,6 +865,19 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         dbs.close();
         return datos;
+
+    }
+
+    public void cancela_Cupon(String cupon){
+
+        // Marcar status de cupon en tabla de reservas
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues up = new ContentValues();
+
+        up.put("status",2);
+        dbs.update("reservas",up,"cupon='"+cupon+"'",null);
+
+        dbs.close();
 
     }
 

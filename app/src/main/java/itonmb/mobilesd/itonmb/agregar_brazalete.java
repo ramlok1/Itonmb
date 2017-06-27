@@ -56,7 +56,10 @@ public class agregar_brazalete extends BaseMenu {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
     }
-
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
     private void genera_lista_brazaletes_seleccionados() {
 
         ArrayList<modelo_lista_agregar_brazalete> datos = dbs.getBrazaletes_asignados(cupon,id_tour,producto_desc);
