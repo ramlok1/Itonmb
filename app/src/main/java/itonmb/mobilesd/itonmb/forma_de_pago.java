@@ -27,11 +27,16 @@ import com.kyanogen.signatureview.SignatureView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
@@ -56,6 +61,9 @@ public class forma_de_pago extends BaseMenu {
     View layout_popup;
     SignatureView signatureView;
     byte[] byteArray;
+    DateFormat dateFormat_hora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    Date date = new Date();
 
 
     @Override
@@ -83,7 +91,7 @@ public class forma_de_pago extends BaseMenu {
         if (tipo == 1) {
             total_pax = dbs.getUpgrade_total_pax(cupon);
             //Cancela boton de descuento en caso de que exista descuento aplicado
-            if(Global.ban_desc){btn_descuento.setEnabled(false);}
+
         } else {
             total_pax = adulto + menor + infante;
             btn_descuento.setVisibility(View.GONE);
@@ -94,13 +102,13 @@ public class forma_de_pago extends BaseMenu {
             impuesto_muelle = total_pax * Global.importe_muelle;
             }
 
-        importe_final=importe_total+impuesto_muelle-Global.valor_descuento;
+        importe_final=importe_total+impuesto_muelle;
 
         //Llenado de valores iniciales
         txt_subtotal.setText(precision.format(importe_total));
         txt_total_fp.setText(precision.format(importe_final));
         txt_imp_muelle.setText(precision.format(impuesto_muelle));
-        txt_descuento.setText(precision.format(Global.valor_descuento));
+        txt_descuento.setText(precision.format(0));
         txt_saldo.setText(precision.format(importe_final));
         txt_total_pagado.setText(precision.format(0));
         txt_cambio_forma_pago.setText(precision.format(0));
@@ -184,14 +192,13 @@ public class forma_de_pago extends BaseMenu {
                         adulto = upg_datos[1];
                         menor = upg_datos[2];
                         infante = upg_datos[3];
+                        new forma_de_pago.imprime_test().execute();
                     }
                     dbs.update_forma_pago(id_upg,cupon);
-                    // Resetea variables de descuento
-                    Global.ban_desc=false;
-                    Global.valor_descuento=0;
+
                     /////////////////////////////////////////////////////////
 
-                    new forma_de_pago.imprime_test().execute();
+
 
 
                     /////////////////////////////////////////////////////////
@@ -249,7 +256,7 @@ public class forma_de_pago extends BaseMenu {
         btn_descuento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupWindow pwin = popup_window();
+                PopupWindow pwin = popup_window(v);
                 pwin.showAtLocation(layout_popup, Gravity.CENTER, 0, -20);
             }
         });
@@ -318,7 +325,7 @@ public class forma_de_pago extends BaseMenu {
         spi_divisa.setSelection(2); //display hint
     }
 
-    private PopupWindow popup_window(){
+    private PopupWindow popup_window(final View vo){
         final PopupWindow pwindo;
 
 
@@ -353,30 +360,41 @@ public class forma_de_pago extends BaseMenu {
             @Override
             public void onClick(View v) {
 
-                int p_descuento = Integer.parseInt(txt_desc.getText().toString());
+                int p_descuento=0;
+                String descuento =txt_desc.getText().toString();
                 autoriza_descuento = txt_desc_autoriza.getText().toString();
-                importe_descuento= (p_descuento/100.00)*importe_total;
-                txt_descuento.setText(precision.format(importe_descuento));
+                if(!descuento.equals("")||!descuento.equals("0")) {
+                    p_descuento=Integer.parseInt(txt_desc.getText().toString());
+                }
 
-                //Cambio de importe total
-                importe_final=(importe_total+impuesto_muelle)-importe_descuento;
-                txt_total_fp.setText(precision.format(importe_final));
-
-                //Cambio de importe saldo
-                double saldo = importe_final - total_pagado;
-                txt_saldo.setText(precision.format(saldo));
-
-            // Tratamiento de imagen de firma
-                Bitmap bmp= signatureView.getSignatureBitmap();
+                // Tratamiento de imagen de firma
+                Bitmap bmp = signatureView.getSignatureBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byteArray = stream.toByteArray();
+                int img_size = byteArray.length;
 
-                btn_descuento.setEnabled(false);
-                Global.ban_desc=true;
-                Global.valor_descuento=importe_descuento;
 
-                pwindo.dismiss();
+               if (p_descuento > 0 && !autoriza_descuento.equals("") && img_size > 2000) {
+
+                    importe_descuento = (p_descuento / 100.00) * importe_total;
+                    txt_descuento.setText(precision.format(importe_descuento));
+
+                    //Cambio de importe total
+                    importe_final = (importe_total + impuesto_muelle) - importe_descuento;
+                    txt_total_fp.setText(precision.format(importe_final));
+
+                    //Cambio de importe saldo
+                    double saldo = importe_final - total_pagado;
+                    txt_saldo.setText(precision.format(saldo));
+
+                   btn_descuento.setEnabled(false);
+                   pwindo.dismiss();
+
+                }else{
+                    Snackmsg bar = new Snackmsg();
+                    bar.getBar(vo, "Favor de verificar porcentaje de descuento, Autoriza descuento y/o Firma", R.drawable.error, "#fe3939").show();
+                }
             }
         });
         return pwindo;
@@ -403,10 +421,26 @@ public class forma_de_pago extends BaseMenu {
             String resp="";
             try
             {
+                String center = "\u001b\u0061\u0001";
                 Socket sock = new Socket("192.168.100.21",9100);
                 PrintWriter oStream = new PrintWriter(sock.getOutputStream());
-                oStream.println("HI,test from Android Device");
-                oStream.println("\n\n\n");
+                oStream.println(center+"UPGRADE");
+                oStream.println("\n");
+                oStream.println(center+"  Folio: " + cupon+"                  "+dateFormat.format(date));
+                oStream.println("  Upgrade: "+producto_desc);
+                oStream.println("  Cantidad: "+total_pax);
+                oStream.println("  Brazalete: ");
+                oStream.println("\n");
+                oStream.println(center+" Impreso: "+dateFormat_hora.format(date)+"  Cajero: "+Global.usuario);
+                oStream.println("\n");
+                oStream.println(center+"¡MUCHAS GRACIAS! ");
+                oStream.println(center+"Marina del Hotel Templation ");
+                oStream.println(center+"Blvd Kukulcan KM 3.5 ZH, CANCUN MEXICO ");
+                oStream.println(center+"Telf: 848 7972/849 4223/849 5396 ");
+                oStream.println(center+"www.albatrossailway.com ");
+                oStream.println(center+"ventas@albatrossailway.com ");
+                oStream.println("\n\n");
+                oStream.println(new char[]{0x1D, 0x56, 0x41, 0x10});
                 oStream.close();
                 sock.close();
             }

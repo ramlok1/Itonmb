@@ -881,5 +881,18 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+    public void noshow_Cupon(String cupon){
+
+        // Marcar status de cupon en tabla de reservas
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues up = new ContentValues();
+
+        up.put("status",11);
+        dbs.update("reservas",up,"cupon='"+cupon+"'",null);
+
+        dbs.close();
+
+    }
+
 }
 

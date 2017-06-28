@@ -17,7 +17,5 @@ public  class Global {
     public static int orden_de_servicio=12356;
     public static int id_usr=153;
     public static int importe_muelle=10;
-    public static boolean ban_desc=false;
-    public static double valor_descuento=0;
 
 }

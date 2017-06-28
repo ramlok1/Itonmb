@@ -43,6 +43,7 @@
                 android:ems="10"
                 android:gravity="right"
                 android:inputType="number"
+                android:text="0"
                 android:textAlignment="center"
                 android:textSize="30sp" />
 

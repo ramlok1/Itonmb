@@ -229,8 +229,28 @@ public class adapter_lista_servicio extends BaseAdapter {
                             return true;
                         }
                         if (id == R.id.no_show) {
-                            Intent anIntent = new Intent(context, noshow.class);
-                            context.startActivity(anIntent);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Reserva No Show: ")
+                                    .setMessage("Esta seguro desea cambiar status del cupon: "+cupon+" a no show?");
+                            builder.setCancelable(false);
+
+                            // Set up the buttons
+                            builder.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dbs.noshow_Cupon(cupon);
+                                    lista.remove(position);
+                                    adapter_lista_servicio.this.notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
                             return true;
                         }
                         if (id == R.id.upgrade) {
