@@ -48,7 +48,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
 
 public class forma_de_pago extends BaseMenu {
 
-    DBhelper dbs ;
+
     String cupon,autoriza_descuento="",producto_desc;
     Button btn_pago_fp,btn_cancelar_fp,btn_finalizar_fp,btn_descuento ;
     int importe_total,id_rva,tipo,id_upg=9999999,adulto,menor,infante,id_producto,total_pax, impuesto_muelle=0;

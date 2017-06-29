@@ -1,6 +1,8 @@
 package itonmb.mobilesd.itonmb.Utils;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -8,15 +10,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.kyanogen.signatureview.SignatureView;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+
+import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.R;
 import itonmb.mobilesd.itonmb.barcos_disponibles;
 import itonmb.mobilesd.itonmb.brazaletes_disponibles;
 import itonmb.mobilesd.itonmb.cerrar_caja;
+import itonmb.mobilesd.itonmb.forma_de_pago;
 import itonmb.mobilesd.itonmb.ingresa_efectivo_caja;
+import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 import itonmb.mobilesd.itonmb.retirar_efectivo_caja;
 import itonmb.mobilesd.itonmb.search_orden;
 
@@ -29,6 +48,8 @@ public class BaseMenu extends AppCompatActivity {
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     public Toolbar toolbar;
+    View lay_base;
+    public DBhelper dbs ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +57,7 @@ public class BaseMenu extends AppCompatActivity {
         setContentView(R.layout.activity_apertura_caja);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
+        dbs = new DBhelper(getApplicationContext());
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -97,13 +118,13 @@ public class BaseMenu extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.ing_efe_caja) {
-            Intent anIntent = new Intent(getApplicationContext(), ingresa_efectivo_caja.class);
-            startActivity(anIntent);
+            PopupWindow pwin = popup_ingreso_egreso_caja(1);
+            pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
             drawerLayout.closeDrawers();
             return true;
         } else if (id == R.id.ret_efe_caja) {
-            Intent anIntent = new Intent(getApplicationContext(), retirar_efectivo_caja.class);
-            startActivity(anIntent);
+            PopupWindow pwin = popup_ingreso_egreso_caja(2);
+            pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
             drawerLayout.closeDrawers();
             return true;
         } else if (id == R.id.cerrar_caja) {
@@ -122,5 +143,70 @@ public class BaseMenu extends AppCompatActivity {
 
         actionBarDrawerToggle.syncState();
     }
+
+    private PopupWindow popup_ingreso_egreso_caja(int funcion){
+        final PopupWindow pwindo;
+
+
+
+        LayoutInflater inflat = (LayoutInflater) BaseMenu.this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        lay_base = inflat.inflate(R.layout.popup_ingresa_efectivo_caja,
+                (ViewGroup) findViewById(R.id.layout_principal_pop_iec));
+
+
+        Button btn_cancelar = (Button) lay_base.findViewById(R.id.btn_iec_cancelar);
+        pwindo = new PopupWindow(lay_base, 900, 400, true);
+
+
+        /// spinner de tipos de operaciones
+        ///////////////////////////////////////////////////////////////////////////////
+             Spinner spi_operacion = (Spinner) lay_base.findViewById(R.id.spi_iec_t_operacion);
+             ArrayList<String> tipos = dbs.getTipo_operacionCaja_entrada(funcion);
+             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View v = super.getView(position, convertView, parent);
+
+
+                return v;
+            }
+
+            @Override
+            public int getCount() {
+                return super.getCount(); // you dont display last item. It is used as hint.
+            }
+
+        };
+
+             adapter.setDropDownViewResource(R.layout.style_spinner_item);
+
+        //Obtener descipciones
+                 for (String dato: tipos) {
+                          adapter.add(dato);
+                     }
+
+
+        spi_operacion.setAdapter(adapter);
+       // spi_operacion.setSelection(adapter.getCount()); //display hint
+
+////////////////////////////////////////////////////////////////////////////
+        // Triggers de Popup
+       btn_cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pwindo.dismiss();
+
+            }
+        });
+
+
+
+        return pwindo;
+    }
+
+
 
 }

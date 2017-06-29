@@ -53,6 +53,9 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     private String TABLA_USUARIOS = "create table usuarios(id_usr integer, usuario text, password text, nombre text, tipo integer, status integer)";
+
+    private String TABLA_TIPO_OPERACION_CAJA = "create table tipo_operacion_caja(id_op integer, desc text, tipo text)";
+
     private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer," +
             "monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,hora text,tipo_movimiento integer," +
@@ -102,6 +105,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_UPG_TEMPORAL);
         db.execSQL(TABLA_CHECKIN);
         db.execSQL(TABLA_UPG_DETALLE);
+        db.execSQL(TABLA_TIPO_OPERACION_CAJA);
 
 
 
@@ -126,6 +130,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists temporal_upg");
         db.execSQL("drop table if exists checkin");
         db.execSQL("drop table if exists upgrade_detalle");
+        db.execSQL("drop table if exists tipo_operacion_caja");
 
 
         onCreate(db);
@@ -149,6 +154,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.execSQL("delete from checkin");
         dbs.execSQL("delete from temporal_upg");
         dbs.execSQL("delete from upgrade_detalle");
+        dbs.execSQL("delete from tipo_operacion_caja");
     }
 
     public String getLogin(String usr, String pwd){
@@ -201,6 +207,30 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         dbs.close();
         return datos;
+
+    }
+
+    public ArrayList<String> getTipo_operacionCaja_entrada( int funcion ){
+
+       ArrayList<String> tipos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String consulta="";
+
+        if (funcion==1) {
+             consulta = "select desc from tipo_operacion_caja where tipo='E'";
+            }else {
+             consulta = "select desc from tipo_operacion_caja where tipo='S'";
+        }
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                tipos.add(cursor.getString(cursor.getColumnIndex("desc")));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return tipos;
 
     }
 

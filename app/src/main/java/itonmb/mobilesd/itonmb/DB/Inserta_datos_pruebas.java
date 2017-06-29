@@ -57,6 +57,19 @@ public class Inserta_datos_pruebas {
         cv.put("status", 0);
         dbs.insert("usuarios", null, cv);
 
+        //Inerta datos tipo operacion caja.
+        ContentValues cop = new ContentValues();
+        cop.put("id_op",153);
+        cop.put("desc","Entrada por Venta");
+        cop.put("tipo", "E");
+        dbs.insert("tipo_operacion_caja", null, cop);
+
+        cop = new ContentValues();
+        cop.put("id_op",153);
+        cop.put("desc","Retiro por Venta");
+        cop.put("tipo", "S");
+        dbs.insert("tipo_operacion_caja", null, cop);
+
         // Datos de reservas
         for(int i=1;i<=20;i++) {
 

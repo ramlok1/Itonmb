@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sign="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_principal_pop_iec"
+    android:layout_width="900dp"
+    android:layout_height="400dp"
+    android:background="@drawable/round_shape_shadow"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_shape"
+
+
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/txt_iec_monto"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
+                android:drawableLeft="@drawable/pesos"
+                android:hint="Monto"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="36sp" />
+
+            <Spinner
+                android:id="@+id/spi_iec_t_operacion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="200dp"
+                android:spinnerMode="dialog" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/xt_iec_obs"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
+            android:hint="Observación"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="36sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_iec_cancelar"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@color/colorbtncancelar"
+                android:text="CANCELAR"
+                android:textColor="@color/white"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btn_iec_confirmar"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginLeft="30dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_light"
+                android:text="CONFIRMAR"
+                android:textColor="@color/white"
+                android:textSize="30sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
