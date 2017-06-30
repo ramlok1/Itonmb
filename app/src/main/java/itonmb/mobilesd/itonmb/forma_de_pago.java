@@ -244,6 +244,7 @@ public class forma_de_pago extends BaseMenu {
                     bar.getBar(v, "Supera monto a pagar, favor de verificar saldo.", R.drawable.warn, "#f9db59").show();
                 } else{
                     dbs.inserta_forma_pago(999991, cupon, forma_pago, monto_moneda, monto_mn, 18.45, moneda, recibido, cambio);
+                    dbs.inserta_movimiento_detalle_caja("E", "Venta Upgrade", monto_moneda, moneda, monto_mn, producto_desc+"-"+cupon, forma_pago);
                 genera_lista_pagos();
                 double saldo = importe_final - total_pagado;
                 txt_saldo.setText(precision.format(saldo));

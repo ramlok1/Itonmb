@@ -60,6 +60,7 @@ public class agregar_brazalete extends BaseMenu {
     public void onBackPressed() {
         moveTaskToBack(false);
     }
+
     private void genera_lista_brazaletes_seleccionados() {
 
         ArrayList<modelo_lista_agregar_brazalete> datos = dbs.getBrazaletes_asignados(cupon,id_tour,producto_desc);

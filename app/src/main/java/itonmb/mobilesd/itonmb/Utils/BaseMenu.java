@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -144,7 +145,7 @@ public class BaseMenu extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    private PopupWindow popup_ingreso_egreso_caja(int funcion){
+    private PopupWindow popup_ingreso_egreso_caja(final int funcion){
         final PopupWindow pwindo;
 
 
@@ -156,13 +157,17 @@ public class BaseMenu extends AppCompatActivity {
 
 
         Button btn_cancelar = (Button) lay_base.findViewById(R.id.btn_iec_cancelar);
+        Button btn_confirmar = (Button) lay_base.findViewById(R.id.btn_iec_confirmar);
+        final EditText txt_monto = (EditText) lay_base.findViewById(R.id.txt_iec_monto);
+        final EditText txt_obs = (EditText) lay_base.findViewById(R.id.txt_iec_obs);
+        txt_monto.setText("0");
         pwindo = new PopupWindow(lay_base, 900, 400, true);
 
 
         /// spinner de tipos de operaciones
         ///////////////////////////////////////////////////////////////////////////////
-             Spinner spi_operacion = (Spinner) lay_base.findViewById(R.id.spi_iec_t_operacion);
-             ArrayList<String> tipos = dbs.getTipo_operacionCaja_entrada(funcion);
+             final Spinner spi_operacion = (Spinner) lay_base.findViewById(R.id.spi_iec_t_operacion);
+             final ArrayList<String> tipos = dbs.getTipo_operacionCaja_entrada(funcion);
              ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
             @Override
@@ -180,21 +185,16 @@ public class BaseMenu extends AppCompatActivity {
             }
 
         };
-
              adapter.setDropDownViewResource(R.layout.style_spinner_item);
 
         //Obtener descipciones
                  for (String dato: tipos) {
                           adapter.add(dato);
                      }
-
-
         spi_operacion.setAdapter(adapter);
-       // spi_operacion.setSelection(adapter.getCount()); //display hint
-
-////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
         // Triggers de Popup
-       btn_cancelar.setOnClickListener(new View.OnClickListener() {
+        btn_cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pwindo.dismiss();
@@ -202,6 +202,30 @@ public class BaseMenu extends AppCompatActivity {
             }
         });
 
+        btn_confirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double monto=0;
+                if(!Utilerias.isNull(txt_monto.getText().toString())) {
+                    monto = Integer.parseInt(txt_monto.getText().toString());
+                }
+                String obs = txt_obs.getText().toString();
+                String operacion = spi_operacion.getSelectedItem().toString();
+
+                if(monto!=0){
+                    if(funcion==1){
+                        dbs.inserta_movimiento_detalle_caja("E", operacion, monto, "MXN", monto, obs, "Efectivo");
+                        pwindo.dismiss();
+                    }else {
+                        dbs.inserta_movimiento_detalle_caja("S", operacion, monto, "MXN", monto, obs, "Efectivo");
+                        pwindo.dismiss();
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(),"Monto no puede ser 0",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
 
         return pwindo;
