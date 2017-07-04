@@ -7,7 +7,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
+import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_abordar;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_disp;
+import itonmb.mobilesd.itonmb.adapters.adapter_lista_servicio;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 
 public class barcos_disponibles extends BaseMenu {
@@ -24,21 +26,11 @@ public class barcos_disponibles extends BaseMenu {
 
     private void genera_lista_barcos() {
 
-        final ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
-
-        datos.add(new modelo_lista_dbarcos(13,"Don Diego",50,45,45));
-        datos.add(new modelo_lista_dbarcos(20,"Mar y Arena",40,17,45));
-        datos.add(new modelo_lista_dbarcos(20,"The Big",60,17,45));
-        datos.add(new modelo_lista_dbarcos(16,"Saga Boy",70,17,45));
-        datos.add(new modelo_lista_dbarcos(15,"Just Mars",60,17,45));
-        datos.add(new modelo_lista_dbarcos(18,"Mar y Arena",30,17,45));
-        datos.add(new modelo_lista_dbarcos(19,"Just Mars",50,17,45));
-        datos.add(new modelo_lista_dbarcos(1235,"The Big",40,17,45));
+        ArrayList<modelo_lista_dbarcos> datos = dbs.getBarcos_disponibles_show();
 
 
-
-        ListView lay_barcos_disp = (ListView) findViewById(R.id.list_barcos_disponibles);
+        ListView lay_barcos_abordar = (ListView) findViewById(R.id.list_barcos_disponibles);
         adapter_lista_barcos_disp adapter = new adapter_lista_barcos_disp(barcos_disponibles.this, datos);
-        lay_barcos_disp.setAdapter(adapter);
+        lay_barcos_abordar.setAdapter(adapter);
     }
 }

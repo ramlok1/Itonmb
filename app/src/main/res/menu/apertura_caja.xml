@@ -8,12 +8,17 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/ret_efe_caja"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:title="@string/ret_efe"
         app:showAsAction="never" />
     <item
         android:id="@+id/cerrar_caja"
-        android:orderInCategory="100"
+        android:orderInCategory="300"
         android:title="@string/cerrar_caja"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/consultar_caja"
+        android:orderInCategory="10"
+        android:title="@string/consultar_caja"
         app:showAsAction="never" />
 </menu>

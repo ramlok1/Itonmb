@@ -70,7 +70,7 @@ public class adapter_lista_barcos_disp extends BaseAdapter {
         tview_abordar = (TextView) itemView.findViewById(R.id.tview_abordar_barco);
 
 
-        btn_menu_det = (Button) itemView.findViewById(R.id.btn_menu_barco);
+        //btn_menu_det = (Button) itemView.findViewById(R.id.btn_menu_barco);
 
 
 
@@ -84,7 +84,7 @@ public class adapter_lista_barcos_disp extends BaseAdapter {
 
 
 
-        btn_menu_det.setOnClickListener(new View.OnClickListener() {
+      /*  btn_menu_det.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Creating the instance of PopupMenu
@@ -110,7 +110,7 @@ public class adapter_lista_barcos_disp extends BaseAdapter {
 
                 popup.show(); //showing popup menu
             }
-        });
+        });*/
 
         return itemView;
 

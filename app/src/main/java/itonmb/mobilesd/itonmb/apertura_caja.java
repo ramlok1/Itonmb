@@ -24,11 +24,13 @@ import android.widget.Spinner;
 import com.kyanogen.signatureview.SignatureView;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.Utils.Utilerias;
+import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 
 public class apertura_caja extends BaseMenu
@@ -93,11 +95,16 @@ public class apertura_caja extends BaseMenu
                   @Override
                   public void onClick(View v) {
 
-                      dbs.inserta_denominacion_caja("B","A",billetes);
-                      dbs.inserta_denominacion_caja("M","A",monedas);
+                      if(billetes!=null) {
+                          dbs.inserta_denominacion_caja("B", "A", billetes);
+                      }
+                      if(monedas!=null) {
+                          dbs.inserta_denominacion_caja("M", "A", monedas);
+                      }
                       dbs.inserta_apertura_caja(Utilerias.toDouble(txt_init_caja.getText().toString()),spi_caja.getSelectedItem().toString());
                       Global.status_caja=1;
                       Global.id_caja=dbs.getidCaja(spi_caja.getSelectedItem().toString());
+                      Global.nombre_caja=spi_caja.getSelectedItem().toString();
 
                       // Abrir busqueda de cupon
                       Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
@@ -109,7 +116,8 @@ public class apertura_caja extends BaseMenu
 
           private void prepara_spinner(){
 
-              ArrayAdapter<String> adapter_fp = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
+              ArrayList<String> data= dbs.getCajas();
+              ArrayAdapter<String> adapter= new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
                   @Override
                   public View getView(int position, View convertView, ViewGroup parent) {
                       View v = super.getView(position, convertView, parent);
@@ -122,12 +130,13 @@ public class apertura_caja extends BaseMenu
                   }
 
               };
-              adapter_fp.setDropDownViewResource(R.layout.style_spinner_item);
+              adapter.setDropDownViewResource(R.layout.style_spinner_item);
 
-              adapter_fp.add("Caja1");
-              adapter_fp.add("Caja2");
+              for (String caja: data) {
+               adapter.add(caja);
+              }
 
-              spi_caja.setAdapter(adapter_fp);
+              spi_caja.setAdapter(adapter);
 
           }
 
@@ -155,7 +164,7 @@ public class apertura_caja extends BaseMenu
 
 
 
-              pwindo = new PopupWindow(layout_popup, 1000, 160, true);
+              pwindo = new PopupWindow(layout_popup, 1200, 200, true);
 
               btn_aceptar.setOnClickListener(new View.OnClickListener() {
                   @Override
@@ -203,7 +212,7 @@ public class apertura_caja extends BaseMenu
 
 
 
-              pwindo = new PopupWindow(layout_popup, 1000, 160, true);
+              pwindo = new PopupWindow(layout_popup, 1200, 200, true);
 
               btn_aceptar.setOnClickListener(new View.OnClickListener() {
                   @Override

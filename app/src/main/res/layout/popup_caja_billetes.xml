@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sign="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_principal_pop_billete"
-    android:layout_width="1000dp"
-    android:layout_height="160dp"
+    android:layout_width="1200dp"
+    android:layout_height="200dp"
 
     android:orientation="vertical">
 
@@ -13,7 +13,10 @@
         android:background="@drawable/round_shape"
 
 
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="30dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,6 +31,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$1000.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -38,6 +42,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$500.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -48,6 +53,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$200.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -58,6 +64,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$100.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -68,6 +75,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$50.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -78,6 +86,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="$20.00"
+                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -162,7 +171,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:background="@android:color/holo_blue_light"
+            android:background="@android:color/holo_green_dark"
             android:text="ACEPTAR"
             android:textColor="@color/white"
             android:textSize="18sp" />

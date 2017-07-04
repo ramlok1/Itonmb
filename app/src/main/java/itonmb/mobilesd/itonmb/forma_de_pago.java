@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +44,7 @@ import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
+import itonmb.mobilesd.itonmb.Utils.Utilerias;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_formas_de_pago;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
 
@@ -130,12 +133,21 @@ public class forma_de_pago extends BaseMenu {
 
         ArrayList<modelo_lista_formas_de_pago> datos = dbs.getPagos(cupon);
 
-        //Coloca total a pagar
-        total_pagado = dbs.getTotal_pagado(cupon);
-        txt_total_pagado.setText(precision.format(total_pagado));
+
 
         ListView lista_formas_pago = (ListView) findViewById(R.id.list_formas_pago);
         adapter_lista_formas_de_pago adapter = new adapter_lista_formas_de_pago(forma_de_pago.this, datos);
+
+        lista_formas_pago.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                total_pagado = dbs.getTotal_pagado(cupon);
+                txt_total_pagado.setText(precision.format(total_pagado));
+
+                double saldo = importe_final - total_pagado;
+                txt_saldo.setText(precision.format(saldo));
+            }
+        });
         lista_formas_pago.setAdapter(adapter);
 
     }
@@ -195,6 +207,7 @@ public class forma_de_pago extends BaseMenu {
                         new forma_de_pago.imprime_test().execute();
                     }
                     dbs.update_forma_pago(id_upg,cupon);
+                    dbs.inserta_movimiento_detalle_caja("E", "Venta", importe_total, "MXN", importe_total, producto_desc+"-"+cupon);
 
                     /////////////////////////////////////////////////////////
 
@@ -234,20 +247,13 @@ public class forma_de_pago extends BaseMenu {
                 double recibido = Double.parseDouble(txt_recibido_forma_pago.getText().toString());
                 double cambio = Double.parseDouble(txt_cambio_forma_pago.getText().toString());
 
-                    if(recibido!=0) {
-                        double importe_cambio = recibido - monto_moneda;
-                        txt_cambio_forma_pago.setText(Double.toString(importe_cambio));
-                    }
-
                 if (monto_mn + total_pagado > importe_final) {
                     Snackmsg bar = new Snackmsg();
                     bar.getBar(v, "Supera monto a pagar, favor de verificar saldo.", R.drawable.warn, "#f9db59").show();
                 } else{
                     dbs.inserta_forma_pago(999991, cupon, forma_pago, monto_moneda, monto_mn, 18.45, moneda, recibido, cambio);
-                    dbs.inserta_movimiento_detalle_caja("E", "Venta Upgrade", monto_moneda, moneda, monto_mn, producto_desc+"-"+cupon, forma_pago);
+
                 genera_lista_pagos();
-                double saldo = importe_final - total_pagado;
-                txt_saldo.setText(precision.format(saldo));
                  }
 
 
@@ -267,10 +273,26 @@ public class forma_de_pago extends BaseMenu {
         txt_monto_forma_pago.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-
                 txt_recibido_forma_pago.setText("0.00");
-                    txt_cambio_forma_pago.setText("0.00");
+                txt_cambio_forma_pago.setText("0.00");
+            }
+        });
 
+        txt_recibido_forma_pago.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                double importe_cambio = Utilerias.toDouble(txt_recibido_forma_pago.getText().toString()) - Utilerias.toDouble(txt_monto_forma_pago.getText().toString());
+                txt_cambio_forma_pago.setText(Double.toString(importe_cambio));
             }
         });
     }

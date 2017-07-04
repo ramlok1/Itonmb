@@ -30,10 +30,18 @@
 
     <TextView
         android:id="@+id/tview_monto_mn"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="50dp"
         android:drawableLeft="@drawable/pesos"
         android:textAlignment="center"
         android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/btn_delete_pago"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/delete"
+        android:elevation="0dp" />
 
 </LinearLayout>

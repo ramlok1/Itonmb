@@ -18,6 +18,7 @@ import java.sql.SQLException;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.DB.Inserta_datos_pruebas;
+import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 
 public class login_main extends AppCompatActivity {
@@ -59,10 +60,10 @@ public class login_main extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-               Intent intent =
+               /*Intent intent =
                         new Intent(getApplicationContext(), apertura_caja.class);
-                startActivity(intent);
-              /* String v_user = txt_usr.getText().toString().toLowerCase();
+                startActivity(intent);*/
+              String v_user = txt_usr.getText().toString().toLowerCase();
                 String v_pwd = txt_pwd.getText().toString().toLowerCase();
 
                 if (v_user.equals("")||v_pwd.equals("")) {
@@ -78,6 +79,8 @@ public class login_main extends AppCompatActivity {
                     } else {
                         Snackmsg bar = new Snackmsg();
                         bar.getBar(v, "Bienvenido al sistema: " + nombre, R.drawable.sucsess, "#5fba7d").show();
+                        Global.usuario=v_user;
+                        Global.usuario_nombre =nombre;
                         Handler thread = new Handler();
                         thread.postDelayed(new Runnable(){
                             public void run() {
@@ -91,7 +94,7 @@ public class login_main extends AppCompatActivity {
                     }
 
 
-                }*/
+                }
             }
         });
 

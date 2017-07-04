@@ -2,7 +2,10 @@ package itonmb.mobilesd.itonmb;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +24,7 @@ import itonmb.mobilesd.itonmb.Utils.Utilerias;
 
 public class cerrar_caja extends BaseMenu {
 
-    TextView txt_caja_inicial,txt_caja_libro;
+    TextView txt_caja_inicial,txt_caja_libro,txt_venta_dia,txt_diferencia,txt_monto_final;
     EditText txt_monto_cierre;
     Button btn_conf_ac,btn_canc_ac,btn_billetes,btn_monedas;
     View layout_popup;
@@ -40,6 +43,7 @@ public class cerrar_caja extends BaseMenu {
         set_triggers();
         txt_caja_inicial.setText(Integer.toString(dbs.getMontoinicial()));
         txt_caja_libro.setText(Double.toString(dbs.getMontolibro()));
+        txt_venta_dia.setText(Double.toString(dbs.getMontoVenta()));
 
     }
 
@@ -56,6 +60,9 @@ public class cerrar_caja extends BaseMenu {
 
         txt_caja_inicial = (TextView) findViewById(R.id.txt_caja_inicial_cierre);
         txt_caja_libro = (TextView) findViewById(R.id.txt_caja_libro);
+        txt_venta_dia = (TextView) findViewById(R.id.txt_venta_dia);
+        txt_monto_final = (TextView) findViewById(R.id.txt_monto_final);
+        txt_diferencia = (TextView) findViewById(R.id.txt_diferencia);
 
         txt_monto_cierre = (EditText) findViewById(R.id.txt_monto_final);
 
@@ -83,8 +90,12 @@ public class cerrar_caja extends BaseMenu {
             @Override
             public void onClick(View v) {
 
-                dbs.inserta_denominacion_caja("B","C",billetes);
-                dbs.inserta_denominacion_caja("M","C",monedas);
+                if(billetes!=null) {
+                    dbs.inserta_denominacion_caja("B", "C", billetes);
+                }
+                if(monedas!=null) {
+                    dbs.inserta_denominacion_caja("M", "C", monedas);
+                }
                 dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()));
                 Global.status_caja=0;
                 Global.id_caja=0;
@@ -92,6 +103,42 @@ public class cerrar_caja extends BaseMenu {
                 // Abrir busqueda de cupon
                 Intent intent_serv = new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent_serv);
+            }
+        });
+
+        btn_canc_ac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_serv = new Intent(getApplicationContext(), listado_orden.class);
+                startActivity(intent_serv);
+
+            }
+        });
+
+        txt_monto_final.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                double diferencia = Utilerias.toDouble(s.toString())-Utilerias.toDouble(txt_caja_libro.getText().toString());
+                txt_diferencia.setText(Double.toString(diferencia));
+                if(diferencia<0) {
+                 txt_diferencia.setTextColor(Color.parseColor("#ea3c3b"));
+                }else if(diferencia>0){
+                    txt_diferencia.setTextColor(Color.parseColor("#0b8043"));
+                }else{
+                    txt_diferencia.setTextColor(Color.parseColor("#000000"));
+                }
+
             }
         });
     }
@@ -120,7 +167,7 @@ public class cerrar_caja extends BaseMenu {
 
 
 
-        pwindo = new PopupWindow(layout_popup, 1000, 160, true);
+        pwindo = new PopupWindow(layout_popup, 1200, 200, true);
 
         btn_aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,7 +215,7 @@ public class cerrar_caja extends BaseMenu {
 
 
 
-        pwindo = new PopupWindow(layout_popup, 1000, 160, true);
+        pwindo = new PopupWindow(layout_popup, 1200, 200, true);
 
         btn_aceptar.setOnClickListener(new View.OnClickListener() {
             @Override

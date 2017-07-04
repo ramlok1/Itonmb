@@ -37,10 +37,10 @@
         android:textAlignment="center"
         android:textSize="30sp" />
 
-    <Button
+    <!--<Button
         android:id="@+id/btn_menu_barco"
         android:layout_width="23dp"
         android:layout_height="30dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/menu" />
+        android:background="@drawable/menu" />-->
 </LinearLayout>

@@ -6,16 +6,18 @@ package itonmb.mobilesd.itonmb.modelo;
 
 public class modelo_lista_formas_de_pago {
 
-    public String forma_papgo;
+    public int id_fp;
+    public String forma_pago;
     public String moneda;
     public double monto_moneda;
     public double monto_mn;
 
 
 
-    public modelo_lista_formas_de_pago(String forma_papgo, String moneda, double monto_moneda, double monto_mn ) {
+    public modelo_lista_formas_de_pago(int id_fp,String forma_pago, String moneda, double monto_moneda, double monto_mn ) {
 
-        this.forma_papgo = forma_papgo;
+        this.id_fp=id_fp;
+        this.forma_pago = forma_pago;
         this.moneda = moneda;
         this.monto_moneda = monto_moneda;
         this.monto_mn = monto_mn;

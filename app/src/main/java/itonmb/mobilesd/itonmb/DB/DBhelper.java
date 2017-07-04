@@ -315,19 +315,20 @@ public class DBhelper extends SQLiteOpenHelper {
         SQLiteDatabase dbs = this.getWritableDatabase();
 
 
-        String consulta = "select forma,moneda,monto_moneda,monto_mn from forma_de_pago where cupon='"+cupon+"' and id_upg=999991";
+        String consulta = "select id_fp, forma,moneda,monto_moneda,monto_mn from forma_de_pago where cupon='"+cupon+"' and id_upg=999991";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
 
+                int id_fp = cursor.getInt(cursor.getColumnIndex("id_fp"));
                 String forma_pago = cursor.getString(cursor.getColumnIndex("forma"));
                 String moneda = cursor.getString(cursor.getColumnIndex("moneda"));
                 double monto_moneda = cursor.getDouble(cursor.getColumnIndex("monto_moneda"));
                 double monto_mn = cursor.getDouble(cursor.getColumnIndex("monto_mn"));
 
                 // Se cargan datos de la bd en el arraylist
-                datos.add(new modelo_lista_formas_de_pago(forma_pago,moneda,monto_moneda,monto_mn));
+                datos.add(new modelo_lista_formas_de_pago(id_fp,forma_pago,moneda,monto_moneda,monto_mn));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -367,6 +368,31 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         String consulta = "select id_bote,nombre,capacidad,reservas,abordado  from botes where id_producto="+id_producto;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                String nombre_barco=cursor.getString(cursor.getColumnIndex("nombre"));
+                int capac =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int id_bote =cursor.getInt(cursor.getColumnIndex("id_bote"));
+                int booking =cursor.getInt(cursor.getColumnIndex("reservas"));
+                int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
+                datos.add(new modelo_lista_dbarcos(id_bote,nombre_barco,capac,booking,aborda));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
+    public ArrayList<modelo_lista_dbarcos> getBarcos_disponibles_show(){
+        ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_bote,nombre,capacidad,reservas,abordado  from botes ";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -648,6 +674,15 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
     }
+    public void borra_elemento_fp(int id_fp){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.delete("forma_de_pago", "id_fp=" + id_fp, null);
+
+
+        dbs.close();
+
+
+    }
 
     public double getTotal_pagado(String cupon){
         double total=0;
@@ -706,7 +741,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.close();
     }
 
-    public void inserta_movimiento_detalle_caja(String movimiento,String operacion, double monto_moneda,String moneda,double monto_mn,String observacion, String forma_ingreso  ){
+    public void inserta_movimiento_detalle_caja(String movimiento,String operacion, double monto_moneda,String moneda,double monto_mn,String observacion  ){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("id_caja",Global.id_caja);
@@ -718,7 +753,7 @@ public class DBhelper extends SQLiteOpenHelper {
         cv.put("usuario",Global.usuario);
         cv.put("operacion", operacion);
         cv.put("observacion", observacion);
-        cv.put("forma_ingreso",forma_ingreso);
+        //cv.put("forma_ingreso",forma_ingreso);
         dbs.insert("detalle_caja", null, cv);
         dbs.close();
 
@@ -765,6 +800,22 @@ public class DBhelper extends SQLiteOpenHelper {
         return id_caja;
     }
 
+    public ArrayList<String> getCajas(){
+        ArrayList<String> cajas = new ArrayList<>();
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select caja from encabezado_caja  where status=0";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                cajas.add(cursor.getString(cursor.getColumnIndex("caja")));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+
+        return cajas;
+    }
+
     public int getMontoinicial(){
         int monto_inicial=0;
         SQLiteDatabase dbs = this.getWritableDatabase();
@@ -805,6 +856,24 @@ public class DBhelper extends SQLiteOpenHelper {
         cursor.close();
 
         return monto_libro;
+    }
+
+    public double getMontoVenta(){
+        double venta=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        //Query salidas
+        String query = "select sum(monto_mn) as venta from detalle_caja  where id_caja='"+Global.id_caja+"' and tipo_movimiento='E' and operacion='Venta'";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                venta = cursor.getDouble(cursor.getColumnIndex("venta"));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+
+        return venta;
     }
 
     public void update_forma_pago(int id_upg,String cupon ){

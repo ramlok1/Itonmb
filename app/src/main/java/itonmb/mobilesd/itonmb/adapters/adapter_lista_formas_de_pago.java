@@ -23,6 +23,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 
 public class adapter_lista_formas_de_pago extends BaseAdapter {
     TextView tview_forma_pago,tview_moneda,tview_monto_moneda,tview_monto_mn;
+    Button btn_del;
     DecimalFormat precision = new DecimalFormat("0.00");
     DBhelper dbs ;
 
@@ -62,16 +63,36 @@ public class adapter_lista_formas_de_pago extends BaseAdapter {
 
         View itemView = inflater.inflate(R.layout.lista_pagos, parent, false);
 
+
+
         //txtview del total en el activity de formas
         tview_forma_pago = (TextView) itemView.findViewById(R.id.tview_forma_pago);
         tview_moneda = (TextView) itemView.findViewById(R.id.tview_moneda);
         tview_monto_moneda = (TextView) itemView.findViewById(R.id.tview_monto_moneda);
         tview_monto_mn = (TextView) itemView.findViewById(R.id.tview_monto_mn);
+
+        btn_del = (Button) itemView.findViewById(R.id.btn_delete_pago);
         ////
-        tview_forma_pago.setText(lista.get(position).forma_papgo);
+        tview_forma_pago.setText(lista.get(position).forma_pago);
         tview_moneda.setText(lista.get(position).moneda);
         tview_monto_moneda.setText(precision.format(lista.get(position).monto_moneda));
         tview_monto_mn.setText(precision.format(lista.get(position).monto_mn));
+
+        ///// Trigger para boton eliminar linea
+        btn_del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbs.borra_elemento_fp(lista.get(position).id_fp);
+                lista.remove(position);
+                adapter_lista_formas_de_pago.this.notifyDataSetChanged();
+                ((Activity)context).runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        //settext here
+                    }
+                });
+            }
+        });
 
         return itemView;
 

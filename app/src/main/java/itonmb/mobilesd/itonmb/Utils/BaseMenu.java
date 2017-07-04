@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kyanogen.signatureview.SignatureView;
@@ -81,13 +84,21 @@ public class BaseMenu extends AppCompatActivity {
                         break;
 
                     case R.id.nav_ver_disp:
+                        if(Global.status_caja==1) {
                         Intent intent_disp = new Intent(getApplicationContext(), barcos_disponibles.class);
                         startActivity(intent_disp);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+                        }
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.nav_ver_braz:
+                        if(Global.status_caja==1) {
                         Intent intent_disp_br = new Intent(getApplicationContext(), brazaletes_disponibles.class);
                         startActivity(intent_disp_br);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+                        }
                         drawerLayout.closeDrawers();
                         break;
                 }
@@ -122,18 +133,35 @@ public class BaseMenu extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.ing_efe_caja) {
-            PopupWindow pwin = popup_ingreso_egreso_caja(1);
-            pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
+            if(Global.status_caja==1) {
+                PopupWindow pwin = popup_ingreso_egreso_caja(1);
+                pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
+            }else{
+                Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+            }
             drawerLayout.closeDrawers();
             return true;
         } else if (id == R.id.ret_efe_caja) {
+            if(Global.status_caja==1) {
             PopupWindow pwin = popup_ingreso_egreso_caja(2);
             pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
+            }else{
+                  Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+             }
             drawerLayout.closeDrawers();
             return true;
         } else if (id == R.id.cerrar_caja) {
+            if(Global.status_caja==1) {
             Intent anIntent = new Intent(getApplicationContext(), cerrar_caja.class);
             startActivity(anIntent);
+            }else{
+                Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+            }
+            drawerLayout.closeDrawers();
+            return true;
+        }else if (id == R.id.consultar_caja) {
+            PopupWindow pwin = popup_consulta_caja();
+            pwin.showAtLocation(lay_base, Gravity.CENTER, 0, -20);
             drawerLayout.closeDrawers();
             return true;
         }
@@ -217,10 +245,10 @@ public class BaseMenu extends AppCompatActivity {
 
                 if(monto!=0){
                     if(funcion==1){
-                        dbs.inserta_movimiento_detalle_caja("E", operacion, monto, "MXN", monto, obs, "Efectivo");
+                        dbs.inserta_movimiento_detalle_caja("E", operacion, monto, "MXN", monto, obs);
                         pwindo.dismiss();
                     }else {
-                        dbs.inserta_movimiento_detalle_caja("S", operacion, monto, "MXN", monto, obs, "Efectivo");
+                        dbs.inserta_movimiento_detalle_caja("S", operacion, monto, "MXN", monto, obs);
                         pwindo.dismiss();
                     }
                 }else{
@@ -229,6 +257,52 @@ public class BaseMenu extends AppCompatActivity {
 
             }
         });
+
+
+        return pwindo;
+    }
+
+    private PopupWindow popup_consulta_caja(){
+        PopupWindow pwindo;
+
+
+
+        LayoutInflater inflat = (LayoutInflater) BaseMenu.this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        lay_base = inflat.inflate(R.layout.popup_consultar_caja,
+                (ViewGroup) findViewById(R.id.layout_principal_pop_iec));
+
+
+
+        TextView txt_nombre_caja = (TextView) lay_base.findViewById(R.id.txt_nombre_caja);
+        TextView txt_usuario_caja = (TextView) lay_base.findViewById(R.id.txt_usuario_caja);
+        TextView txt_caja_inicial_consulta = (TextView) lay_base.findViewById(R.id.txt_caja_inicial_consulta);
+        TextView txt_caja_libro_contulta = (TextView) lay_base.findViewById(R.id.txt_caja_libro_consulta);
+        TextView txt_venta_consulta = (TextView) lay_base.findViewById(R.id.txt_venta_dia_consulta);
+        TextView txt_status= (TextView) lay_base.findViewById(R.id.txt_status);
+
+
+        if(Global.status_caja==1) {
+            txt_nombre_caja.setText("Caja: " + Global.nombre_caja);
+            txt_usuario_caja.setText("Usuario: " + Global.usuario_nombre);
+            txt_caja_inicial_consulta.setText(Integer.toString(dbs.getMontoinicial()));
+            txt_caja_libro_contulta.setText(Double.toString(dbs.getMontolibro()));
+            txt_venta_consulta.setText(Double.toString(dbs.getMontoVenta()));
+            txt_status.setText("Abierta");
+            txt_status.setTextColor(Color.parseColor("#0b8043"));
+        }else {
+            txt_status.setText("Cerrada");
+            txt_status.setTextColor(Color.parseColor("#ea3c3b"));
+        }
+
+
+
+        pwindo = new PopupWindow(lay_base, 1200, 300, true);
+        // Closes the popup window when touch outside.
+        pwindo.setOutsideTouchable(true);
+        // Removes default background.
+        pwindo.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
 
         return pwindo;

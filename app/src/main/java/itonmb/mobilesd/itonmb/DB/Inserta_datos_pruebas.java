@@ -50,9 +50,9 @@ public class Inserta_datos_pruebas {
         //Inerta datos usuario.
         ContentValues cv = new ContentValues();
         cv.put("id_usr",153);
-        cv.put("usuario","conrado");
-        cv.put("password", new String(Hex.encodeHex(DigestUtils.sha1("musica"))));
-        cv.put("nombre", "Conrado Gonzalez");
+        cv.put("usuario","admin");
+        cv.put("password", new String(Hex.encodeHex(DigestUtils.sha1("admin"))));
+        cv.put("nombre", "Administrador");
         cv.put("tipo", 1);
         cv.put("status", 0);
         dbs.insert("usuarios", null, cv);

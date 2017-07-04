@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sign="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_principal_pop_iec"
+    android:layout_width="1200dp"
+    android:layout_height="300dp"
+    android:background="@drawable/round_shape_shadow"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_shape"
+
+
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_nombre_caja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="30dp"
+                android:textAlignment="textStart"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/txt_usuario_caja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="30dp"
+                android:textAlignment="textEnd"
+                android:textSize="36sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lbl_cc_inicial"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Caja inicial:"
+                android:textColor="@color/colorfondo"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txt_caja_inicial_consulta"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="60dp"
+                android:elevation="0dp"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colortxt"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/lbl_cc_v_dia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="200dp"
+                android:text="Venta del día:"
+                android:textColor="@color/colorfondo"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txt_venta_dia_consulta"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colortxt"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lbl_cc_libros"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Caja de libros:"
+                android:textColor="@color/colorfondo"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txt_caja_libro_consulta"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="25dp"
+                android:elevation="0dp"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colortxt"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/lbl_cc_diferencia"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginLeft="200dp"
+                android:text="Status:"
+                android:textColor="@color/colorfondo"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txt_status"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="45dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

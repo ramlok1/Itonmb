@@ -35,11 +35,12 @@
 
             <TextView
                 android:id="@+id/txt_caja_inicial_cierre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="60dp"
                 android:elevation="0dp"
-                android:text="$ 1,000.00"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
 
@@ -52,11 +53,12 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/lbl_venta_dia_cierre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/txt_venta_dia"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
-                android:text="$ 0.00"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
         </LinearLayout>
@@ -78,11 +80,12 @@
 
             <TextView
                 android:id="@+id/txt_caja_libro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="25dp"
                 android:elevation="0dp"
-                android:text="$ 1,000.00"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
 
@@ -95,11 +98,12 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/txt_diferencia"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="60dp"
-                android:text="$ 0.00"
+                android:hint="00.00"
+                android:textAlignment="textEnd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
         </LinearLayout>
@@ -113,34 +117,23 @@
             android:orientation="horizontal">
 
 
-            <EditText
-                android:id="@+id/txt_total_cc_lbl"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="210dp"
-                android:layout_marginRight="40dp"
-                android:ems="14"
-                android:focusable="false"
-                android:textColor="@android:color/black"
-                android:textSize="30sp" />
-
             <TextView
                 android:id="@+id/textView55"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="200dp"
                 android:text="Caja Final:"
                 android:textSize="30sp" />
 
             <EditText
                 android:id="@+id/txt_monto_final"
                 android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="60dp"
-                android:layout_marginRight="40dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="50dp"
                 android:ems="14"
-                android:focusable="false"
+                android:hint="00.00"
                 android:inputType="number"
+                android:textAlignment="textEnd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
 
@@ -152,23 +145,24 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="60dp"
             android:orientation="vertical">
 
             <Button
                 android:id="@+id/btn_billetes"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@color/fondo_layout"
                 android:drawableRight="@drawable/popup"
                 android:paddingLeft="50dp"
                 android:text="Billetes"
-                style="?android:attr/borderlessButtonStyle"
                 android:textAlignment="textStart"
                 android:textSize="24sp" />
 
             <Button
                 android:id="@+id/btn_monedas"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="30dp"
@@ -176,7 +170,6 @@
                 android:drawableRight="@drawable/popup"
                 android:paddingLeft="50dp"
                 android:text="Monedas"
-                style="?android:attr/borderlessButtonStyle"
                 android:textAlignment="textStart"
                 android:textSize="24sp" />
         </LinearLayout>
@@ -191,7 +184,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_conf_cierra_caja"
+                android:id="@+id/btn_canc_cierra_caja"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_marginLeft="100dp"
@@ -202,7 +195,7 @@
                 android:textColor="@android:color/background_light" />
 
             <Button
-                android:id="@+id/btn_canc_cierra_caja"
+                android:id="@+id/btn_conf_cierra_caja"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_marginRight="100dp"

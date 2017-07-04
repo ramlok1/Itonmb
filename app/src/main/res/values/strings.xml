@@ -7,6 +7,7 @@
     <string name="ing_efe">Ingresar efectivo a Caja</string>
     <string name="ret_efe">Retirar efectivo a Caja</string>
     <string name="cerrar_caja">Cerrar Caja</string>
+    <string name="consultar_caja">Consultar Caja</string>
 
     <string name="abordar">Check-In</string>
     <string name="detalle_barco">Ver detalles</string>

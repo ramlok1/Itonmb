@@ -239,7 +239,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dbs.noshow_Cupon(cupon);
-                                    lista.remove(position);
+                                    lista.get(position).status=11;
                                     adapter_lista_servicio.this.notifyDataSetChanged();
                                 }
                             });
