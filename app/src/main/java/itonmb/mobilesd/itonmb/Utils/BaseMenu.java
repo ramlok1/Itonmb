@@ -71,8 +71,12 @@ public class BaseMenu extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.nav_buscar_serv:
-                        Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
-                        startActivity(intent_serv);
+                        if(Global.status_caja==1) {
+                            Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
+                            startActivity(intent_serv);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
+                        }
                         drawerLayout.closeDrawers();
                         break;
 
@@ -86,7 +90,6 @@ public class BaseMenu extends AppCompatActivity {
                         startActivity(intent_disp_br);
                         drawerLayout.closeDrawers();
                         break;
-
                 }
                 return false;
             }

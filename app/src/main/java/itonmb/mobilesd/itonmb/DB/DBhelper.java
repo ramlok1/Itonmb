@@ -56,7 +56,9 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private String TABLA_TIPO_OPERACION_CAJA = "create table tipo_operacion_caja(id_op integer, desc text, tipo text)";
 
-    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer PRIMARY KEY, fecha datetime, hora text,usuario text, monto_inicial integer," +
+    private String TABLA_CAJA_DENOMINACION = "create table caja_denominacion(id_caja integer, cant integer, denom double, tipo text, tipo_operacion text, usuario text)";
+
+    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer,caja text, fecha_abre datetime,fecha_cierre datetime,usuario text, monto_inicial integer," +
             "monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,tipo_movimiento text," +
             " monto_moneda double, moneda text,monto_mn double,usuario text,operacion text,observacion text,forma_ingreso integer)";
@@ -108,6 +110,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_CHECKIN);
         db.execSQL(TABLA_UPG_DETALLE);
         db.execSQL(TABLA_TIPO_OPERACION_CAJA);
+        db.execSQL(TABLA_CAJA_DENOMINACION);
 
 
 
@@ -133,6 +136,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists checkin");
         db.execSQL("drop table if exists upgrade_detalle");
         db.execSQL("drop table if exists tipo_operacion_caja");
+        db.execSQL("drop table if exists caja_denominacion");
 
 
         onCreate(db);
@@ -157,6 +161,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.execSQL("delete from temporal_upg");
         dbs.execSQL("delete from upgrade_detalle");
         dbs.execSQL("delete from tipo_operacion_caja");
+        dbs.execSQL("delete from caja_denominacion");
     }
 
     public String getLogin(String usr, String pwd){
@@ -677,6 +682,30 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
+    public void inserta_apertura_caja(double importe, String caja){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues up = new ContentValues();
+        up.put("fecha_abre",dateFormat.format(date));
+        up.put("usuario",Global.usuario);
+        up.put("monto_inicial",importe);
+        up.put("status",1);
+        dbs.update("encabezado_caja",up,"caja='"+caja+"'",null);
+        dbs.close();
+
+    }
+
+    public void inserta_cierre_caja(double importe){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        ContentValues up = new ContentValues();
+        up.put("fecha_cierre",dateFormat.format(date));
+        up.put("usuario",Global.usuario);
+        up.put("monto_final",importe);
+        up.put("status",0);
+        dbs.update("encabezado_caja",up,"id_caja='"+Global.id_caja+"'",null);
+        dbs.close();
+    }
+
     public void inserta_movimiento_detalle_caja(String movimiento,String operacion, double monto_moneda,String moneda,double monto_mn,String observacion, String forma_ingreso  ){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -693,6 +722,89 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.insert("detalle_caja", null, cv);
         dbs.close();
 
+    }
+
+    public void inserta_denominacion_caja(String tipo, String tipo_operacion, int [] valores){
+
+        int c=0;
+        double[] denom;
+            if(tipo.equals("B")) {
+                 denom = new double [] {1000, 500, 200, 100, 50, 20};
+            }else {
+                 denom = new double [] {10, 5, 2, 1, 0.50, 0.20,0.10};
+            }
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        for(int valor:valores) {
+            ContentValues cv = new ContentValues();
+            cv.put("id_caja", Global.id_caja);
+            cv.put("cant", valor);
+            cv.put("denom", denom[c]);
+            cv.put("tipo", tipo);
+            cv.put("tipo_operacion", tipo_operacion);
+            cv.put("usuario", Global.usuario);
+            dbs.insert("caja_denominacion", null, cv);
+            c++;
+        }
+        dbs.close();
+
+    }
+
+    public int getidCaja(String caja){
+        int id_caja=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select id_caja from encabezado_caja  where caja='"+caja+"'";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            id_caja = cursor.getInt(cursor.getColumnIndex("id_caja"));
+        }
+        cursor.close();
+
+        return id_caja;
+    }
+
+    public int getMontoinicial(){
+        int monto_inicial=0;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select monto_inicial from encabezado_caja  where id_caja='"+Global.id_caja+"'";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            monto_inicial = cursor.getInt(cursor.getColumnIndex("monto_inicial"));
+        }
+        cursor.close();
+
+        return monto_inicial;
+    }
+
+    public double getMontolibro(){
+        double monto_libro=getMontoinicial();
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        //Query entradas
+        String querye = "select monto_mn from detalle_caja  where id_caja='"+Global.id_caja+"' and tipo_movimiento='E'";
+
+        //Query salidas
+        String querys = "select monto_mn from detalle_caja  where id_caja='"+Global.id_caja+"' and tipo_movimiento='S'";
+        Cursor cursor = dbs.rawQuery(querye, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                monto_libro = monto_libro + cursor.getDouble(cursor.getColumnIndex("monto_mn"));
+            }while(cursor.moveToNext());
+        }
+
+         cursor = dbs.rawQuery(querys, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                monto_libro = monto_libro - cursor.getDouble(cursor.getColumnIndex("monto_mn"));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+
+        return monto_libro;
     }
 
     public void update_forma_pago(int id_upg,String cupon ){
@@ -831,9 +943,8 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     public void update_barcos_check_yes(int id_bote){
+
         SQLiteDatabase dbs = this.getWritableDatabase();
-
-
         ContentValues up = new ContentValues();
         up.put("seleccion",1);
         dbs.update("botes",up,"id_bote="+id_bote,null);

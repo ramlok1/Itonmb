@@ -123,6 +123,12 @@ public class Inserta_datos_pruebas {
         cv2.put("importe", 247);
         dbs.insert("productos", null, cv2);
 
+        cv2 = new ContentValues();
+        cv2.put("id_caja",13);
+        cv2.put("caja","Caja1");
+        cv2.put("status",0);
+        dbs.insert("encabezado_caja", null, cv2);
+
         // Inserta Brazaletes
         for(int i=1;i<=100;i++) {
             int numero = (int) (Math.random() * 3);

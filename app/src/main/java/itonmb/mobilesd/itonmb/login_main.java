@@ -62,7 +62,7 @@ public class login_main extends AppCompatActivity {
                Intent intent =
                         new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent);
-               /*String v_user = txt_usr.getText().toString().toLowerCase();
+              /* String v_user = txt_usr.getText().toString().toLowerCase();
                 String v_pwd = txt_pwd.getText().toString().toLowerCase();
 
                 if (v_user.equals("")||v_pwd.equals("")) {
