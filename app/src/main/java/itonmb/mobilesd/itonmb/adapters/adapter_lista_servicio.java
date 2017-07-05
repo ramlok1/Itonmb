@@ -110,7 +110,6 @@ public class adapter_lista_servicio extends BaseAdapter {
         tview_nombre.setText(lista.get(position).nombre);
         tview_hotel.setText(lista.get(position).hotel);
         tview_habi.setText(lista.get(position).habi);
-        tview_importe.setText(Double.toString(lista.get(position).importe));
 
         /// Verifica status del cupon
 

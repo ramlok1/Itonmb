@@ -2,7 +2,9 @@ package itonmb.mobilesd.itonmb;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +16,17 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.DB.Inserta_datos_pruebas;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
+import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 
 public class login_main extends AppCompatActivity {
 
@@ -81,13 +88,11 @@ public class login_main extends AppCompatActivity {
                         bar.getBar(v, "Bienvenido al sistema: " + nombre, R.drawable.sucsess, "#5fba7d").show();
                         Global.usuario=v_user;
                         Global.usuario_nombre =nombre;
-                        Handler thread = new Handler();
-                        thread.postDelayed(new Runnable(){
-                            public void run() {
-                                Intent intent =
-                                        new Intent(getApplicationContext(), apertura_caja.class);
-                                startActivity(intent);
-                            }}, 1500);
+
+
+                        new login_main.DatosCupones().execute();
+
+
 
 
 
@@ -99,5 +104,54 @@ public class login_main extends AppCompatActivity {
         });
 
 
+    }
+
+    Handler procHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    // calling to this function from other pleaces
+                    // The notice call method of doing things
+                    break;
+
+                case 5:
+                    if(!dbs.getcajaAbierta()) {
+                        Intent intent =  new Intent(getApplicationContext(), apertura_caja.class);
+                        startActivity(intent);
+                    } else{
+                        Intent intent =  new Intent(getApplicationContext(), search_orden.class);
+                        startActivity(intent);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    private class DatosCupones extends AsyncTask<String, String, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            procHandler.sendEmptyMessage(0);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            WsProcesos ws = new WsProcesos();
+            ws.WSObtenerReservas(getApplicationContext(),"");
+
+
+            return resp;
+        }
     }
 }

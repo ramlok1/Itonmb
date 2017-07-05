@@ -62,7 +62,7 @@ public class DBhelper extends SQLiteOpenHelper {
             "monto_final integer, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,tipo_movimiento text," +
             " monto_moneda double, moneda text,monto_mn double,usuario text,operacion text,observacion text,forma_ingreso integer)";
-    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, cupon text, agencia text,id_producto_padre integer, id_producto integer,producto text," +
+    private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, reservaDetalle integer, cupon text, agencia text,id_producto_padre integer, id_producto integer,producto text," +
             " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma integer,idioma_icono integer, fecha datetime," +
             " status integer )";
     private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
@@ -187,12 +187,14 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_rva,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,observaciones,idioma,idioma_icono from reservas "+ consulta_where+ " order by cupon";
+        String consulta = "select id_rva,orden_servicio,reservaDetalle,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,observaciones,idioma,idioma_icono from reservas "+ consulta_where+ " order by cupon";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
                 int id_rva=cursor.getInt(cursor.getColumnIndex("id_rva"));
+                int reservaDetalle=cursor.getInt(cursor.getColumnIndex("reservaDetalle"));
+                int orden_servicio=cursor.getInt(cursor.getColumnIndex("orden_servicio"));
                 String cupon=cursor.getString(cursor.getColumnIndex("cupon"));
                 String agencia=cursor.getString(cursor.getColumnIndex("agencia"));
                 int id_prodcuto_padre=cursor.getInt(cursor.getColumnIndex("id_producto"));
@@ -203,13 +205,12 @@ public class DBhelper extends SQLiteOpenHelper {
                 String nombre_cliente=cursor.getString(cursor.getColumnIndex("nombre_cliente"));
                 String hotel=cursor.getString(cursor.getColumnIndex("hotel"));
                 String habi=cursor.getString(cursor.getColumnIndex("habi"));
-                int importe=cursor.getInt(cursor.getColumnIndex("importe"));
                 int status=cursor.getInt(cursor.getColumnIndex("status"));
                 String obs=cursor.getString(cursor.getColumnIndex("observaciones"));
                 int idioma=cursor.getInt(cursor.getColumnIndex("idioma"));
                 int idioma_icono=cursor.getInt(cursor.getColumnIndex("idioma_icono"));
 
-                datos.add(new modelo_lista_orden(id_rva,cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,obs,idioma,idioma_icono));
+                datos.add(new modelo_lista_orden(id_rva,orden_servicio,reservaDetalle,cupon,agencia,id_prodcuto_padre,producto1,adulto,menor,infante,nombre_cliente,hotel,habi,obs,idioma,idioma_icono,status));
              }while(cursor.moveToNext());
         }
         dbs.close();
@@ -738,6 +739,8 @@ public class DBhelper extends SQLiteOpenHelper {
         up.put("monto_final",importe);
         up.put("status",0);
         dbs.update("encabezado_caja",up,"id_caja='"+Global.id_caja+"'",null);
+
+        dbs.delete("detalle_caja", "", null);
         dbs.close();
     }
 
@@ -798,6 +801,24 @@ public class DBhelper extends SQLiteOpenHelper {
         cursor.close();
 
         return id_caja;
+    }
+
+    public boolean getcajaAbierta(){
+        boolean response = false;
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        String query = "select id_caja,caja from encabezado_caja  where usuario='"+Global.usuario+"' and status=1";
+        Cursor cursor = dbs.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+
+            Global.id_caja = cursor.getInt(cursor.getColumnIndex("id_caja"));
+            Global.nombre_caja = cursor.getString(cursor.getColumnIndex("caja"));
+            Global.status_caja=1;
+            response=true;
+        }
+        cursor.close();
+
+        return response;
     }
 
     public ArrayList<String> getCajas(){

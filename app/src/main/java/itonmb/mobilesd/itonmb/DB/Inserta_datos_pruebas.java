@@ -71,7 +71,7 @@ public class Inserta_datos_pruebas {
         dbs.insert("tipo_operacion_caja", null, cop);
 
         // Datos de reservas
-        for(int i=1;i<=20;i++) {
+      /*  for(int i=1;i<=20;i++) {
 
                 int numero = (int) (Math.random() * 7);
                 int nidi = (int) (Math.random() * 3);
@@ -99,7 +99,7 @@ public class Inserta_datos_pruebas {
                 cv1.put("status", status[nst]);
                 dbs.insert("reservas", null, cv1);
 
-        }
+        }*/
 
         //Datos de productos
         ContentValues cv2 = new ContentValues();
