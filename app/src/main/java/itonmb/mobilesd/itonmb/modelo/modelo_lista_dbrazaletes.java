@@ -7,18 +7,19 @@ package itonmb.mobilesd.itonmb.modelo;
 public class modelo_lista_dbrazaletes {
 
 
-    public String folio;
+    public int idBrazalete;
+    public int folio;
     public String tipo;
     public String color;
-    public String tour;
 
 
-    public modelo_lista_dbrazaletes( String folio, String tipo,String color, String tour) {
+
+    public modelo_lista_dbrazaletes( int idBrazalete,int folio, String tipo,String color) {
 
         this.folio = folio;
         this.tipo = tipo;
         this.color = color;
-        this.tour = tour;
+        this.idBrazalete = idBrazalete;
 
     }
 

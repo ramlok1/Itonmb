@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_Tour;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
@@ -63,17 +64,19 @@ public class DBhelper extends SQLiteOpenHelper {
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,tipo_movimiento text," +
             " monto_moneda double, moneda text,monto_mn double,usuario text,operacion text,observacion text,forma_ingreso integer)";
     private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, reservaDetalle integer, cupon text, agencia text,id_producto_padre integer, id_producto integer,producto text," +
-            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text, importe integer, idioma integer,idioma_icono integer, fecha datetime," +
+            " adulto integer, menor integer, infante integer,nombre_cliente text, hotel text, habi text, observaciones text,idioma integer,idioma_icono integer, fecha datetime," +
             " status integer )";
-    private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, importe integer)";
+    private String TABLA_PRODUCTOS = "create table productos(id_producto integer,id_producto_padre integer, desc text, idEquipoBase integer, idBrazalete_Adulto integer, idBrazalete_menor integer, idBrazalete_complemento integer, precio_ad double, precio_me double, precio_in double)";
 
-    private String TABLA_BRAZALETES = "create table brazaletes (folio text, tipo text, color text, id_tour integer,id_usr integer, status integer)";
+    private String TABLA_PRODUCTOS_UPGRADE = "create table productos_upgrade(idTour integer, idTourCombinacion integer)";
+
+    private String TABLA_BRAZALETES = "create table brazaletes (idBrazalete integer, folio integer, tipo text, color text,id_usr text, status integer)";
 
     private String TABLA_ABORDAJE = "create table abordado(cupon text, barco text, fecha datetime, hora text)";
 
     private String TABLA_UPGRADE = "create table upgrade(id_ugr integer PRIMARY KEY,orden_servicio integer ,cupon text,usuario text,subtotal double,descuento double,total double, fecha datetime, firma blob, autoriza_descuento text)";
 
-    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon text,folio text,id_producto integer ,producto_desc text, color text, usuario text,abordado integer)";
+    private String TABLA_BRAZALETE_ASIGNACION = "create table brazalete_asignacion(id_asignacion integer PRIMARY KEY, cupon text,folio integer,id_producto integer ,producto_desc text, color text, usuario text,abordado integer)";
 
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text,moneda text,monto_moneda double,tc double, monto_mn double,recibido double," +
             " cambio double, fecha datetime, usuario text)";
@@ -111,6 +114,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_UPG_DETALLE);
         db.execSQL(TABLA_TIPO_OPERACION_CAJA);
         db.execSQL(TABLA_CAJA_DENOMINACION);
+        db.execSQL(TABLA_PRODUCTOS_UPGRADE);
 
 
 
@@ -126,6 +130,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists detalle_caja");
         db.execSQL("drop table if exists reservas");
         db.execSQL("drop table if exists productos");
+        db.execSQL("drop table if exists productos_upgrade");
         db.execSQL("drop table if exists brazaletes");
         db.execSQL("drop table if exists abordado");
         db.execSQL("drop table if exists upgrade");
@@ -151,6 +156,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.execSQL("delete from detalle_caja");
         dbs.execSQL("delete from reservas");
         dbs.execSQL("delete from productos");
+        dbs.execSQL("delete from productos_upgrade");
         dbs.execSQL("delete from brazaletes");
         dbs.execSQL("delete from abordado");
         dbs.execSQL("delete from upgrade");
@@ -418,18 +424,18 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select folio,tipo,color,desc from brazaletes,productos where id_producto=id_tour and status=0 order by folio,tipo, desc";
+        String consulta = "select folio,tipo,color from brazaletes where  status=1 order by folio,tipo";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
-                String folio=cursor.getString(cursor.getColumnIndex("folio"));
+                int folio=cursor.getInt(cursor.getColumnIndex("folio"));
                 String tipo=cursor.getString(cursor.getColumnIndex("tipo"));
                 String color=cursor.getString(cursor.getColumnIndex("color"));
-                String tour=cursor.getString(cursor.getColumnIndex("desc"));
 
 
-                datos.add(new modelo_lista_dbrazaletes(folio,tipo,color,tour));
+
+                datos.add(new modelo_lista_dbrazaletes(0,folio,tipo,color));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -920,7 +926,7 @@ public class DBhelper extends SQLiteOpenHelper {
         return ban;
     }
 
-    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int infante){
+    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int complemento,int idbr_adulto,int idbr_menor, int idbr_complemento){
 
         String encontrado = "nada";
 
@@ -937,18 +943,18 @@ public class DBhelper extends SQLiteOpenHelper {
             else if(tipo_1.equals("menor")) {
                 menor = menor-cursor.getInt(cursor.getColumnIndex("cant"));
             }
-            else if(tipo_1.equals("infante")) {
-                infante = infante-cursor.getInt(cursor.getColumnIndex("cant"));
+            else if(tipo_1.equals("complemento")) {
+                complemento = complemento-cursor.getInt(cursor.getColumnIndex("cant"));
             }
         }
         cursor.close();
 
-        String sql_brazalete = "Select tipo,color from brazaletes where folio='"+folio+"' and id_tour="+id_tour+" and status=0 and id_usr="+Global.id_usr;
+        String sql_brazalete = "Select tipo,color from brazaletes where folio="+folio+"  and idBrazalete in ("+idbr_adulto+","+idbr_menor+","+idbr_complemento+") and status=1 and id_usr='"+Global.user_id+"'";
          cursor = dbs.rawQuery(sql_brazalete, null);
         if (cursor.moveToFirst()) {
             do{
                 String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
-                boolean continua = validaPax_brazalete(adulto,menor,infante,tipo);
+                boolean continua = validaPax_brazalete(adulto,menor,complemento,tipo);
 
                 if(continua) {
                     // inserta datos de brazalete
@@ -1139,6 +1145,84 @@ public class DBhelper extends SQLiteOpenHelper {
 
         up.put("status",11);
         dbs.update("reservas",up,"cupon='"+cupon+"'",null);
+
+        dbs.close();
+
+    }
+
+
+    ///////Inserts Web Service.
+
+    public void ws_Inserta_datos_reservas(ArrayList<modelo_lista_orden> datos){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        for (modelo_lista_orden data: datos) {
+            ContentValues cv1 = new ContentValues();
+            cv1.put("orden_servicio", data.idOpboat);
+            cv1.put("reservaDetalle", data.reservaDetalle);
+            cv1.put("cupon", data.cupon);
+            cv1.put("agencia", data.agencia);
+            cv1.put("id_producto_padre", data.producto_padre);
+            cv1.put("id_producto", data.producto_padre);
+            cv1.put("producto", data.producto);
+            cv1.put("adulto", data.adulto);
+            cv1.put("menor", data.menor);
+            cv1.put("infante", data.infante);
+            cv1.put("nombre_cliente", data.nombre);
+            cv1.put("hotel", data.hotel);
+            cv1.put("habi", data.habi);
+            cv1.put("observaciones", data.obs);
+            cv1.put("idioma", data.idioma);
+            cv1.put("idioma_icono", data.idioma_icono);
+            cv1.put("fecha", dateFormat_reserva.format(date).toString());
+            cv1.put("status", data.status);
+            dbs.insert("reservas", null, cv1);
+        }
+
+        dbs.close();
+
+    }
+
+    public void ws_Inserta_datos_brazaletes(ArrayList<modelo_lista_dbrazaletes> datos){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        for (modelo_lista_dbrazaletes data: datos) {
+            ContentValues cv1 = new ContentValues();
+            cv1.put("idBrazalete", data.idBrazalete);
+            cv1.put("folio", data.folio);
+            cv1.put("tipo", data.tipo);
+            cv1.put("color", data.color);
+            cv1.put("id_usr", Global.user_id);
+            cv1.put("status", 1);
+            dbs.insert("brazaletes", null, cv1);
+        }
+
+        dbs.close();
+
+    }
+
+    public void ws_Inserta_datos_Tour(ArrayList<modelo_lista_Tour> datos){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        for (modelo_lista_Tour data: datos) {
+            ContentValues cv1 = new ContentValues();
+            cv1.put("id_producto", data.idTour);
+            cv1.put("id_producto_padre", data.idTour);
+            cv1.put("desc", data.nombreTour);
+            cv1.put("idEquipoBase", data.idEquipoBase);
+            cv1.put("idBrazalete_Adulto", data.idBrazaleteAd);
+            cv1.put("idBrazalete_menor", data.idBrazaleteNino);
+            cv1.put("idBrazalete_complemento", data.idBrazaleteComplemento);
+            cv1.put("precio_ad", data.precioAdulto);
+            cv1.put("precio_me", data.precioNino);
+            cv1.put("precio_in", data.precioInfante);
+            dbs.insert("productos", null, cv1);
+        }
 
         dbs.close();
 
