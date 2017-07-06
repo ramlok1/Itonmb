@@ -47,7 +47,7 @@
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="60dp"
 
                 android:text="Agencia"
                 android:textAlignment="textStart"
@@ -67,7 +67,7 @@
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="70dp"
+                android:layout_marginLeft="120dp"
 
                 android:text="A"
                 android:textAlignment="center"
@@ -117,7 +117,7 @@
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="70dp"
+                android:layout_marginLeft="90dp"
 
                 android:elevation="0dp"
                 android:text="Room"
@@ -131,16 +131,6 @@
 
                 android:layout_marginLeft="30dp"
                 android:text="Observaciones"
-                android:textAlignment="textEnd"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginLeft="30dp"
-                android:text="Importe"
                 android:textAlignment="textEnd"
                 android:textSize="18sp" />
 

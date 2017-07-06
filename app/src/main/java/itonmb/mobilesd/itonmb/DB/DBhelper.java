@@ -16,6 +16,7 @@ import java.util.Date;
 
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_Tour;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_TourUpgrade;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_agregar_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
@@ -86,7 +87,7 @@ public class DBhelper extends SQLiteOpenHelper {
             "id_bote integer, fecha datetime, usuario text )";
 
     private String TABLA_UPG_TEMPORAL   = "create table temporal_upg(id_tmp integer PRIMARY KEY, cupon text, id_producto integer, producto_desc text," +
-            " adulto integer,menor integer,infante integer, importe integer)";
+            " adulto integer,menor integer,infante integer, importe double)";
 
     private String TABLA_UPG_DETALLE   = "create table upgrade_detalle(id_tmp integer PRIMARY KEY,id_upg integer, cupon text, id_producto integer, producto_desc text," +
             " adulto integer,menor integer,infante integer)";
@@ -193,7 +194,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_rva,orden_servicio,reservaDetalle,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,importe,status,observaciones,idioma,idioma_icono from reservas "+ consulta_where+ " order by cupon";
+        String consulta = "select id_rva,orden_servicio,reservaDetalle,cupon,agencia,id_producto,producto,adulto,menor,infante,nombre_cliente,hotel,habi,status,observaciones,idioma,idioma_icono from reservas "+ consulta_where+ " order by cupon";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -255,13 +256,42 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_producto,desc,importe from productos where id_producto_padre="+producto_padre;
+        String consulta = "select id_producto,desc,precio_ad,precio_me,precio_in from productos,productos_upgrade where idTour="+producto_padre+" and id_producto = idTourCombinacion";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
                 datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc"))
-                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),cursor.getInt(cursor.getColumnIndex("importe"))));
+                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_ad")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_me")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_in"))
+                ));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return datos;
+
+    }
+
+    public ArrayList<modelo_spinner_productos_upg> getProducto_precio( int producto_padre){
+        ArrayList<modelo_spinner_productos_upg> datos = new ArrayList<>();
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select id_producto,desc,precio_ad,precio_me,precio_in from productos where id_producto="+producto_padre;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc"))
+                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_ad")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_me")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_in"))
+                ));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -276,17 +306,43 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_producto,desc,importe from productos";
+        String consulta = "select id_producto,desc,precio_ad,precio_me,precio_in from productos";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
                 datos.add(new modelo_spinner_productos_upg(cursor.getString(cursor.getColumnIndex("desc"))
-                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),cursor.getInt(cursor.getColumnIndex("importe"))));
+                        ,cursor.getInt(cursor.getColumnIndex("id_producto")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_ad")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_me")),
+                        cursor.getDouble(cursor.getColumnIndex("precio_in"))
+                ));
             }while(cursor.moveToNext());
         }
         dbs.close();
         return datos;
+
+    }
+
+    public int[] getProducto_idbrazalete( int producto_padre){
+        int[] response = new int[3];
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+
+        String consulta = "select idBrazalete_Adulto,idBrazalete_menor,idBrazalete_complemento from productos where id_producto="+producto_padre;
+        Cursor cursor = dbs.rawQuery(consulta, null);
+
+        if (cursor.moveToFirst()) {
+            do{
+                response[0] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_Adulto"));
+                response[1] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_menor"));
+                response[2] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_complemento"));
+            }while(cursor.moveToNext());
+        }
+        dbs.close();
+        return response;
 
     }
 
@@ -305,7 +361,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 int adulto = cursor.getInt(cursor.getColumnIndex("adulto"));
                 int menor = cursor.getInt(cursor.getColumnIndex("menor"));
                 int infante = cursor.getInt(cursor.getColumnIndex("infante"));
-                int importe = cursor.getInt(cursor.getColumnIndex("importe"));
+                double importe = cursor.getDouble(cursor.getColumnIndex("importe"));
                 int id_tmp = cursor.getInt(cursor.getColumnIndex("id_tmp"));
                 // Se cargan datos de la bd en el arraylist
                 datos.add(new modelo_lista_upgrade_productos(id_tmp,producto_desc,adulto,menor,infante,importe,cupon));
@@ -569,7 +625,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public String inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, int importe_producto, int ad_cupon,int me_cupon, int in_cupon){
+    public String inserta_upgrade_temporal(String cupon,int id_producto, String producto,int adulto, int menor, int infante, double importe_producto, int ad_cupon,int me_cupon, int in_cupon){
 
         String response = "ok";
         SQLiteDatabase dbs = this.getWritableDatabase();
@@ -681,6 +737,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
     }
+
     public void borra_elemento_fp(int id_fp){
         SQLiteDatabase dbs = this.getWritableDatabase();
         dbs.delete("forma_de_pago", "id_fp=" + id_fp, null);
@@ -929,6 +986,8 @@ public class DBhelper extends SQLiteOpenHelper {
     public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int complemento,int idbr_adulto,int idbr_menor, int idbr_complemento){
 
         String encontrado = "nada";
+        int[] idbr = getProducto_idbrazalete(id_tour);
+
 
 
         SQLiteDatabase dbs = this.getWritableDatabase();
@@ -949,7 +1008,7 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         cursor.close();
 
-        String sql_brazalete = "Select tipo,color from brazaletes where folio="+folio+"  and idBrazalete in ("+idbr_adulto+","+idbr_menor+","+idbr_complemento+") and status=1 and id_usr='"+Global.user_id+"'";
+        String sql_brazalete = "Select tipo,color from brazaletes where folio="+folio+"  and idBrazalete in ("+idbr[0]+","+idbr[1]+","+idbr[2]+") and status=1 and id_usr='"+Global.user_id+"'";
          cursor = dbs.rawQuery(sql_brazalete, null);
         if (cursor.moveToFirst()) {
             do{
@@ -1222,6 +1281,23 @@ public class DBhelper extends SQLiteOpenHelper {
             cv1.put("precio_me", data.precioNino);
             cv1.put("precio_in", data.precioInfante);
             dbs.insert("productos", null, cv1);
+        }
+
+        dbs.close();
+
+    }
+
+    public void ws_Inserta_datos_TourUpgrade(ArrayList<modelo_lista_TourUpgrade> datos){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+
+        for (modelo_lista_TourUpgrade data: datos) {
+            ContentValues cv1 = new ContentValues();
+            cv1.put("idTour", data.idTour);
+            cv1.put("idTourCombinacion", data.idTourCombinacion);
+
+            dbs.insert("productos_upgrade", null, cv1);
         }
 
         dbs.close();

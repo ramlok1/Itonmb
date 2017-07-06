@@ -12,11 +12,11 @@ public class modelo_lista_upgrade_productos {
     public int adulto;
     public int nino;
     public int infante;
-    public int importe;
+    public double importe;
 
 
 
-    public modelo_lista_upgrade_productos(int id_tmp,String descripcion, int adulto, int nino, int infante, int importe, String cupon ) {
+    public modelo_lista_upgrade_productos(int id_tmp,String descripcion, int adulto, int nino, int infante, double importe, String cupon ) {
 
         this.id_tmp = id_tmp;
         this.descripcion = descripcion;

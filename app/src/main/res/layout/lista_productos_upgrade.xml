@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="30dp"
         android:textAlignment="textStart"
-        android:textSize="30sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/tview_upgrade_adulto"

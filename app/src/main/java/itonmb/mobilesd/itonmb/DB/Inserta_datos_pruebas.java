@@ -101,7 +101,7 @@ public class Inserta_datos_pruebas {
 
         }*/
 
-        //Datos de productos
+       /* //Datos de productos
         ContentValues cv2 = new ContentValues();
         cv2.put("id_producto",132);
         cv2.put("id_producto_padre",13);
@@ -121,16 +121,16 @@ public class Inserta_datos_pruebas {
         cv2.put("id_producto_padre",13);
         cv2.put("desc","Isla M.");
         cv2.put("importe", 247);
-        dbs.insert("productos", null, cv2);
+        dbs.insert("productos", null, cv2);*/
 
-        cv2 = new ContentValues();
+        ContentValues cv2 = new ContentValues();
         cv2.put("id_caja",13);
         cv2.put("caja","Caja1");
         cv2.put("status",0);
         dbs.insert("encabezado_caja", null, cv2);
 
         // Inserta Brazaletes
-        for(int i=1;i<=100;i++) {
+      /*  for(int i=1;i<=100;i++) {
             int numero = (int) (Math.random() * 3);
             int numero2 = (int) (Math.random() * 3);
             int ncolor = (int) (Math.random() * 4);
@@ -144,7 +144,7 @@ public class Inserta_datos_pruebas {
             cv1.put("status", 0);
             dbs.insert("brazaletes", null, cv1);
 
-        }
+        }*/
 
         // Inserta Barcos
         for(int i=0;i<=4;i++) {

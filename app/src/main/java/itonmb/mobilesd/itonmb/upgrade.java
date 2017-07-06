@@ -32,7 +32,8 @@ public class upgrade extends BaseMenu {
     int ad_cupon,me_cupon,in_cupon,id_producto_padre,total,id_rva;
     Spinner spi_productos_upg;
     DBhelper dbs ;
-    int[] id_producto,importe_producto;
+    int[] id_producto;
+    double[] precio_ad_o,precio_me_o,precio_in_o,precio_ad_n,precio_me_n,precio_in_n;
 
 
     @Override
@@ -56,6 +57,7 @@ public class upgrade extends BaseMenu {
         set_triggers();
         genera_lista_productos_seleccionados();
         prepara_spinner();
+        obtener_precios_producto();
 
 
 
@@ -246,7 +248,10 @@ public class upgrade extends BaseMenu {
                     Snackmsg bar = new Snackmsg();
                     bar.getBar(v, "Favor de indicar pax.", R.drawable.warn, "#f9db59").show();
                 }else{
-                    int producto_importe = importe_producto[spi_productos_upg.getSelectedItemPosition()];
+                    int posicion = spi_productos_upg.getSelectedItemPosition();
+                    double producto_importe = (upg_adulto*(precio_ad_n[posicion]-precio_ad_o[posicion]))+
+                                              (upg_menor*(precio_me_n[posicion]-precio_me_o[posicion]))+
+                                              (upg_infante*(precio_in_n[posicion]-precio_in_o[posicion]));
                     int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
                     String response = dbs.inserta_upgrade_temporal(cupon,producto_id,producto_selecc,upg_adulto,upg_menor,upg_infante,producto_importe,ad_cupon,me_cupon,in_cupon);
                     valida_response(response, v);
@@ -263,7 +268,9 @@ public class upgrade extends BaseMenu {
         // Obtener datos para la lista de productos
         ArrayList<modelo_spinner_productos_upg> data= dbs.getProductos_upgrade(id_producto_padre);
         id_producto= new int[data.size()];
-        importe_producto= new int[data.size()];
+        precio_ad_n= new double[data.size()];
+        precio_me_n= new double[data.size()];
+        precio_in_n= new double[data.size()];
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.style_spinner_item) {
 
             @Override
@@ -286,7 +293,9 @@ public class upgrade extends BaseMenu {
         for (modelo_spinner_productos_upg producto: data) {
             adapter.add(producto.descripcion);
             id_producto[c]=producto.id;
-            importe_producto[c]=producto.importe;
+            precio_ad_n[c]=producto.precio_ad;
+            precio_me_n[c]=producto.precio_me;
+            precio_in_n[c]=producto.precio_in;
             c++;
         }
         adapter.add("Producto");
@@ -299,6 +308,28 @@ public class upgrade extends BaseMenu {
             spi_productos_upg.setSelection(spinnerPosition);
             spi_productos_upg.setEnabled(false);
         }
+    }
+
+    private void obtener_precios_producto(){
+
+        int c=0;
+        // Obtener datos para la lista de productos
+        ArrayList<modelo_spinner_productos_upg> data= dbs.getProducto_precio(id_producto_padre);
+        id_producto= new int[data.size()];
+        precio_ad_o= new double[data.size()];
+        precio_me_o= new double[data.size()];
+        precio_in_o= new double[data.size()];
+
+
+
+        for (modelo_spinner_productos_upg producto: data) {
+
+            precio_ad_o[c]=producto.precio_ad;
+            precio_me_o[c]=producto.precio_me;
+            precio_in_o[c]=producto.precio_in;
+            c++;
+        }
+
     }
 
     private void valida_response(String response, View v){

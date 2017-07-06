@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -68,9 +69,9 @@ public class login_main extends AppCompatActivity {
             public void onClick(View v) {
 
                 new login_main.DatosCupones().execute();
-               Intent intent =
+              /* Intent intent =
                         new Intent(getApplicationContext(), apertura_caja.class);
-                startActivity(intent);
+                startActivity(intent);*/
             /*  String v_user = txt_usr.getText().toString().toLowerCase();
                 String v_pwd = txt_pwd.getText().toString().toLowerCase();
 
@@ -133,16 +134,22 @@ public class login_main extends AppCompatActivity {
     };
 
     private class DatosCupones extends AsyncTask<String, String, String> {
-
+        ProgressDialog progressDialog = new ProgressDialog(login_main.this);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Trabajando...");
+            progressDialog.show();
         }
 
         @Override
         protected void onPostExecute(String resp) {
-            procHandler.sendEmptyMessage(0);
+            progressDialog.dismiss();
+            procHandler.sendEmptyMessage(5);
+
         }
 
         @Override
@@ -150,6 +157,9 @@ public class login_main extends AppCompatActivity {
             String resp="";
             WsProcesos ws = new WsProcesos();
             ws.WSObtenerReservas(getApplicationContext(),"");
+            ws.WSObtenerBrazaletes(getApplicationContext());
+            ws.WSObtenerTour(getApplicationContext());
+            ws.WSObtenerTourUpgrade(getApplicationContext());
 
 
             return resp;

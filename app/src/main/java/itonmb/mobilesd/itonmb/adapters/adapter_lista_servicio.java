@@ -37,7 +37,7 @@ import java.util.ArrayList;
  */
 
 public class adapter_lista_servicio extends BaseAdapter {
-    TextView tview_cupon, tview_agencia, tview_tour, tview_adulto, tview_nino, tview_infante, tview_nombre, tview_hotel, tview_habi, tview_importe,hidden_producto_padre;
+    TextView tview_cupon, tview_agencia, tview_tour, tview_adulto, tview_nino, tview_infante, tview_nombre, tview_hotel, tview_habi,hidden_producto_padre;
     Button btn_obs_ver, btn_flag, btn_status, btn_menu;
     DBhelper dbs ;
 
@@ -91,7 +91,9 @@ public class adapter_lista_servicio extends BaseAdapter {
         tview_nombre = (TextView) itemView.findViewById(R.id.tview_nombre);
         tview_hotel = (TextView) itemView.findViewById(R.id.tview_hotel);
         tview_habi = (TextView) itemView.findViewById(R.id.tview_habi);
-        tview_importe = (TextView) itemView.findViewById(R.id.tview_importe);
+
+
+
         hidden_producto_padre = (TextView) itemView.findViewById(R.id.hidden_producto_padre);
 
         btn_obs_ver = (Button) itemView.findViewById(R.id.btn_obs_ver);

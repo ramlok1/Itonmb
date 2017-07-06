@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_Tour;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_TourUpgrade;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 
@@ -35,7 +36,7 @@ public class WsProcesos {
 
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-        String dd = "2017/07/15";
+        String dd = "2017/07/04";
             request.addProperty("fecha",dd);
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -199,6 +200,64 @@ public class WsProcesos {
             }
 
             dbs.ws_Inserta_datos_Tour(datos);
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSObtenerTourUpgrade (Context context) {
+
+        dbs = new DBhelper(context);
+
+        boolean resul = true;
+        ArrayList<modelo_lista_TourUpgrade> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "ObtenerTourUpgrade";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerTourUpgrade";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+
+            SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+            for (int i = 0; i <  resSoap.getPropertyCount(); i++)
+            {
+                SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+
+                int idTour=Integer.parseInt(ic.getProperty("idTour").toString());
+                int idTourCombinacion=Integer.parseInt(ic.getProperty("idTourCombinacion").toString());
+
+
+
+
+
+                datos.add(new modelo_lista_TourUpgrade(idTour,idTourCombinacion));
+            }
+
+            dbs.ws_Inserta_datos_TourUpgrade(datos);
         }
         catch (Exception e)
         {

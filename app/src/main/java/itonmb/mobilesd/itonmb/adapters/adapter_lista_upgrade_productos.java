@@ -85,7 +85,7 @@ public class adapter_lista_upgrade_productos extends BaseAdapter {
         tview_adulto.setText(Integer.toString(lista.get(position).adulto));
         tview_nino.setText(Integer.toString(lista.get(position).nino));
         tview_infante.setText(Integer.toString(lista.get(position).infante));
-        tview_importe.setText(Integer.toString(lista.get(position).importe));
+        tview_importe.setText(Double.toString(lista.get(position).importe));
 
         ///// Trigger para boton eliminar linea
         btn_delete.setOnClickListener(new View.OnClickListener() {

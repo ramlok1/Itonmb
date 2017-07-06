@@ -108,7 +108,7 @@ public class agregar_brazalete extends BaseMenu {
 
                 String folio = txt_folio_brazalete.getText().toString();
                 if(!folio.equals("")) {
-                    String encontrado = dbs.busca_brazalete(folio,id_tour,producto_desc,cupon,ad_cupon,me_cupon,in_cupon);
+                    String encontrado = dbs.busca_brazalete(folio,id_tour,producto_desc,cupon,ad_cupon,me_cupon,in_cupon,0,0,0);
                     valida_encontrado(encontrado,v);
                     txt_folio_brazalete.setText("");
                 }else{
