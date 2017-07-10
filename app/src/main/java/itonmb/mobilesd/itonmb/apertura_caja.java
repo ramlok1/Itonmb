@@ -40,9 +40,10 @@ public class apertura_caja extends BaseMenu
       {
 
           Spinner spi_caja;
-          EditText txt_init_caja;
+          EditText txt_init_caja,txt_init_caja_usd;
           Button btn_conf_ac,btn_canc_ac,btn_billetes,btn_monedas;
           View layout_popup;
+          int pesos,usd;
           int[] billetes,monedas;
 
     @Override
@@ -72,6 +73,7 @@ public class apertura_caja extends BaseMenu
               spi_caja= (Spinner) findViewById(R.id.spin_caja);
 
               txt_init_caja = (EditText) findViewById(R.id.txt_init_caja);
+              txt_init_caja_usd = (EditText) findViewById(R.id.txt_init_caja_usd);
 
           }
 
@@ -98,17 +100,15 @@ public class apertura_caja extends BaseMenu
                   @Override
                   public void onClick(View v) {
 
-                      if(billetes!=null) {
-                          dbs.inserta_denominacion_caja("B", "A", billetes);
-                      }
-                      if(monedas!=null) {
-                          dbs.inserta_denominacion_caja("M", "A", monedas);
-                      }
-                      dbs.inserta_apertura_caja(Utilerias.toDouble(txt_init_caja.getText().toString()),spi_caja.getSelectedItem().toString());
+                      pesos = Utilerias.toNumero(txt_init_caja.getText().toString());
+                      usd = Utilerias.toNumero(txt_init_caja_usd.getText().toString());
+
+                      dbs.inserta_apertura_caja(pesos,usd,spi_caja.getSelectedItem().toString());
                       Global.status_caja=1;
                       Global.id_caja=dbs.getidCaja(spi_caja.getSelectedItem().toString());
                       Global.nombre_caja=spi_caja.getSelectedItem().toString();
                       new apertura_caja.AbreCaja().execute();
+
                       // Abrir busqueda de cupon
                       Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
                       startActivity(intent_serv);
@@ -239,7 +239,7 @@ public class apertura_caja extends BaseMenu
               return pwindo;
           }
 
-          private class AbreCaja extends AsyncTask<String, String, String> {
+          private class AbreCaja extends AsyncTask<Integer, String, String> {
               ProgressDialog progressDialog = new ProgressDialog(apertura_caja.this);
 
               @Override
@@ -254,14 +254,21 @@ public class apertura_caja extends BaseMenu
               @Override
               protected void onPostExecute(String resp) {
                   progressDialog.dismiss();
+                  if(billetes!=null) {
+                      dbs.inserta_denominacion_caja("B", "A", billetes);
+                  }
+                  if(monedas!=null) {
+                      dbs.inserta_denominacion_caja("M", "A", monedas);
+                  }
 
               }
 
               @Override
-              protected String doInBackground(String... params) {
+              protected String doInBackground(Integer... params) {
                   String resp="";
                   WsProcesos ws = new WsProcesos();
-                  ws.WSAbrir_Caja();
+                  Global.id_sesion= ws.WSAbrir_Caja();
+                  ws.WSArqueo_Abrir_Caja(billetes,monedas,pesos,usd);
 
 
 

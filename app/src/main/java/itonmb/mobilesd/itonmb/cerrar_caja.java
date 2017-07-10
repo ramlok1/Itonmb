@@ -99,10 +99,11 @@ public class cerrar_caja extends BaseMenu {
                 if(monedas!=null) {
                     dbs.inserta_denominacion_caja("M", "C", monedas);
                 }
+                new cerrar_caja.CerrarCaja().execute();
                 dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()));
                 Global.status_caja=0;
                 Global.id_caja=0;
-                new cerrar_caja.CerrarCaja().execute();
+
                 // Abrir busqueda de cupon
                 Intent intent_serv = new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent_serv);

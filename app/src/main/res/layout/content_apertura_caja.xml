@@ -38,7 +38,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginLeft="500dp"
-                android:text="Monto Inicial:"
+                android:text="Monto Inicial MXN:"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginLeft="50dp"
+                android:text="Monto Inicial USD:"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -64,6 +72,20 @@
                 android:layout_width="250dp"
                 android:layout_height="60dp"
                 android:layout_marginLeft="200dp"
+                android:backgroundTint="@color/colorfondo"
+                android:drawableLeft="@drawable/pesos"
+                android:ems="14"
+                android:hint="00.00"
+                android:inputType="number"
+                android:textAlignment="textEnd"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/txt_init_caja_usd"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
+                android:layout_weight="1"
                 android:backgroundTint="@color/colorfondo"
                 android:drawableLeft="@drawable/pesos"
                 android:ems="14"

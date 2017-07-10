@@ -653,9 +653,68 @@ public class WsProcesos {
         try
         {
             transporte.call(SOAP_ACTION, envelope);
-            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+            /*SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
 
-            resul = new Boolean(resSoap.toString());
+            resul = new Boolean(resSoap.toString());*/
+
+
+        }
+       catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSArqueo_Abrir_Caja (int[] billete, int [] moneda, int pesos, int usd) {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_Arqueo_abrir_caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Arqueo_abrir_caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idSesion",Global.id_sesion);
+        request.addProperty("idTipoArqueo",1);
+        request.addProperty("d1000",billete[0]);
+        request.addProperty("d500",billete[1]);
+        request.addProperty("d200",billete[2]);
+        request.addProperty("d100",billete[3]);
+        request.addProperty("d50",billete[4]);
+        request.addProperty("d20",billete[5]);
+        request.addProperty("d10",moneda[0]);
+        request.addProperty("d5",moneda[1]);
+        request.addProperty("d2",moneda[2]);
+        request.addProperty("d05",moneda[3]);
+        request.addProperty("d02",moneda[4]);
+        request.addProperty("d01",moneda[5]);
+        request.addProperty("pesos",pesos);
+        request.addProperty("usd",usd);
+        request.addProperty("userid",Global.user_id);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+           // SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+
 
 
         }

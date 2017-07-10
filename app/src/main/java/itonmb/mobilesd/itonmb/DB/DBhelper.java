@@ -61,10 +61,10 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private String TABLA_TIPO_OPERACION_CAJA = "create table tipo_operacion_caja(id_op integer, desc text, tipo text)";
 
-    private String TABLA_CAJA_DENOMINACION = "create table caja_denominacion(id_caja integer, cant integer, denom double, tipo text, tipo_operacion text, usuario text)";
+    private String TABLA_CAJA_DENOMINACION = "create table caja_denominacion(id_sesion integer,id_caja integer, cant integer, denom double, tipo text, tipo_operacion text, usuario text)";
 
-    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer,caja text, fecha_abre datetime,fecha_cierre datetime,usuario text, monto_inicial integer," +
-            "monto_final integer, status integer)";
+    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer,caja text, fecha_abre datetime,fecha_cierre datetime,usuario text, monto_inicial_usd double," +
+            "monto_final_usd double,monto_inicial_mxn double,monto_final_mxn double, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,tipo_movimiento text," +
             " monto_moneda double, moneda text,monto_mn double,usuario text,operacion text,observacion text,forma_ingreso integer)";
     private String TABLA_RESERVAS = "create table reservas(id_rva integer PRIMARY KEY,  orden_servicio integer, reservaDetalle integer, cupon text, agencia text,id_producto_padre integer, id_producto integer,producto text," +
@@ -805,13 +805,14 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public void inserta_apertura_caja(double importe, String caja){
+    public void inserta_apertura_caja(double importe,double importe_usd, String caja){
 
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues up = new ContentValues();
         up.put("fecha_abre",dateFormat.format(date));
         up.put("usuario",Global.usuario);
-        up.put("monto_inicial",importe);
+        up.put("monto_inicial_mxn",importe);
+        up.put("monto_inicial_usd",importe_usd);
         up.put("status",1);
         dbs.update("encabezado_caja",up,"caja='"+caja+"'",null);
         dbs.close();
@@ -863,6 +864,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
         for(int valor:valores) {
             ContentValues cv = new ContentValues();
+            cv.put("id_sesion15", Global.id_sesion);
             cv.put("id_caja", Global.id_caja);
             cv.put("cant", valor);
             cv.put("denom", denom[c]);
@@ -927,11 +929,11 @@ public class DBhelper extends SQLiteOpenHelper {
     public int getMontoinicial(){
         int monto_inicial=0;
         SQLiteDatabase dbs = this.getWritableDatabase();
-        String query = "select monto_inicial from encabezado_caja  where id_caja='"+Global.id_caja+"'";
+        String query = "select monto_inicial_mxn,monto_inicial_usd from encabezado_caja  where id_caja='"+Global.id_caja+"'";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            monto_inicial = cursor.getInt(cursor.getColumnIndex("monto_inicial"));
+            monto_inicial = cursor.getInt(cursor.getColumnIndex("monto_inicial_mxn"));
         }
         cursor.close();
 
