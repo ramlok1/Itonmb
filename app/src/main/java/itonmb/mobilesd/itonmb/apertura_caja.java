@@ -1,12 +1,14 @@
 package itonmb.mobilesd.itonmb;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.view.Gravity;
@@ -30,6 +32,7 @@ import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.Utils.Utilerias;
+import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
 
 
@@ -105,7 +108,7 @@ public class apertura_caja extends BaseMenu
                       Global.status_caja=1;
                       Global.id_caja=dbs.getidCaja(spi_caja.getSelectedItem().toString());
                       Global.nombre_caja=spi_caja.getSelectedItem().toString();
-
+                      new apertura_caja.AbreCaja().execute();
                       // Abrir busqueda de cupon
                       Intent intent_serv = new Intent(getApplicationContext(), search_orden.class);
                       startActivity(intent_serv);
@@ -234,6 +237,36 @@ public class apertura_caja extends BaseMenu
 
 
               return pwindo;
+          }
+
+          private class AbreCaja extends AsyncTask<String, String, String> {
+              ProgressDialog progressDialog = new ProgressDialog(apertura_caja.this);
+
+              @Override
+              protected void onPreExecute() {
+                  super.onPreExecute();
+                  progressDialog.setIndeterminate(true);
+                  progressDialog.setCancelable(false);
+                  progressDialog.setMessage("Abriendo Caja...");
+                  progressDialog.show();
+              }
+
+              @Override
+              protected void onPostExecute(String resp) {
+                  progressDialog.dismiss();
+
+              }
+
+              @Override
+              protected String doInBackground(String... params) {
+                  String resp="";
+                  WsProcesos ws = new WsProcesos();
+                  ws.WSAbrir_Caja();
+
+
+
+                  return resp;
+              }
           }
 
 

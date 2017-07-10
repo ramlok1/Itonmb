@@ -174,6 +174,8 @@ public class adapter_lista_servicio extends BaseAdapter {
                             }
                              if(dbs.valida_muelle_pagado(cupon)){
 
+                                 Global.orden_de_servicio=lista.get(position).idOpboat;
+                                 Global.reservadetalle=lista.get(position).reservaDetalle;
                                  Intent intent = new Intent(context, agregar_brazalete.class);
                                  intent.putExtra("adulto", lista.get(position).adulto);
                                  intent.putExtra("menor", lista.get(position).menor);
@@ -184,6 +186,8 @@ public class adapter_lista_servicio extends BaseAdapter {
                                  context.startActivity(intent);
                              }
                               else {
+                                 Global.orden_de_servicio=lista.get(position).idOpboat;
+                                 Global.reservadetalle=lista.get(position).reservaDetalle;
                                  Intent intent = new Intent(context, forma_de_pago.class);
                                  //datos para cobro muelle
                                  intent.putExtra("total",0);

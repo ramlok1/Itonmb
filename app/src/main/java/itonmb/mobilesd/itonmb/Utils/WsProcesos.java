@@ -11,16 +11,26 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import itonmb.mobilesd.itonmb.DB.DBhelper;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_Caja;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_Tour;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_TourUpgrade;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_tipoOperacionCaja;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 
 public class WsProcesos {
     DBhelper dbs ;
+    String dd = "2017/07/04";
+    DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
+    Date date = new Date();
 
     public boolean  WSObtenerReservas (Context context, String fecha) {
 
@@ -36,7 +46,7 @@ public class WsProcesos {
 
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-        String dd = "2017/07/04";
+
             request.addProperty("fecha",dd);
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -258,6 +268,396 @@ public class WsProcesos {
             }
 
             dbs.ws_Inserta_datos_TourUpgrade(datos);
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSObtenerTour_Equipo_Base (Context context, String fecha, int upd_param) {
+
+        dbs = new DBhelper(context);
+
+        boolean resul = true;
+        ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "ObtenerTour_Equipo_Base";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerTour_Equipo_Base";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("fecha",dd);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+
+            SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+            for (int i = 0; i <  resSoap.getPropertyCount(); i++)
+            {
+                SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+
+                int idtourequipobase=Integer.parseInt(ic.getProperty("idtourequipobase").toString());
+                String nombreTourEquipoBase=ic.getProperty("nombreTourEquipoBase").toString();
+                int capacidad=Integer.parseInt(ic.getProperty("capacidad").toString());
+                int abordados=Integer.parseInt(ic.getProperty("abordados").toString());
+                int idTour=Integer.parseInt(ic.getProperty("idTour").toString());
+
+                datos.add(new modelo_lista_dbarcos(idtourequipobase,nombreTourEquipoBase,capacidad,abordados,idTour));
+            }
+
+            if(upd_param==1) {
+                dbs.ws_Update_datos_Equipo_Base_Tour(datos);
+            }else{
+                dbs.ws_Inserta_datos_Equipo_Base_Tour(datos);
+            }
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSValida_Capacidad_Bote (String fecha, int id_barco, int pax) {
+
+
+
+        boolean resul = false;
+        ArrayList<modelo_lista_dbarcos> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Valida_Capacidad_Bote";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Valida_Capacidad_Bote";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("fecha",dd);
+        request.addProperty("idtourequipobase",id_barco);
+        request.addProperty("pax",pax);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+             resul = new Boolean(resSoap.toString());
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSUpdate_Brazalete (int idBrazalete, int folio) {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Update_brazalete_abordar";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Update_brazalete_abordar";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("braza",idBrazalete);
+        request.addProperty("folio",folio);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Boolean(resSoap.toString());
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSinserta_detalleOpBoat_Abordar (int opboat , int reservadetalle , int adulto , int menor , int infante , String fecha ,String user) {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_Abordar_DetalleOpBoat";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Abordar_DetalleOpBoat";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("opboat",opboat);
+        request.addProperty("reservadetalle",reservadetalle);
+        request.addProperty("adulto",adulto);
+        request.addProperty("menor",menor);
+        request.addProperty("infante",infante);
+        request.addProperty("fecha",fecha);
+        request.addProperty("user",user);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Boolean(resSoap.toString());
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSObtenerCajas (Context context) {
+
+        dbs = new DBhelper(context);
+
+        boolean resul = true;
+        ArrayList<modelo_lista_Caja> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "ObtenerCajas";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerCajas";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+
+            SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+            for (int i = 0; i <  resSoap.getPropertyCount(); i++)
+            {
+                SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+                int idCaja=Integer.parseInt(ic.getProperty("idCaja").toString());
+                String nombreCaja=ic.getProperty("nombreCaja").toString();
+                int status=Integer.parseInt(ic.getProperty("status").toString());
+
+                datos.add(new modelo_lista_Caja(idCaja,nombreCaja,status));
+            }
+
+            dbs.ws_Inserta_Cajas(datos);
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSObtenertipoOperacionCaja (Context context) {
+
+        dbs = new DBhelper(context);
+
+        boolean resul = true;
+        ArrayList<modelo_lista_tipoOperacionCaja> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "ObtenerTipoOperacion_Caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerTipoOperacion_Caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+
+            SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+            for (int i = 0; i <  resSoap.getPropertyCount(); i++)
+            {
+                SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+
+                int idTipoOperacionCaja=Integer.parseInt(ic.getProperty("idTipoOperacionCaja").toString());
+                String nomTipoOperacionCaja=ic.getProperty("nomTipoOperacionCaja").toString();
+                String tipo=ic.getProperty("tipo").toString();
+
+                datos.add(new modelo_lista_tipoOperacionCaja(idTipoOperacionCaja,nomTipoOperacionCaja,tipo));
+            }
+
+            dbs.ws_Inserta_tipoOperacionCaja(datos);
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public int  WSAbrir_Caja () {
+
+        int sesion = 0;
+
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Abrir_Caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Abrir_Caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idCaja",Global.id_caja);
+        request.addProperty("userid",Global.user_id);
+        request.addProperty("fecha",dateFormat.format(date));
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+            sesion = new Integer(resSoap.toString());
+        }
+        catch (Exception e)
+        {
+            sesion = 0;
+        }
+        return sesion;
+
+    }
+
+    public boolean  WSCerrar_Caja () {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Cerrar_Caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Cerrar_Caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idCaja",Global.id_caja);
+        request.addProperty("userid",Global.user_id);
+        request.addProperty("fecha",dateFormat.format(date));
+        request.addProperty("idSesion",Global.id_sesion);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Boolean(resSoap.toString());
+
+
         }
         catch (Exception e)
         {

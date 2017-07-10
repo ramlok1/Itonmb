@@ -1,8 +1,10 @@
 package itonmb.mobilesd.itonmb;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +23,7 @@ import itonmb.mobilesd.itonmb.DB.DBhelper;
 import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Utilerias;
+import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 
 public class cerrar_caja extends BaseMenu {
 
@@ -99,7 +102,7 @@ public class cerrar_caja extends BaseMenu {
                 dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()));
                 Global.status_caja=0;
                 Global.id_caja=0;
-
+                new cerrar_caja.CerrarCaja().execute();
                 // Abrir busqueda de cupon
                 Intent intent_serv = new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent_serv);
@@ -237,5 +240,35 @@ public class cerrar_caja extends BaseMenu {
 
 
         return pwindo;
+    }
+
+    private class CerrarCaja extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(cerrar_caja.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Abriendo Caja...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            WsProcesos ws = new WsProcesos();
+            ws.WSCerrar_Caja();
+
+
+
+            return resp;
+        }
     }
 }

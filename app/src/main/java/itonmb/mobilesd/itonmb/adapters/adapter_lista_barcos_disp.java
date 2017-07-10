@@ -77,7 +77,6 @@ public class adapter_lista_barcos_disp extends BaseAdapter {
         // Capture position and set to the TextViews
         tview_nombre.setText(lista.get(position).nombre);
         tview_capacidad.setText(Integer.toString(lista.get(position).capacidad));
-        tview_booking.setText(Integer.toString(lista.get(position).booking));
         tview_abordar.setText(Integer.toString(lista.get(position).abordar));
 
 

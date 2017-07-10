@@ -1,6 +1,8 @@
 package itonmb.mobilesd.itonmb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -90,6 +92,7 @@ public class agregar_brazalete extends BaseMenu {
                 // Obtener total de brazaletes asignados.
                 int total_pax = dbs.getTotal_pax_abordar(cupon);
                 if (total_pax!=0) {
+                    new agregar_brazalete.DatosBarcos().execute();
                     Intent intent = new Intent(getApplicationContext(), barcos_abordar.class);
                     intent.putExtra("producto", id_tour);
                     intent.putExtra("total_pax_cupon", ad_cupon+me_cupon+in_cupon);
@@ -155,5 +158,34 @@ public class agregar_brazalete extends BaseMenu {
 
 
 
+    }
+
+    private class DatosBarcos extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(agregar_brazalete.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Actualizando lista de barcos...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",1);
+
+
+            return resp;
+        }
     }
 }

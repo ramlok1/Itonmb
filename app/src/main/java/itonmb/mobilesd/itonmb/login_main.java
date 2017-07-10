@@ -141,7 +141,7 @@ public class login_main extends AppCompatActivity {
             super.onPreExecute();
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
-            progressDialog.setMessage("Trabajando...");
+            progressDialog.setMessage("Actualizando Información...");
             progressDialog.show();
         }
 
@@ -160,6 +160,9 @@ public class login_main extends AppCompatActivity {
             ws.WSObtenerBrazaletes(getApplicationContext());
             ws.WSObtenerTour(getApplicationContext());
             ws.WSObtenerTourUpgrade(getApplicationContext());
+            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",0);
+            ws.WSObtenerCajas(getApplicationContext());
+            ws.WSObtenertipoOperacionCaja(getApplicationContext());
 
 
             return resp;

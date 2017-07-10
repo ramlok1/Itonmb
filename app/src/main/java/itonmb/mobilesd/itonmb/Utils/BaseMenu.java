@@ -1,11 +1,13 @@
 package itonmb.mobilesd.itonmb.Utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -54,6 +56,7 @@ public class BaseMenu extends AppCompatActivity {
     public Toolbar toolbar;
     View lay_base;
     public DBhelper dbs ;
+    public WsProcesos ws = new WsProcesos();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +88,9 @@ public class BaseMenu extends AppCompatActivity {
 
                     case R.id.nav_ver_disp:
                         if(Global.status_caja==1) {
-                        Intent intent_disp = new Intent(getApplicationContext(), barcos_disponibles.class);
-                        startActivity(intent_disp);
+
+                            new BaseMenu.DatosBarcos().execute();
+
                         }else{
                             Toast.makeText(getApplicationContext(),"Caja Cerrada",Toast.LENGTH_SHORT).show();
                         }
@@ -306,6 +310,36 @@ public class BaseMenu extends AppCompatActivity {
 
 
         return pwindo;
+    }
+
+    private class DatosBarcos extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(BaseMenu.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Actualizando lista de barcos...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+            Intent intent_disp = new Intent(getApplicationContext(), barcos_disponibles.class);
+            startActivity(intent_disp);
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",1);
+
+
+            return resp;
+        }
     }
 
 

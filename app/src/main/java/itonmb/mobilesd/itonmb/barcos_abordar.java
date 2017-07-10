@@ -1,6 +1,8 @@
 package itonmb.mobilesd.itonmb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_barcos_abordar;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 
 public class barcos_abordar extends BaseMenu {
 
@@ -22,6 +25,7 @@ public class barcos_abordar extends BaseMenu {
     DBhelper dbs;
     int id_tour,total_pax, total_pax_cupon;
     String cupon;
+    View snkv;
     
 
     @Override
@@ -41,6 +45,7 @@ public class barcos_abordar extends BaseMenu {
         findviews();
         set_triggers();
         genera_lista_barcos();
+
     }
     @Override
     public void onBackPressed() {
@@ -67,9 +72,8 @@ public class barcos_abordar extends BaseMenu {
             public void onClick(View v) {
 
                 if(dbs.valida_barco_seleccion()) {
-                    dbs.inserta_abordaje_in(cupon,total_pax,id_tour,total_pax_cupon);
-                    Intent intent = new Intent(getApplicationContext(), listado_orden.class);
-                    startActivity(intent);
+                    snkv=v;
+                    new barcos_abordar.Abordar().execute();
                 }else{
                     Snackmsg bar = new Snackmsg();
                     bar.getBar(v, "Error en seleccion de barco.", R.drawable.warn, "#f9db59").show();
@@ -77,4 +81,51 @@ public class barcos_abordar extends BaseMenu {
             }
         });
     }
+
+    private class Abordar extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(barcos_abordar.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Actualizando lista de barcos...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+            if(resp.equals("ok")) {
+                Intent intent = new Intent(getApplicationContext(), listado_orden.class);
+                startActivity(intent);
+            }else {
+                Snackmsg bar = new Snackmsg();
+                bar.getBar(snkv, "Barco Lleno...", R.drawable.warn, "#f9db59").show();
+
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            boolean valida = ws.WSValida_Capacidad_Bote("",dbs.getBote_seleccionado(id_tour),total_pax);
+            if(valida){
+                ArrayList<modelo_lista_ws_brazalete> dato = dbs.getFolio_Brazalete_Abordar(cupon,id_tour);
+                for(modelo_lista_ws_brazalete data:dato) {
+                    ws.WSUpdate_Brazalete(data.idBrazalete,data.folio);
+                }
+                int[] px= dbs.getPax_BRazalete(cupon);
+
+                ws.WSinserta_detalleOpBoat_Abordar(Global.orden_de_servicio,Global.reservadetalle,px[0] , px[1] , 0 ,"2017/07/04" ,Global.user_id);
+                dbs.inserta_abordaje_in(cupon,total_pax,id_tour,total_pax_cupon);
+              resp="ok";
+            }
+            return resp;
+        }
+    }
+
+
 }
