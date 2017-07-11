@@ -6,14 +6,14 @@ package itonmb.mobilesd.itonmb.modelo;
 
 public class modelo_lista_agregar_brazalete {
 
-    public String folio;
+    public int folio;
     public String producto;
     public String color;
     public int id_br;
 
 
 
-    public modelo_lista_agregar_brazalete(String folio, String producto,String color, int id_br ) {
+    public modelo_lista_agregar_brazalete(int folio, String producto,String color, int id_br ) {
 
         this.folio = folio;
         this.producto = producto;

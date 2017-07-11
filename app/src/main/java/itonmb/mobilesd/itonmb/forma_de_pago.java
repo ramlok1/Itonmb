@@ -1,5 +1,6 @@
 package itonmb.mobilesd.itonmb;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import itonmb.mobilesd.itonmb.Utils.BaseMenu;
 import itonmb.mobilesd.itonmb.Utils.Global;
 import itonmb.mobilesd.itonmb.Utils.Snackmsg;
 import itonmb.mobilesd.itonmb.Utils.Utilerias;
+import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_formas_de_pago;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
 
@@ -204,10 +206,11 @@ public class forma_de_pago extends BaseMenu {
                         adulto = upg_datos[1];
                         menor = upg_datos[2];
                         infante = upg_datos[3];
-                        new forma_de_pago.imprime_test().execute();
+                       // new forma_de_pago.imprime_test().execute();
                     }
                     dbs.update_forma_pago(id_upg,cupon);
-                    dbs.inserta_movimiento_detalle_caja("E", "Venta", importe_total, "MXN", importe_total, producto_desc+"-"+cupon);
+                    dbs.inserta_movimiento_detalle_caja("E", "Entrada Venta", importe_total,"USD", importe_total, producto_desc+"-"+cupon);
+                    new forma_de_pago.inserta_mov_caja().execute();
 
                     /////////////////////////////////////////////////////////
 
@@ -475,6 +478,36 @@ public class forma_de_pago extends BaseMenu {
             {
                 e.printStackTrace();
             }
+
+
+            return resp;
+        }
+    }
+
+    private class inserta_mov_caja extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(forma_de_pago.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Finalizando Venta...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            WsProcesos ws = new WsProcesos();
+            ws.WSInserta_detalle_caja(1,Integer.toString(importe_total),1,Integer.toString(Global.TC), producto_desc+"-"+cupon);
+
 
 
             return resp;

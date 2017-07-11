@@ -390,7 +390,53 @@ public class WsProcesos {
 
     }
 
-    public boolean  WSUpdate_Brazalete (int idBrazalete, int folio) {
+    public int  WSInserta_Personalbrazalete ( int cant) {
+
+
+
+        int resul ;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_PersonalBrazalete";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_PersonalBrazalete";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("cant",cant);
+        request.addProperty("fecha",dateFormat.format(date));
+        request.addProperty("idreservadetalle",Global.reservadetalle);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Integer(resSoap.toString());
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = 0;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSUpdate_Brazalete (int idBrazalete, int folio, int idPersonal) {
 
 
 
@@ -404,6 +450,7 @@ public class WsProcesos {
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
         request.addProperty("braza",idBrazalete);
         request.addProperty("folio",folio);
+        request.addProperty("idPersonaldetalle",idPersonal);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;
@@ -715,6 +762,55 @@ public class WsProcesos {
            // SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
 
 
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSInserta_detalle_caja (int OPcaja, String monto, int idmoneda,String TC,String obs) {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_detalle_caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_detalle_caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idSesion",Global.id_sesion);
+        request.addProperty("idTipoOperacionCaja",OPcaja);
+        request.addProperty("Monto",monto);
+        request.addProperty("FechaAlta",dateFormat.format(date));
+        request.addProperty("idMoneda",idmoneda);
+        request.addProperty("TipoCambio",TC);
+        request.addProperty("observaciones",obs);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            /*SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Boolean(resSoap.toString());*/
 
 
         }

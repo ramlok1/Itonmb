@@ -114,8 +114,9 @@ public class barcos_abordar extends BaseMenu {
             boolean valida = ws.WSValida_Capacidad_Bote("",dbs.getBote_seleccionado(id_tour),total_pax);
             if(valida){
                 ArrayList<modelo_lista_ws_brazalete> dato = dbs.getFolio_Brazalete_Abordar(cupon,id_tour);
+                int idPersonal = ws.WSInserta_Personalbrazalete(dato.size());
                 for(modelo_lista_ws_brazalete data:dato) {
-                    ws.WSUpdate_Brazalete(data.idBrazalete,data.folio);
+                    ws.WSUpdate_Brazalete(data.idBrazalete,data.folio,idPersonal);
                 }
                 int[] px= dbs.getPax_BRazalete(cupon);
 

@@ -28,7 +28,7 @@ import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 public class cerrar_caja extends BaseMenu {
 
     TextView txt_caja_inicial,txt_caja_libro,txt_venta_dia,txt_diferencia,txt_monto_final;
-    EditText txt_monto_cierre;
+    EditText txt_monto_cierre,txt_monto_cierre_usd;
     Button btn_conf_ac,btn_canc_ac,btn_billetes,btn_monedas;
     View layout_popup;
     int[] billetes,monedas;
@@ -64,10 +64,11 @@ public class cerrar_caja extends BaseMenu {
         txt_caja_inicial = (TextView) findViewById(R.id.txt_caja_inicial_cierre);
         txt_caja_libro = (TextView) findViewById(R.id.txt_caja_libro);
         txt_venta_dia = (TextView) findViewById(R.id.txt_venta_dia);
-        txt_monto_final = (TextView) findViewById(R.id.txt_monto_final);
+
         txt_diferencia = (TextView) findViewById(R.id.txt_diferencia);
 
-        txt_monto_cierre = (EditText) findViewById(R.id.txt_monto_final);
+        txt_monto_cierre = (EditText) findViewById(R.id.txt_monto_final_mxn);
+        txt_monto_cierre_usd = (EditText) findViewById(R.id.txt_monto_final_usd);
 
     }
     private void set_triggers() {
@@ -100,7 +101,7 @@ public class cerrar_caja extends BaseMenu {
                     dbs.inserta_denominacion_caja("M", "C", monedas);
                 }
                 new cerrar_caja.CerrarCaja().execute();
-                dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()));
+                dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()),Utilerias.toDouble(txt_monto_cierre_usd.getText().toString()));
                 Global.status_caja=0;
                 Global.id_caja=0;
 
@@ -119,7 +120,7 @@ public class cerrar_caja extends BaseMenu {
             }
         });
 
-        txt_monto_final.addTextChangedListener(new TextWatcher() {
+        txt_monto_cierre.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 

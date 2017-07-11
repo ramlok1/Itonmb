@@ -431,14 +431,14 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_asignacion,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto="+id_tour+"";
+        String consulta = "select idBrazalete,folio,color from brazalete_asignacion where cupon='"+cupon+"' and id_producto="+id_tour+"";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
 
-                int id_br=cursor.getInt(cursor.getColumnIndex("id_asignacion"));
-                String folio =cursor.getString(cursor.getColumnIndex("folio"));
+                int id_br=cursor.getInt(cursor.getColumnIndex("idBrazalete"));
+                int folio =cursor.getInt(cursor.getColumnIndex("folio"));
                 String color =cursor.getString(cursor.getColumnIndex("color"));
                 datos.add(new modelo_lista_agregar_brazalete(folio,producto_desc,color,id_br));
             }while(cursor.moveToNext());
@@ -749,13 +749,13 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.close();
     }
 
-    public void borra_elemento_br(int id_br, String folio){
+    public void borra_elemento_br(int id_br, int folio){
         SQLiteDatabase dbs = this.getWritableDatabase();
-        dbs.delete("brazalete_asignacion", "id_asignacion=" + id_br, null);
+        dbs.delete("brazalete_asignacion", "idBrazalete=" + id_br+" and folio="+folio, null);
 
         ContentValues up = new ContentValues();
         up.put("status",0);
-        dbs.update("brazaletes",up,"folio="+folio,null);
+        dbs.update("brazaletes",up,"idBrazalete=" + id_br+" and folio="+folio,null);
 
         dbs.close();
 
@@ -819,12 +819,13 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public void inserta_cierre_caja(double importe){
+    public void inserta_cierre_caja(double importe,double importe_usd){
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues up = new ContentValues();
         up.put("fecha_cierre",dateFormat.format(date));
         up.put("usuario",Global.usuario);
-        up.put("monto_final",importe);
+        up.put("monto_final_usd",importe_usd);
+        up.put("monto_final_mxn",importe);
         up.put("status",0);
         dbs.update("encabezado_caja",up,"id_caja='"+Global.id_caja+"'",null);
 
@@ -864,7 +865,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
         for(int valor:valores) {
             ContentValues cv = new ContentValues();
-            cv.put("id_sesion15", Global.id_sesion);
+            cv.put("id_sesion", Global.id_sesion);
             cv.put("id_caja", Global.id_caja);
             cv.put("cant", valor);
             cv.put("denom", denom[c]);
@@ -929,11 +930,11 @@ public class DBhelper extends SQLiteOpenHelper {
     public int getMontoinicial(){
         int monto_inicial=0;
         SQLiteDatabase dbs = this.getWritableDatabase();
-        String query = "select monto_inicial_mxn,monto_inicial_usd from encabezado_caja  where id_caja='"+Global.id_caja+"'";
+        String query = "select monto_inicial_usd,monto_inicial_usd from encabezado_caja  where id_caja='"+Global.id_caja+"'";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            monto_inicial = cursor.getInt(cursor.getColumnIndex("monto_inicial_mxn"));
+            monto_inicial = cursor.getInt(cursor.getColumnIndex("monto_inicial_usd"));
         }
         cursor.close();
 

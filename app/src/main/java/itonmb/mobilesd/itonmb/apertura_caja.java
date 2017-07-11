@@ -44,7 +44,8 @@ public class apertura_caja extends BaseMenu
           Button btn_conf_ac,btn_canc_ac,btn_billetes,btn_monedas;
           View layout_popup;
           int pesos,usd;
-          int[] billetes,monedas;
+          int[] billetes= {0,0,0,0,0,0};
+          int[] monedas={0,0,0,0,0,0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

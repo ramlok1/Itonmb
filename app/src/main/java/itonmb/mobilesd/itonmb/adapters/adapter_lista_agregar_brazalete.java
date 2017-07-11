@@ -69,7 +69,7 @@ public class adapter_lista_agregar_brazalete extends BaseAdapter {
 
         btn_del_brazalete = (Button) itemView.findViewById(R.id.btn_delete_brazalete);
         btn_color = (Button) itemView.findViewById(R.id.color_braz_agregado);
-        tview_folio.setText(lista.get(position).folio);
+        tview_folio.setText(Integer.toString(lista.get(position).folio));
         tview_producto.setText(lista.get(position).producto);
 
         btn_color.setBackgroundColor(Color.parseColor(lista.get(position).color));
