@@ -209,7 +209,7 @@ public class forma_de_pago extends BaseMenu {
                        // new forma_de_pago.imprime_test().execute();
                     }
                     dbs.update_forma_pago(id_upg,cupon);
-                    dbs.inserta_movimiento_detalle_caja("E", "Entrada Venta", importe_total,"USD", importe_total, producto_desc+"-"+cupon);
+                    dbs.inserta_movimiento_detalle_caja("E", "Entrada Venta", importe_final,"USD", importe_final, producto_desc+"-"+cupon);
                     new forma_de_pago.inserta_mov_caja().execute();
 
                     /////////////////////////////////////////////////////////
@@ -239,10 +239,8 @@ public class forma_de_pago extends BaseMenu {
                 double monto_moneda = Double.parseDouble(txt_monto_forma_pago.getText().toString());
                 double monto_mn;
                 // revisa moneda
-                if (moneda.equals("EUR")) {
-                    monto_mn = monto_moneda * 20.45;
-                } else if (moneda.equals("USD")) {
-                    monto_mn = monto_moneda * 18.45;
+                if (moneda.equals("MXN")) {
+                    monto_mn = monto_moneda / Global.TC;
                 } else {
                     monto_mn = monto_moneda;
                 }
@@ -342,13 +340,13 @@ public class forma_de_pago extends BaseMenu {
         };
         adapter_cp.setDropDownViewResource(R.layout.style_spinner_item);
 
-        adapter_cp.add("EUR");
-        adapter_cp.add("USD");
         adapter_cp.add("MXN");
+        adapter_cp.add("USD");
+
 
 
         spi_divisa.setAdapter(adapter_cp);
-        spi_divisa.setSelection(2); //display hint
+        spi_divisa.setSelection(1); //display hint
     }
 
     private PopupWindow popup_window(final View vo){
@@ -506,7 +504,7 @@ public class forma_de_pago extends BaseMenu {
         protected String doInBackground(String... params) {
             String resp="";
             WsProcesos ws = new WsProcesos();
-            ws.WSInserta_detalle_caja(1,Integer.toString(importe_total),1,Integer.toString(Global.TC), producto_desc+"-"+cupon);
+            ws.WSInserta_detalle_caja(1,Double.toString(importe_final),1,Double.toString(Global.TC), producto_desc+"-"+cupon);
 
 
 

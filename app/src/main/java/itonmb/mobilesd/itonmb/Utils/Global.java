@@ -22,7 +22,7 @@ public  class Global {
     public static int id_caja;
     public static int id_sesion;
     public static int status_caja=0;
-    public static int TC=18;
+    public static double TC=17.81;
     public static String nombre_caja="";
 
 }

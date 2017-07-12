@@ -24,6 +24,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbarcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_tipoOperacionCaja;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_tour_barcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 
 public class WsProcesos {
@@ -283,7 +284,7 @@ public class WsProcesos {
 
     }
 
-    public boolean  WSObtenerTour_Equipo_Base (Context context, String fecha, int upd_param) {
+    public boolean  WSObtenerEquipo_Base (Context context, String fecha, int upd_param) {
 
         dbs = new DBhelper(context);
 
@@ -292,8 +293,8 @@ public class WsProcesos {
 
         final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
         final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
-        final String METHOD_NAME = "ObtenerTour_Equipo_Base";
-        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerTour_Equipo_Base";
+        final String METHOD_NAME = "ObtenerEquipo_Base";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerEquipo_Base";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
         request.addProperty("fecha",dd);
@@ -315,20 +316,77 @@ public class WsProcesos {
                 SoapObject ic = (SoapObject)resSoap.getProperty(i);
 
 
-                int idtourequipobase=Integer.parseInt(ic.getProperty("idtourequipobase").toString());
-                String nombreTourEquipoBase=ic.getProperty("nombreTourEquipoBase").toString();
+                int idOpBoat=Integer.parseInt(ic.getProperty("idOpBoat").toString());
+                int idEquipoBase=Integer.parseInt(ic.getProperty("idEquipoBase").toString());
+                String nombreTourEquipoBase=ic.getProperty("nombreEquipoBase").toString();
                 int capacidad=Integer.parseInt(ic.getProperty("capacidad").toString());
                 int abordados=Integer.parseInt(ic.getProperty("abordados").toString());
-                int idTour=Integer.parseInt(ic.getProperty("idTour").toString());
 
-                datos.add(new modelo_lista_dbarcos(idtourequipobase,nombreTourEquipoBase,capacidad,abordados,idTour));
+
+                datos.add(new modelo_lista_dbarcos(idOpBoat,idEquipoBase,nombreTourEquipoBase,capacidad,abordados));
             }
 
             if(upd_param==1) {
-                dbs.ws_Update_datos_Equipo_Base_Tour(datos);
+                dbs.ws_Update_datos_Equipo_Base(datos);
             }else{
-                dbs.ws_Inserta_datos_Equipo_Base_Tour(datos);
+                dbs.ws_Inserta_datos_Equipo_Base(datos);
             }
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSObtenerTour_Equipo_Base (Context context) {
+
+        dbs = new DBhelper(context);
+
+        boolean resul = true;
+        ArrayList<modelo_lista_tour_barcos> datos = new ArrayList<>();
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "ObtenerTour_Equipo_Base";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerTour_Equipo_Base";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+
+            SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+            for (int i = 0; i <  resSoap.getPropertyCount(); i++)
+            {
+                SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+
+                int idEquipoBase=Integer.parseInt(ic.getProperty("idEquipoBase").toString());
+                int idTour=Integer.parseInt(ic.getProperty("idTour").toString());
+
+
+
+                datos.add(new modelo_lista_tour_barcos(idEquipoBase,idTour));
+            }
+            dbs.ws_Inserta_datos_Equipo_Base_Tour(datos);
+
         }
         catch (Exception e)
         {
@@ -481,7 +539,7 @@ public class WsProcesos {
 
     }
 
-    public boolean  WSinserta_detalleOpBoat_Abordar (int opboat , int reservadetalle , int adulto , int menor , int infante , String fecha ,String user) {
+    public boolean  WSinserta_detalleOpBoat_Abordar (int opboat , int reservadetalle , int adulto , int menor , int infante  ,String user) {
 
 
 
@@ -498,7 +556,7 @@ public class WsProcesos {
         request.addProperty("adulto",adulto);
         request.addProperty("menor",menor);
         request.addProperty("infante",infante);
-        request.addProperty("fecha",fecha);
+        request.addProperty("fecha",dateFormat.format(date));
         request.addProperty("user",user);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -760,6 +818,70 @@ public class WsProcesos {
         {
             transporte.call(SOAP_ACTION, envelope);
            // SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSArqueo_Cerrar_Caja (int[] billete, int [] moneda, String pesos, String usd,String venta,String cajaInicial,String cajaLibro, String diferencia) {
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_Arqueo_cerrar_caja";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Arqueo_cerrar_caja";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idSesion",Global.id_sesion);
+        request.addProperty("idTipoArqueo",1);
+        request.addProperty("d1000",billete[0]);
+        request.addProperty("d500",billete[1]);
+        request.addProperty("d200",billete[2]);
+        request.addProperty("d100",billete[3]);
+        request.addProperty("d50",billete[4]);
+        request.addProperty("d20",billete[5]);
+        request.addProperty("d10",moneda[0]);
+        request.addProperty("d5",moneda[1]);
+        request.addProperty("d2",moneda[2]);
+        request.addProperty("d05",moneda[3]);
+        request.addProperty("d02",moneda[4]);
+        request.addProperty("d01",moneda[5]);
+        request.addProperty("pesos",pesos);
+        request.addProperty("usd",usd);
+        request.addProperty("venta",venta);
+        request.addProperty("cajaInicial",cajaInicial);
+        request.addProperty("cajaFinal",usd);
+        request.addProperty("cajaLibro",cajaLibro);
+        request.addProperty("diferencia",diferencia);
+        request.addProperty("userid",Global.user_id);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            // SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
 
 
 

@@ -160,7 +160,8 @@ public class login_main extends AppCompatActivity {
             ws.WSObtenerBrazaletes(getApplicationContext());
             ws.WSObtenerTour(getApplicationContext());
             ws.WSObtenerTourUpgrade(getApplicationContext());
-            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",0);
+            ws.WSObtenerTour_Equipo_Base(getApplicationContext());
+            ws.WSObtenerEquipo_Base(getApplicationContext(),"",0);
             ws.WSObtenerCajas(getApplicationContext());
             ws.WSObtenertipoOperacionCaja(getApplicationContext());
 

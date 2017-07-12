@@ -9,14 +9,14 @@ public class modelo_lista_dbarcos {
     public String nombre;
     public int capacidad;
     public int abordar;
-    public int idTour;
+    public int idOpBoat;
 
 
-    public modelo_lista_dbarcos(int idtourequipobase, String nombre,int capacidad,int abordar, int idTour) {
+    public modelo_lista_dbarcos(int idOpBoat, int idtourequipobase, String nombre,int capacidad,int abordar) {
         this.idtourequipobase = idtourequipobase;
         this.nombre = nombre;
         this.capacidad = capacidad;
-        this.idTour = idTour;
+        this.idOpBoat = idOpBoat;
         this.abordar = abordar;
 
     }

@@ -27,11 +27,13 @@ import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 
 public class cerrar_caja extends BaseMenu {
 
-    TextView txt_caja_inicial,txt_caja_libro,txt_venta_dia,txt_diferencia,txt_monto_final;
+    TextView txt_caja_inicial,txt_caja_libro,txt_venta_dia,txt_diferencia;
     EditText txt_monto_cierre,txt_monto_cierre_usd;
     Button btn_conf_ac,btn_canc_ac,btn_billetes,btn_monedas;
     View layout_popup;
-    int[] billetes,monedas;
+    int[] billetes= {0,0,0,0,0,0};
+    int[] monedas={0,0,0,0,0,0};
+    String pesos,usd,inicial,libros,diferencia,venta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +102,15 @@ public class cerrar_caja extends BaseMenu {
                 if(monedas!=null) {
                     dbs.inserta_denominacion_caja("M", "C", monedas);
                 }
+                pesos= txt_monto_cierre.getText().toString();
+                usd =txt_monto_cierre_usd.getText().toString();
+                inicial=txt_caja_inicial.getText().toString();
+                libros=txt_caja_libro.getText().toString();
+                diferencia=txt_diferencia.getText().toString();
+                venta=txt_venta_dia.getText().toString();
+
                 new cerrar_caja.CerrarCaja().execute();
-                dbs.inserta_cierre_caja(Utilerias.toDouble(txt_monto_cierre.getText().toString()),Utilerias.toDouble(txt_monto_cierre_usd.getText().toString()));
+                dbs.inserta_cierre_caja(Utilerias.toDouble(pesos),Utilerias.toDouble(usd));
                 Global.status_caja=0;
                 Global.id_caja=0;
 
@@ -120,7 +129,7 @@ public class cerrar_caja extends BaseMenu {
             }
         });
 
-        txt_monto_cierre.addTextChangedListener(new TextWatcher() {
+        txt_monto_cierre_usd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -267,6 +276,7 @@ public class cerrar_caja extends BaseMenu {
             String resp="";
             WsProcesos ws = new WsProcesos();
             ws.WSCerrar_Caja();
+            ws.WSArqueo_Cerrar_Caja(billetes,monedas,pesos,usd,venta,inicial,libros,diferencia);
 
 
 

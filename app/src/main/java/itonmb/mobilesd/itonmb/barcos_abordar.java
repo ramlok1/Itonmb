@@ -23,7 +23,7 @@ public class barcos_abordar extends BaseMenu {
 
     Button btn_abordar;
     DBhelper dbs;
-    int id_tour,total_pax, total_pax_cupon;
+    int id_tour,total_pax, total_pax_cupon,infante;
     String cupon;
     View snkv;
     
@@ -41,6 +41,7 @@ public class barcos_abordar extends BaseMenu {
         id_tour=extras.getInt("producto");
         total_pax=extras.getInt("total_pax");
         total_pax_cupon=extras.getInt("total_pax_cupon");
+        infante=extras.getInt("infante");
 
         findviews();
         set_triggers();
@@ -113,14 +114,17 @@ public class barcos_abordar extends BaseMenu {
             String resp="";
             boolean valida = ws.WSValida_Capacidad_Bote("",dbs.getBote_seleccionado(id_tour),total_pax);
             if(valida){
+
                 ArrayList<modelo_lista_ws_brazalete> dato = dbs.getFolio_Brazalete_Abordar(cupon,id_tour);
                 int idPersonal = ws.WSInserta_Personalbrazalete(dato.size());
+
                 for(modelo_lista_ws_brazalete data:dato) {
                     ws.WSUpdate_Brazalete(data.idBrazalete,data.folio,idPersonal);
                 }
+
                 int[] px= dbs.getPax_BRazalete(cupon);
 
-                ws.WSinserta_detalleOpBoat_Abordar(Global.orden_de_servicio,Global.reservadetalle,px[0] , px[1] , 0 ,"2017/07/04" ,Global.user_id);
+                ws.WSinserta_detalleOpBoat_Abordar(Global.orden_de_servicio,Global.reservadetalle,px[0] , px[1] , infante ,Global.user_id);
                 dbs.inserta_abordaje_in(cupon,total_pax,id_tour,total_pax_cupon);
               resp="ok";
             }

@@ -335,7 +335,7 @@ public class BaseMenu extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             String resp="";
-            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",1);
+            ws.WSObtenerEquipo_Base(getApplicationContext(),"",1);
 
 
             return resp;

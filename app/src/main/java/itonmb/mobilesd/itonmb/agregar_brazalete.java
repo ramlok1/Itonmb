@@ -97,6 +97,7 @@ public class agregar_brazalete extends BaseMenu {
                     intent.putExtra("producto", id_tour);
                     intent.putExtra("total_pax_cupon", ad_cupon+me_cupon+in_cupon);
                     intent.putExtra("total_pax", total_pax);
+                    intent.putExtra("infante", in_cupon);
                     startActivity(intent);
                 }else{
                     Snackmsg bar = new Snackmsg();
@@ -182,7 +183,7 @@ public class agregar_brazalete extends BaseMenu {
         @Override
         protected String doInBackground(String... params) {
             String resp="";
-            ws.WSObtenerTour_Equipo_Base(getApplicationContext(),"",1);
+            ws.WSObtenerEquipo_Base(getApplicationContext(),"",1);
 
 
             return resp;

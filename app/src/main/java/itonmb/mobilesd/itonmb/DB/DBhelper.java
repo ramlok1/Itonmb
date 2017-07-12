@@ -24,6 +24,7 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_dbrazaletes;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_orden;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_tipoOperacionCaja;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_tour_barcos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_upgrade_productos;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 import itonmb.mobilesd.itonmb.modelo.modelo_spinner_productos_upg;
@@ -84,7 +85,9 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private String TABLA_FORMA_PAGO = "create table forma_de_pago(id_fp integer PRIMARY KEY,id_upg integer, cupon text, forma text,moneda text,monto_moneda double,tc double, monto_mn double,recibido double," +
             " cambio double, fecha datetime, usuario text)";
-    private String TABLA_BOTES = "create table botes(id_bote integer, nombre text, capacidad integer, abordado integer, id_producto integer,seleccion integer)";
+    private String TABLA_BOTES = "create table botes(idOpboat integer,id_bote integer, nombre text, capacidad integer, abordado integer,seleccion integer)";
+
+    private String TABLA_BOTES_TOUR = "create table botes_tour(idEquipoBase integer,idTour integer)";
 
     private String TABLA_CHECKIN = "create table checkin(orden_servicio integer, cupon text, folio_brazalete integer, " +
             "id_bote integer, fecha datetime, usuario text )";
@@ -119,6 +122,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL(TABLA_TIPO_OPERACION_CAJA);
         db.execSQL(TABLA_CAJA_DENOMINACION);
         db.execSQL(TABLA_PRODUCTOS_UPGRADE);
+        db.execSQL(TABLA_BOTES_TOUR);
 
 
 
@@ -141,6 +145,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists brazalete_asignacion");
         db.execSQL("drop table if exists forma_de_pago");
         db.execSQL("drop table if exists botes");
+        db.execSQL("drop table if exists botes_tour");
         db.execSQL("drop table if exists temporal_upg");
         db.execSQL("drop table if exists checkin");
         db.execSQL("drop table if exists upgrade_detalle");
@@ -167,6 +172,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.execSQL("delete from brazalete_asignacion");
         dbs.execSQL("delete from forma_de_pago");
         dbs.execSQL("delete from botes");
+        dbs.execSQL("delete from botes_tour");
         dbs.execSQL("delete from checkin");
         dbs.execSQL("delete from temporal_upg");
         dbs.execSQL("delete from upgrade_detalle");
@@ -455,16 +461,17 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_bote,nombre,capacidad,abordado  from botes where id_producto="+id_producto;
+        String consulta = "select idOpboat,id_bote,nombre,capacidad,abordado  from botes,botes_tour where id_bote=idEquipoBase and  idTour="+id_producto;
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
                 String nombre_barco=cursor.getString(cursor.getColumnIndex("nombre"));
                 int capac =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int idOpBote =cursor.getInt(cursor.getColumnIndex("idOpboat"));
                 int id_bote =cursor.getInt(cursor.getColumnIndex("id_bote"));
                 int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
-                datos.add(new modelo_lista_dbarcos(id_bote,nombre_barco,capac,aborda,id_producto));
+                datos.add(new modelo_lista_dbarcos(idOpBote,id_bote,nombre_barco,capac,aborda));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -479,17 +486,18 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select id_bote,nombre,capacidad,abordado,id_producto  from botes ";
+        String consulta = "select idOpboat,id_bote,nombre,capacidad,abordado,id_producto  from botes ";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
             do{
                 String nombre_barco=cursor.getString(cursor.getColumnIndex("nombre"));
                 int capac =cursor.getInt(cursor.getColumnIndex("capacidad"));
+                int idOpboat =cursor.getInt(cursor.getColumnIndex("idOpboat"));
                 int id_bote =cursor.getInt(cursor.getColumnIndex("id_bote"));
                 int id_producto =cursor.getInt(cursor.getColumnIndex("id_producto"));
                 int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
-                datos.add(new modelo_lista_dbarcos(id_bote,nombre_barco,capac,aborda,id_producto));
+                datos.add(new modelo_lista_dbarcos(idOpboat,id_bote,nombre_barco,capac,aborda));
             }while(cursor.moveToNext());
         }
         dbs.close();
@@ -754,7 +762,7 @@ public class DBhelper extends SQLiteOpenHelper {
         dbs.delete("brazalete_asignacion", "idBrazalete=" + id_br+" and folio="+folio, null);
 
         ContentValues up = new ContentValues();
-        up.put("status",0);
+        up.put("status",1);
         dbs.update("brazaletes",up,"idBrazalete=" + id_br+" and folio="+folio,null);
 
         dbs.close();
@@ -1056,7 +1064,7 @@ public class DBhelper extends SQLiteOpenHelper {
                     dbs.insert("brazalete_asignacion", null, cv);
 
                     ContentValues up = new ContentValues();
-                    up.put("status",1);
+                    up.put("status",0);
                     dbs.update("brazaletes",up,"folio="+folio,null);
                     encontrado=tipo;
                 }else
@@ -1247,7 +1255,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         // Obtener id de bote seleccionado
-        String consulta_id_bote = "select id_bote from botes where seleccion=1 and id_producto=" + id_tour;
+        String consulta_id_bote = "select id_bote from botes,botes_tour where seleccion=1 and id_bote=idEquipoBase and  idTour="+id_tour;
         Cursor cb = dbs.rawQuery(consulta_id_bote, null);
 
         if (cb.moveToFirst()) {
@@ -1377,17 +1385,18 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public void ws_Inserta_datos_Equipo_Base_Tour(ArrayList<modelo_lista_dbarcos> datos){
+    public void ws_Inserta_datos_Equipo_Base(ArrayList<modelo_lista_dbarcos> datos){
 
         SQLiteDatabase dbs = this.getWritableDatabase();
 
         for (modelo_lista_dbarcos data: datos) {
             ContentValues cv1 = new ContentValues();
+            cv1.put("idOpboat", data.idOpBoat);
             cv1.put("id_bote", data.idtourequipobase);
             cv1.put("nombre", data.nombre);
             cv1.put("capacidad", data.capacidad);
             cv1.put("abordado", data.abordar);
-            cv1.put("id_producto", data.idTour);
+
             dbs.insert("botes", null, cv1);
         }
 
@@ -1395,7 +1404,24 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public void ws_Update_datos_Equipo_Base_Tour(ArrayList<modelo_lista_dbarcos> datos){
+    public void ws_Inserta_datos_Equipo_Base_Tour(ArrayList<modelo_lista_tour_barcos> datos){
+
+        SQLiteDatabase dbs = this.getWritableDatabase();
+
+        for (modelo_lista_tour_barcos data: datos) {
+            ContentValues cv1 = new ContentValues();
+            cv1.put("idEquipoBase", data.idEquipoBase);
+            cv1.put("idTour", data.idTour);
+
+
+            dbs.insert("botes_tour", null, cv1);
+        }
+
+        dbs.close();
+
+    }
+
+    public void ws_Update_datos_Equipo_Base(ArrayList<modelo_lista_dbarcos> datos){
         SQLiteDatabase dbs = this.getWritableDatabase();
         for (modelo_lista_dbarcos data: datos) {
             ContentValues up = new ContentValues();
@@ -1433,7 +1459,7 @@ public class DBhelper extends SQLiteOpenHelper {
             cv1.put("id_op",data.idTipoOperacionCaja);
             cv1.put("desc",data.nomTipoOperacionCaja);
             cv1.put("tipo", data.tipo);
-            dbs.insert("encabezado_caja", null, cv1);
+            dbs.insert("tipo_operacion_caja", null, cv1);
         }
 
         dbs.close();
