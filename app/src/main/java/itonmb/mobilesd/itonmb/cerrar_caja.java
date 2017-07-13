@@ -113,9 +113,10 @@ public class cerrar_caja extends BaseMenu {
                 dbs.inserta_cierre_caja(Utilerias.toDouble(pesos),Utilerias.toDouble(usd));
                 Global.status_caja=0;
                 Global.id_caja=0;
+                dbs.clean_databaseall();
 
                 // Abrir busqueda de cupon
-                Intent intent_serv = new Intent(getApplicationContext(), apertura_caja.class);
+                Intent intent_serv = new Intent(getApplicationContext(), login_main.class);
                 startActivity(intent_serv);
             }
         });

@@ -29,9 +29,11 @@ import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 
 public class WsProcesos {
     DBhelper dbs ;
-    String dd = "2017/07/04";
-    DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    DateFormat dateFormat2 = new SimpleDateFormat("yyyy/MM/dd");
     Date date = new Date();
+
 
     public boolean  WSObtenerReservas (Context context, String fecha) {
 
@@ -48,7 +50,7 @@ public class WsProcesos {
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 
 
-            request.addProperty("fecha",dd);
+            request.addProperty("fecha",dateFormat2.format(date));
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
@@ -297,7 +299,7 @@ public class WsProcesos {
         final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerEquipo_Base";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("fecha",dd);
+        request.addProperty("fecha",dateFormat2.format(date));
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;
@@ -415,7 +417,8 @@ public class WsProcesos {
         final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Valida_Capacidad_Bote";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("fecha",dd);
+        request.addProperty("fecha",dateFormat2
+                .format(date));
         request.addProperty("idtourequipobase",id_barco);
         request.addProperty("pax",pax);
 
@@ -622,8 +625,9 @@ public class WsProcesos {
                 int idCaja=Integer.parseInt(ic.getProperty("idCaja").toString());
                 String nombreCaja=ic.getProperty("nombreCaja").toString();
                 int status=Integer.parseInt(ic.getProperty("status").toString());
+                String userid=ic.getProperty("userid").toString();
 
-                datos.add(new modelo_lista_Caja(idCaja,nombreCaja,status));
+                datos.add(new modelo_lista_Caja(idCaja,nombreCaja,status,userid));
             }
 
             dbs.ws_Inserta_Cajas(datos);
@@ -920,6 +924,56 @@ public class WsProcesos {
         request.addProperty("idMoneda",idmoneda);
         request.addProperty("TipoCambio",TC);
         request.addProperty("observaciones",obs);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            /*SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Boolean(resSoap.toString());*/
+
+
+        }
+        catch (Exception e)
+        {
+
+            resul = false;
+
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public boolean  WSUpgrade (int idTour, int numAdulto, int numNinio, int numInfante) {
+
+
+
+
+        boolean resul = false;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Upgrade";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Upgrade";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idTour",idTour);
+        request.addProperty("numAdulto",numAdulto);
+        request.addProperty("numNinio",numNinio);
+        request.addProperty("numInfante",numInfante);
+        request.addProperty("fechaAlta",dateFormat.format(date));
+        request.addProperty("userId",Global.user_id);
+        request.addProperty("reservaDetalle",Global.reservadetalle);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;

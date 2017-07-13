@@ -265,6 +265,7 @@ public class adapter_lista_servicio extends BaseAdapter {
                                 return false;
                             }
                             Intent anIntent = new Intent(context, upgrade.class);
+                            Global.reservadetalle=lista.get(position).reservaDetalle;
                             Global.cupon=lista.get(position).cupon;
                             anIntent.putExtra("adulto",Integer.toString(lista.get(position).adulto));
                             anIntent.putExtra("menor",Integer.toString(lista.get(position).menor));

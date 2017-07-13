@@ -64,7 +64,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private String TABLA_CAJA_DENOMINACION = "create table caja_denominacion(id_sesion integer,id_caja integer, cant integer, denom double, tipo text, tipo_operacion text, usuario text)";
 
-    private String TABLA_ENC_CAJA = "create table encabezado_caja( id_caja integer,caja text, fecha_abre datetime,fecha_cierre datetime,usuario text, monto_inicial_usd double," +
+    private String TABLA_ENC_CAJA = "create table encabezado_caja( sesion integer,id_caja integer,caja text, fecha_abre datetime,fecha_cierre datetime,usuario text, monto_inicial_usd double," +
             "monto_final_usd double,monto_inicial_mxn double,monto_final_mxn double, status integer)";
     private String TABLA_DET_CAJA = "create table detalle_caja(id_d_caja integer PRIMARY KEY, id_caja integer, fecha datetime,tipo_movimiento text," +
             " monto_moneda double, moneda text,monto_mn double,usuario text,operacion text,observacion text,forma_ingreso integer)";
@@ -159,6 +159,19 @@ public class DBhelper extends SQLiteOpenHelper {
     }
 
     public void clean_database(){
+        SQLiteDatabase dbs = this.getWritableDatabase();
+        dbs.execSQL("delete from usuarios");
+        dbs.execSQL("delete from reservas");
+        dbs.execSQL("delete from productos");
+        dbs.execSQL("delete from productos_upgrade");
+        dbs.execSQL("delete from brazaletes");
+        dbs.execSQL("delete from abordado");
+        dbs.execSQL("delete from brazalete_asignacion");
+        dbs.execSQL("delete from botes");
+        dbs.execSQL("delete from botes_tour");
+    }
+
+    public void clean_databaseall(){
         SQLiteDatabase dbs = this.getWritableDatabase();
         dbs.execSQL("delete from usuarios");
         dbs.execSQL("delete from encabezado_caja");
@@ -333,24 +346,36 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public int[] getProducto_idbrazalete( int producto_padre){
+    public int[] getProducto_idbrazalete( int producto_padre, int adulto,int menor,int complemento){
         int[] response = new int[3];
 
-        SQLiteDatabase dbs = this.getWritableDatabase();
+        SQLiteDatabase dbss = this.getWritableDatabase();
 
 
 
         String consulta = "select idBrazalete_Adulto,idBrazalete_menor,idBrazalete_complemento from productos where id_producto="+producto_padre;
-        Cursor cursor = dbs.rawQuery(consulta, null);
 
-        if (cursor.moveToFirst()) {
+        Cursor cur = dbss.rawQuery(consulta, null);
+
+        if (cur.moveToFirst()) {
             do{
-                response[0] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_Adulto"));
-                response[1] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_menor"));
-                response[2] =  cursor.getInt(cursor.getColumnIndex("idBrazalete_complemento"));
-            }while(cursor.moveToNext());
+                response[0]=0;
+                response[1]=0;
+                response[2]=0;
+                ///////////////////////////////////////
+                if(adulto>0) {
+                    response[0] = cur.getInt(cur.getColumnIndex("idBrazalete_Adulto"));
+                }
+               else if(menor>0) {
+                    response[1] = cur.getInt(cur.getColumnIndex("idBrazalete_menor"));
+                }
+                else if (complemento>0) {
+                    response[2] = cur.getInt(cur.getColumnIndex("idBrazalete_complemento"));
+                }
+            }while(cur.moveToNext());
         }
-        dbs.close();
+        dbss.close();
+        cur.close();
         return response;
 
     }
@@ -486,7 +511,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
 
-        String consulta = "select idOpboat,id_bote,nombre,capacidad,abordado,id_producto  from botes ";
+        String consulta = "select idOpboat,id_bote,nombre,capacidad,abordado  from botes ";
         Cursor cursor = dbs.rawQuery(consulta, null);
 
         if (cursor.moveToFirst()) {
@@ -495,7 +520,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 int capac =cursor.getInt(cursor.getColumnIndex("capacidad"));
                 int idOpboat =cursor.getInt(cursor.getColumnIndex("idOpboat"));
                 int id_bote =cursor.getInt(cursor.getColumnIndex("id_bote"));
-                int id_producto =cursor.getInt(cursor.getColumnIndex("id_producto"));
+
                 int aborda =cursor.getInt(cursor.getColumnIndex("abordado"));
                 datos.add(new modelo_lista_dbarcos(idOpboat,id_bote,nombre_barco,capac,aborda));
             }while(cursor.moveToNext());
@@ -588,7 +613,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 cv.put("adulto", adulto);
                 cv.put("menor", menor);
                 cv.put("infante", infante);
-                cv.put("importe", importe);
+
                 dbs.insert("upgrade_detalle", null, cv);
 
 
@@ -817,8 +842,9 @@ public class DBhelper extends SQLiteOpenHelper {
 
         SQLiteDatabase dbs = this.getWritableDatabase();
         ContentValues up = new ContentValues();
+        up.put("sesion",Global.id_sesion);
         up.put("fecha_abre",dateFormat.format(date));
-        up.put("usuario",Global.usuario);
+        up.put("usuario",Global.user_id);
         up.put("monto_inicial_mxn",importe);
         up.put("monto_inicial_usd",importe_usd);
         up.put("status",1);
@@ -904,11 +930,12 @@ public class DBhelper extends SQLiteOpenHelper {
     public boolean getcajaAbierta(){
         boolean response = false;
         SQLiteDatabase dbs = this.getWritableDatabase();
-        String query = "select id_caja,caja from encabezado_caja  where usuario='"+Global.usuario+"' and status=1";
+        String query = "select sesion,id_caja,caja from encabezado_caja  where usuario='"+Global.user_id+"' and status=1";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
 
+            Global.id_sesion = cursor.getInt(cursor.getColumnIndex("sesion"));
             Global.id_caja = cursor.getInt(cursor.getColumnIndex("id_caja"));
             Global.nombre_caja = cursor.getString(cursor.getColumnIndex("caja"));
             Global.status_caja=1;
@@ -1021,12 +1048,12 @@ public class DBhelper extends SQLiteOpenHelper {
     public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int complemento,int idbr_adulto,int idbr_menor, int idbr_complemento){
 
         String encontrado = "nada";
-        int[] idbr = getProducto_idbrazalete(id_tour);
+
 
 
 
         SQLiteDatabase dbs = this.getWritableDatabase();
-        String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b where b.folio='"+folio+"' and a.folio=b.folio and a.idBRazalete=b.idBrazalete group by a.tipo";
+        String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b where b.cupon='"+cupon+"' and a.folio=b.folio and a.idBRazalete=b.idBrazalete group by a.tipo";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
@@ -1043,7 +1070,10 @@ public class DBhelper extends SQLiteOpenHelper {
         }
         cursor.close();
 
-        String sql_brazalete = "Select idBrazalete,tipo,color from brazaletes where folio="+folio+"  and idBrazalete in ("+idbr[0]+","+idbr[1]+","+idbr[2]+") and status=1 and id_usr='"+Global.user_id+"'";
+        int[] idbr = getProducto_idbrazalete(id_tour,adulto,menor,complemento);
+         dbs = this.getWritableDatabase();
+        String sql_brazalete = "Select idBrazalete,tipo,color from brazaletes where folio="+folio+"  " +
+                "and idBrazalete in ("+idbr[0]+","+idbr[1]+","+idbr[2]+") and status=1 and id_usr='"+Global.user_id+"'";
          cursor = dbs.rawQuery(sql_brazalete, null);
         if (cursor.moveToFirst()) {
             do{
@@ -1445,6 +1475,7 @@ public class DBhelper extends SQLiteOpenHelper {
             cv1.put("id_caja",data.idCaja);
             cv1.put("caja",data.nombreCaja);
             cv1.put("status",data.status);
+            cv1.put("usuario",data.userid);
             dbs.insert("encabezado_caja", null, cv1);
         }
 

@@ -506,6 +506,9 @@ public class forma_de_pago extends BaseMenu {
             WsProcesos ws = new WsProcesos();
             ws.WSInserta_detalle_caja(1,Double.toString(importe_final),1,Double.toString(Global.TC), producto_desc+"-"+cupon);
 
+            if (tipo==1){
+                ws.WSUpgrade(id_producto,adulto,menor,infante);
+            }
 
 
             return resp;

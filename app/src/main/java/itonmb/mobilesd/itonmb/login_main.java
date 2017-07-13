@@ -48,7 +48,7 @@ public class login_main extends AppCompatActivity {
 
         /////////////////////////////////////////////////////
         // Datos pruebas
-        dbs.clean_database();
+
            Inserta_datos_pruebas datos = new Inserta_datos_pruebas(getApplicationContext());
            datos.inserta_datos_pruebas();
         // Oculta teclado
@@ -156,14 +156,18 @@ public class login_main extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String resp="";
             WsProcesos ws = new WsProcesos();
-            ws.WSObtenerReservas(getApplicationContext(),"");
+            if(!dbs.getcajaAbierta()) {
+                dbs.clean_databaseall();
+                ws.WSObtenerCajas(getApplicationContext());
+                ws.WSObtenertipoOperacionCaja(getApplicationContext());
+            }
+            dbs.clean_database();
+            ws.WSObtenerReservas(getApplicationContext(), "");
             ws.WSObtenerBrazaletes(getApplicationContext());
             ws.WSObtenerTour(getApplicationContext());
             ws.WSObtenerTourUpgrade(getApplicationContext());
             ws.WSObtenerTour_Equipo_Base(getApplicationContext());
-            ws.WSObtenerEquipo_Base(getApplicationContext(),"",0);
-            ws.WSObtenerCajas(getApplicationContext());
-            ws.WSObtenertipoOperacionCaja(getApplicationContext());
+            ws.WSObtenerEquipo_Base(getApplicationContext(), "", 0);
 
 
             return resp;

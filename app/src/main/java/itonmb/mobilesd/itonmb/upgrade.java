@@ -315,7 +315,7 @@ public class upgrade extends BaseMenu {
         int c=0;
         // Obtener datos para la lista de productos
         ArrayList<modelo_spinner_productos_upg> data= dbs.getProducto_precio(id_producto_padre);
-        id_producto= new int[data.size()];
+
         precio_ad_o= new double[data.size()];
         precio_me_o= new double[data.size()];
         precio_in_o= new double[data.size()];

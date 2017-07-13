@@ -104,7 +104,6 @@ public class apertura_caja extends BaseMenu
                       pesos = Utilerias.toNumero(txt_init_caja.getText().toString());
                       usd = Utilerias.toNumero(txt_init_caja_usd.getText().toString());
 
-                      dbs.inserta_apertura_caja(pesos,usd,spi_caja.getSelectedItem().toString());
                       Global.status_caja=1;
                       Global.id_caja=dbs.getidCaja(spi_caja.getSelectedItem().toString());
                       Global.nombre_caja=spi_caja.getSelectedItem().toString();
@@ -255,6 +254,8 @@ public class apertura_caja extends BaseMenu
               @Override
               protected void onPostExecute(String resp) {
                   progressDialog.dismiss();
+                  dbs.inserta_apertura_caja(pesos,usd,spi_caja.getSelectedItem().toString());
+
                   if(billetes!=null) {
                       dbs.inserta_denominacion_caja("B", "A", billetes);
                   }
