@@ -124,8 +124,9 @@ public class barcos_abordar extends BaseMenu {
 
                 int[] px= dbs.getPax_BRazalete(cupon);
 
-                ws.WSinserta_detalleOpBoat_Abordar(Global.orden_de_servicio,Global.reservadetalle,px[0] , px[1] , infante ,Global.user_id);
                 dbs.inserta_abordaje_in(cupon,total_pax,id_tour,total_pax_cupon);
+                ws.WSinserta_detalleOpBoat_Abordar(px[0] , px[1] , infante );
+
               resp="ok";
             }
             return resp;

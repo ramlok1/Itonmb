@@ -539,7 +539,7 @@ public class WsProcesos {
 
     }
 
-    public boolean  WSinserta_detalleOpBoat_Abordar (int opboat , int reservadetalle , int adulto , int menor , int infante  ,String user) {
+    public boolean  WSinserta_detalleOpBoat_Abordar ( int adulto , int menor , int infante  ) {
 
 
 
@@ -551,13 +551,13 @@ public class WsProcesos {
         final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Abordar_DetalleOpBoat";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("opboat",opboat);
-        request.addProperty("reservadetalle",reservadetalle);
+        request.addProperty("opboat", Global.orden_de_servicio);
+        request.addProperty("reservadetalle",Global.reservadetalle);
         request.addProperty("adulto",adulto);
         request.addProperty("menor",menor);
         request.addProperty("infante",infante);
         request.addProperty("fecha",dateFormat.format(date));
-        request.addProperty("user",user);
+        request.addProperty("user",Global.user_id);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;

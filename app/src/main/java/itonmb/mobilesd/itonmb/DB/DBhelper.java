@@ -1170,11 +1170,13 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         // Obtener id de bote seleccionado
-        String consulta_id_bote = "select id_bote,abordado from botes where seleccion=1 and id_producto="+id_tour;
+        String consulta_id_bote = "select idOpboat,id_bote,abordado from botes,botes_tour where seleccion=1 and  id_bote=idEquipoBase and  idTour="+id_tour;
         Cursor cb = dbs.rawQuery(consulta_id_bote, null);
 
         if (cb.moveToFirst()) {
                 id_bote = cb.getInt(cb.getColumnIndex("id_bote"));
+                Global.orden_de_servicio = cb.getInt(cb.getColumnIndex("idOpboat"));
+
                 abordados = cb.getInt(cb.getColumnIndex("abordado"));
         }
         // obtener folios de brazaletes seleccionados
@@ -1392,7 +1394,7 @@ public class DBhelper extends SQLiteOpenHelper {
         for (modelo_lista_dbarcos data: datos) {
             ContentValues cv1 = new ContentValues();
             cv1.put("idOpboat", data.idOpBoat);
-            cv1.put("id_bote", data.idtourequipobase);
+            cv1.put("id_bote", data.equipobase);
             cv1.put("nombre", data.nombre);
             cv1.put("capacidad", data.capacidad);
             cv1.put("abordado", data.abordar);
@@ -1426,7 +1428,7 @@ public class DBhelper extends SQLiteOpenHelper {
         for (modelo_lista_dbarcos data: datos) {
             ContentValues up = new ContentValues();
             up.put("abordado", data.abordar);
-            dbs.update("botes", up, "id_bote=" + data.idtourequipobase, null);
+            dbs.update("botes", up, "id_bote=" + data.equipobase, null);
         }
 
         dbs.close();

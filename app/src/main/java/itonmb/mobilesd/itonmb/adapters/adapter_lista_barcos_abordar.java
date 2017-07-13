@@ -75,7 +75,7 @@ public class adapter_lista_barcos_abordar extends BaseAdapter {
         chk_sel_abordar = (CheckBox) itemView.findViewById(R.id.chk_sel_abordar);
 
 
-        final int id_bote =lista.get(position).idtourequipobase;
+        final int id_bote =lista.get(position).equipobase;
         // Capture position and set to the TextViews
         tview_nombre.setText(lista.get(position).nombre);
         tview_capacidad.setText(Integer.toString(lista.get(position).capacidad));
