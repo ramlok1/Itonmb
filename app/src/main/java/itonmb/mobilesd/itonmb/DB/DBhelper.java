@@ -346,7 +346,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     }
 
-    public int[] getProducto_idbrazalete( int producto_padre, int adulto,int menor,int complemento){
+    public int[] getProducto_idbrazalete( int producto_padre, int adulto,int menor,int complemento, int haz){
         int[] response = new int[3];
 
         SQLiteDatabase dbss = this.getWritableDatabase();
@@ -358,21 +358,27 @@ public class DBhelper extends SQLiteOpenHelper {
         Cursor cur = dbss.rawQuery(consulta, null);
 
         if (cur.moveToFirst()) {
-            do{
-                response[0]=0;
-                response[1]=0;
-                response[2]=0;
-                ///////////////////////////////////////
-                if(adulto>0) {
-                    response[0] = cur.getInt(cur.getColumnIndex("idBrazalete_Adulto"));
-                }
-               else if(menor>0) {
-                    response[1] = cur.getInt(cur.getColumnIndex("idBrazalete_menor"));
-                }
-                else if (complemento>0) {
-                    response[2] = cur.getInt(cur.getColumnIndex("idBrazalete_complemento"));
-                }
-            }while(cur.moveToNext());
+           if(haz==0) {
+               do {
+                   response[0] = 0;
+                   response[1] = 0;
+                   response[2] = 0;
+                   ///////////////////////////////////////
+                   if (adulto > 0) {
+                       response[0] = cur.getInt(cur.getColumnIndex("idBrazalete_Adulto"));
+                   } else if (menor > 0) {
+                       response[1] = cur.getInt(cur.getColumnIndex("idBrazalete_menor"));
+                   } else if (complemento > 0) {
+                       response[2] = cur.getInt(cur.getColumnIndex("idBrazalete_complemento"));
+                   }
+               } while (cur.moveToNext());
+           }else{
+               do {
+                       response[0] = cur.getInt(cur.getColumnIndex("idBrazalete_Adulto"));
+                       response[1] = cur.getInt(cur.getColumnIndex("idBrazalete_menor"));
+                       response[2] = cur.getInt(cur.getColumnIndex("idBrazalete_complemento"));
+               } while (cur.moveToNext());
+           }
         }
         dbss.close();
         cur.close();
@@ -1045,32 +1051,45 @@ public class DBhelper extends SQLiteOpenHelper {
         return ban;
     }
 
-    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor, int complemento,int idbr_adulto,int idbr_menor, int idbr_complemento){
+    public String busca_brazalete (String folio, int id_tour,String producto_desc, String cupon, int adulto,int menor){
 
         String encontrado = "nada";
+        int complemento =0;
+        boolean continua=false;
 
 
 
-
+        int[] idtr = getProducto_idbrazalete(id_tour,0,0,0,1);
         SQLiteDatabase dbs = this.getWritableDatabase();
+        if(idtr[2]>0){
+            complemento=adulto+menor;
+
+            int tasig = this.getTotal_pax_abordar(cupon);
+
+            if(tasig<(complemento*2)){complemento=(complemento*2)-tasig;
+            }else{complemento=0;}
+
+        }
+
+
         String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b where b.cupon='"+cupon+"' and a.folio=b.folio and a.idBRazalete=b.idBrazalete group by a.tipo";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            String tipo_1=cursor.getString(cursor.getColumnIndex("tipo"));
-            if(tipo_1.equals("adulto")) {
-                adulto = adulto-cursor.getInt(cursor.getColumnIndex("cant"));
-            }
-            else if(tipo_1.equals("menor")) {
-                menor = menor-cursor.getInt(cursor.getColumnIndex("cant"));
-            }
-            else if(tipo_1.equals("complemento")) {
-                complemento = complemento-cursor.getInt(cursor.getColumnIndex("cant"));
-            }
+            do {
+                String tipo_1 = cursor.getString(cursor.getColumnIndex("tipo"));
+                if (tipo_1.equals("adulto")) {
+                    adulto = adulto - cursor.getInt(cursor.getColumnIndex("cant"));
+                } else if (tipo_1.equals("menor")) {
+                    menor = menor - cursor.getInt(cursor.getColumnIndex("cant"));
+                } else if (tipo_1.equals("complemento")) {
+                    complemento = complemento - cursor.getInt(cursor.getColumnIndex("cant"));
+                }
+            }while(cursor.moveToNext());
         }
         cursor.close();
-
-        int[] idbr = getProducto_idbrazalete(id_tour,adulto,menor,complemento);
+        if(menor<0){menor=0;}
+        int[] idbr = getProducto_idbrazalete(id_tour,adulto,menor,complemento,0);
          dbs = this.getWritableDatabase();
         String sql_brazalete = "Select idBrazalete,tipo,color from brazaletes where folio="+folio+"  " +
                 "and idBrazalete in ("+idbr[0]+","+idbr[1]+","+idbr[2]+") and status=1 and id_usr='"+Global.user_id+"'";
@@ -1078,7 +1097,11 @@ public class DBhelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do{
                 String tipo = cursor.getString(cursor.getColumnIndex("tipo"));
-                boolean continua = validaPax_brazalete(adulto,menor,complemento,tipo);
+                if(complemento>0 && (adulto+menor)==0) {
+                    continua=true;
+                }else{
+                    continua = validaPax_brazalete(adulto, menor, complemento, tipo);
+                }
 
                 if(continua) {
                     // inserta datos de brazalete
@@ -1095,7 +1118,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
                     ContentValues up = new ContentValues();
                     up.put("status",0);
-                    dbs.update("brazaletes",up,"folio="+folio,null);
+                    dbs.update("brazaletes",up,"folio="+folio+" and idBrazalete="+cursor.getInt(cursor.getColumnIndex("idBrazalete")),null);
                     encontrado=tipo;
                 }else
                 {return tipo_brazalete_ban;}
@@ -1123,7 +1146,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 if(menor==0){ban=false;tipo_brazalete_ban="menorx";}
                 else{tipo_brazalete_ban=tipo;}
                 break;
-            case "infante":
+            case "complemento":
                 if(infante==0){ban=false;tipo_brazalete_ban="infantex";}
                 else{tipo_brazalete_ban=tipo;}
                 break;
@@ -1238,7 +1261,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
         // Marcar status de cupon en tabla de reservas
         up = new ContentValues();
-        if(total_pax==total_pax_cupon){
+        if(total_pax>=total_pax_cupon ){
             up.put("status",14);
         }else{up.put("status",13);}
         dbs.update("reservas",up,"cupon='"+cupon+"' and id_producto="+id_tour,null);

@@ -112,7 +112,7 @@ public class agregar_brazalete extends BaseMenu {
 
                 String folio = txt_folio_brazalete.getText().toString();
                 if(!folio.equals("")) {
-                    String encontrado = dbs.busca_brazalete(folio,id_tour,producto_desc,cupon,ad_cupon,me_cupon,in_cupon,0,0,0);
+                    String encontrado = dbs.busca_brazalete(folio,id_tour,producto_desc,cupon,ad_cupon,me_cupon);
                     valida_encontrado(encontrado,v);
                     txt_folio_brazalete.setText("");
                 }else{
@@ -152,7 +152,7 @@ public class agregar_brazalete extends BaseMenu {
                 bar.getBar(v, "Numero de infantes superado, no se puede agregar el brazalete.", R.drawable.error, "#fe3939").show();
                 break;
             case "nada":
-                bar.getBar(v, "No se encontro el folio o ya se encuentra asignado.", R.drawable.warn, "#f9db59").show();
+                bar.getBar(v, "No se encontro el folio o excede asignación para tipo de pax.", R.drawable.warn, "#f9db59").show();
                 break;
         }
 

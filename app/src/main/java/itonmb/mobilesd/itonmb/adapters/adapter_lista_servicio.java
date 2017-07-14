@@ -128,6 +128,9 @@ public class adapter_lista_servicio extends BaseAdapter {
             case 13:
                 btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.pendiente));
                 break;
+            case 1:
+                btn_status.setBackground(ContextCompat.getDrawable(context,R.drawable.pendiente));
+                break;
         }
 
         //Revisar id de drawer idioma

@@ -157,25 +157,10 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/img_abordar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="80dp"
-            app:srcCompat="@drawable/abordar" />
-
-        <TextView
-            android:id="@+id/lbl_abordar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Abordado"
-            android:textSize="14sp" />
-
-        <ImageView
             android:id="@+id/img_noshow"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="80dp"
+            android:layout_marginLeft="350dp"
             app:srcCompat="@drawable/noshow" />
 
         <TextView
@@ -199,21 +184,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Go Show"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:id="@+id/img_abordo_sin_cupon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="80dp"
-            app:srcCompat="@drawable/abordo_sin_cupon" />
-
-        <TextView
-            android:id="@+id/lbl_abordo_sin_cupon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Abordado Sin Cupon"
             android:textSize="14sp" />
 
         <ImageView
