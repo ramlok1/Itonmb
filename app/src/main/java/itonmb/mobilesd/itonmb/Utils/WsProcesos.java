@@ -954,6 +954,92 @@ public class WsProcesos {
 
     }
 
+    public int  WSInserta_venta ( String monto, int muelle,int desc) {
+
+
+
+        int resul;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_Venta";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Venta";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("idReservaDetalle",Global.reservadetalle);
+        request.addProperty("Monto",monto);
+        request.addProperty("muelle",muelle);
+        request.addProperty("descuento",desc);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+            SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Integer(resSoap.toString());
+
+
+        }
+        catch (Exception e)
+        {
+            resul = 0;
+        }
+
+        return resul;
+
+
+
+
+    }
+
+    public void  WSInserta_pago ( String monto, int idVenta,int idmoneda,int idfp) {
+
+
+
+        int resul;
+
+        final String NAMESPACE = "http://sql2mobilesd.cloudapp.net/";
+        final String URL="http://sql2mobilesd.cloudapp.net/WSAlbatros/WSAlbatros.asmx";
+        final String METHOD_NAME = "Inserta_Pago";
+        final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Inserta_Pago";
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        request.addProperty("fechaPago",dateFormat.format(date));
+        request.addProperty("idVenta",idVenta);
+        request.addProperty("Monto",monto);
+        request.addProperty("idMoneda",idmoneda);
+        request.addProperty("idFormaPago",idfp);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE transporte = new HttpTransportSE(URL);
+
+        try
+        {
+            transporte.call(SOAP_ACTION, envelope);
+          /*  SoapPrimitive resSoap = (SoapPrimitive) envelope.getResponse();
+
+            resul = new Integer(resSoap.toString());*/
+
+
+        }
+        catch (Exception e)
+        {
+            resul = 0;
+        }
+
+    }
+
     public boolean  WSUpgrade (int idTour, int numAdulto, int numNinio, int numInfante) {
 
 

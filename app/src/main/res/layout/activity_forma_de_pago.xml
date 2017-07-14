@@ -375,7 +375,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:paddingRight="30dp"
-                        android:text="Monto M/N"
+                        android:text="Monto USD"
                         android:textAlignment="center"
                         android:textColor="@color/colorfondo"
                         android:textSize="18sp" />

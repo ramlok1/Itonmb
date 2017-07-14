@@ -49,6 +49,7 @@ import itonmb.mobilesd.itonmb.Utils.Utilerias;
 import itonmb.mobilesd.itonmb.Utils.WsProcesos;
 import itonmb.mobilesd.itonmb.adapters.adapter_lista_formas_de_pago;
 import itonmb.mobilesd.itonmb.modelo.modelo_lista_formas_de_pago;
+import itonmb.mobilesd.itonmb.modelo.modelo_lista_ws_brazalete;
 
 
 public class forma_de_pago extends BaseMenu {
@@ -69,6 +70,8 @@ public class forma_de_pago extends BaseMenu {
     DateFormat dateFormat_hora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     Date date = new Date();
+    ArrayList<modelo_lista_formas_de_pago> datos;
+    int p_descuento=0;
 
 
     @Override
@@ -133,7 +136,7 @@ public class forma_de_pago extends BaseMenu {
     }
     private void genera_lista_pagos() {
 
-        ArrayList<modelo_lista_formas_de_pago> datos = dbs.getPagos(cupon);
+        datos = dbs.getPagos(cupon);
 
 
 
@@ -252,7 +255,7 @@ public class forma_de_pago extends BaseMenu {
                     Snackmsg bar = new Snackmsg();
                     bar.getBar(v, "Supera monto a pagar, favor de verificar saldo.", R.drawable.warn, "#f9db59").show();
                 } else{
-                    dbs.inserta_forma_pago(999991, cupon, forma_pago, monto_moneda, monto_mn, 18.45, moneda, recibido, cambio);
+                    dbs.inserta_forma_pago(999991, cupon, forma_pago, monto_moneda, monto_mn, Global.TC, moneda, recibido, cambio);
 
                 genera_lista_pagos();
                  }
@@ -384,7 +387,8 @@ public class forma_de_pago extends BaseMenu {
             @Override
             public void onClick(View v) {
 
-                int p_descuento=0;
+                p_descuento=0;
+
                 String descuento =txt_desc.getText().toString();
                 autoriza_descuento = txt_desc_autoriza.getText().toString();
                 if(!descuento.equals("")||!descuento.equals("0")) {
@@ -504,7 +508,15 @@ public class forma_de_pago extends BaseMenu {
         protected String doInBackground(String... params) {
             String resp="";
             WsProcesos ws = new WsProcesos();
-            ws.WSInserta_detalle_caja(1,Double.toString(importe_final),1,Double.toString(Global.TC), producto_desc+"-"+cupon);
+            ws.WSInserta_detalle_caja(1,Double.toString(importe_final),2,Double.toString(Global.TC), producto_desc+"-"+cupon);
+            int idVenta=ws.WSInserta_venta(Double.toString(importe_total),impuesto_muelle,p_descuento);
+            p_descuento=0;
+            for(modelo_lista_formas_de_pago data:datos) {
+                int fp=1,mn=2;
+                if(data.forma_pago.equals("TARJETA")){fp=2;}
+                if(data.moneda.equals("MXN")){mn=1;}
+                ws.WSInserta_pago(Double.toString(data.monto_moneda),idVenta,mn,fp);
+            }
 
             if (tipo==1){
                 ws.WSUpgrade(id_producto,adulto,menor,infante);

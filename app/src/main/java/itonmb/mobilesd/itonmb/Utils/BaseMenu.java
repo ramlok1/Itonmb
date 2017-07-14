@@ -57,6 +57,9 @@ public class BaseMenu extends AppCompatActivity {
     View lay_base;
     public DBhelper dbs ;
     public WsProcesos ws = new WsProcesos();
+    String obs;
+    double monto=0;
+    int tp=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,21 +243,24 @@ public class BaseMenu extends AppCompatActivity {
         btn_confirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double monto=0;
+                 monto=0;
                 if(!Utilerias.isNull(txt_monto.getText().toString())) {
                     monto = Integer.parseInt(txt_monto.getText().toString());
                 }
-                String obs = txt_obs.getText().toString();
+                obs = txt_obs.getText().toString();
                 String operacion = spi_operacion.getSelectedItem().toString();
 
                 if(monto!=0){
+                    tp=funcion;
                     if(funcion==1){
-                        dbs.inserta_movimiento_detalle_caja("E", operacion, monto, "MXN", monto, obs);
+
+                        dbs.inserta_movimiento_detalle_caja("E", operacion, monto, "USD", monto, obs);
                         pwindo.dismiss();
                     }else {
-                        dbs.inserta_movimiento_detalle_caja("S", operacion, monto, "MXN", monto, obs);
+                        dbs.inserta_movimiento_detalle_caja("S", operacion, monto, "USD", monto, obs);
                         pwindo.dismiss();
                     }
+                    new BaseMenu.movimientoCaja().execute();
                 }else{
                     Toast.makeText(getApplicationContext(),"Monto no puede ser 0",Toast.LENGTH_SHORT).show();
                 }
@@ -336,6 +342,38 @@ public class BaseMenu extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String resp="";
             ws.WSObtenerEquipo_Base(getApplicationContext(),"",1);
+
+
+            return resp;
+        }
+    }
+
+    private class movimientoCaja extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(BaseMenu.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Actualizando caja...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String resp) {
+            progressDialog.dismiss();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp="";
+            if(tp==1) {
+                ws.WSInserta_detalle_caja(1, Double.toString(monto), 2, Double.toString(Global.TC), obs);
+            }else{
+                ws.WSInserta_detalle_caja(3, Double.toString(monto), 2, Double.toString(Global.TC), obs);
+            }
 
 
             return resp;

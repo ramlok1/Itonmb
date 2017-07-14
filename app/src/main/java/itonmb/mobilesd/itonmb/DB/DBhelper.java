@@ -393,16 +393,20 @@ public class DBhelper extends SQLiteOpenHelper {
 
 
         SQLiteDatabase dbs = this.getWritableDatabase();
-        String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b where b.cupon='" + cupon + "' and a.folio=b.folio and a.idBRazalete=b.idBrazalete group by a.tipo";
+        String query = "select a.tipo as tipo, count(b.id_asignacion) as cant from brazaletes a,brazalete_asignacion b " +
+                "where b.cupon='" + cupon + "' and a.folio=b.folio and a.idBRazalete=b.idBrazalete and a.idBrazalete not in (select idBrazalete_complemento from productos where idBrazalete_complemento !=0 ) " +
+                "group by a.tipo";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            String tipo_1 = cursor.getString(cursor.getColumnIndex("tipo"));
-            if (tipo_1.equals("adulto")) {
-                paxbr[0]= cursor.getInt(cursor.getColumnIndex("cant"));
-            } else if (tipo_1.equals("menor")) {
-                paxbr[1]= cursor.getInt(cursor.getColumnIndex("cant"));
-            }
+            do {
+                String tipo_1 = cursor.getString(cursor.getColumnIndex("tipo"));
+                if (tipo_1.equals("adulto")) {
+                    paxbr[0] = cursor.getInt(cursor.getColumnIndex("cant"));
+                } else if (tipo_1.equals("menor")) {
+                    paxbr[1] = cursor.getInt(cursor.getColumnIndex("cant"));
+                }
+            }while(cursor.moveToNext());
         }
         cursor.close();
         return paxbr;
@@ -1015,7 +1019,7 @@ public class DBhelper extends SQLiteOpenHelper {
         SQLiteDatabase dbs = this.getWritableDatabase();
 
         //Query salidas
-        String query = "select sum(monto_mn) as venta from detalle_caja  where id_caja='"+Global.id_caja+"' and tipo_movimiento='E' and operacion='Venta'";
+        String query = "select sum(monto_mn) as venta from detalle_caja  where id_caja='"+Global.id_caja+"' and tipo_movimiento='E' and operacion='Entrada Venta'";
         Cursor cursor = dbs.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {

@@ -58,6 +58,7 @@ public class search_orden extends BaseMenu {
         set_triggers();
         prepara_spinner();
 
+
         txt_fecha.setText(dateFormat.format(date).toString());
 
         // Oculta teclado
@@ -90,7 +91,7 @@ public class search_orden extends BaseMenu {
                 String operacion= txt_id_oper.getText().toString();
                 String producto = spi_producto.getSelectedItem().toString();
                 String cupon = txt_cupon.getText().toString();
-
+                Global.consulta_where=" where status not in (14,2) and (adulto+menor+infante)!=0";
                 if(producto=="Producto"){producto="";}
 
                 // Armado de where dinamico

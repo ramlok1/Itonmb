@@ -249,9 +249,9 @@ public class upgrade extends BaseMenu {
                     bar.getBar(v, "Favor de indicar pax.", R.drawable.warn, "#f9db59").show();
                 }else{
                     int posicion = spi_productos_upg.getSelectedItemPosition();
-                    double producto_importe = (upg_adulto*(precio_ad_n[posicion]-precio_ad_o[posicion]))+
-                                              (upg_menor*(precio_me_n[posicion]-precio_me_o[posicion]))+
-                                              (upg_infante*(precio_in_n[posicion]-precio_in_o[posicion]));
+                    double producto_importe = (upg_adulto*(precio_ad_n[posicion]-precio_ad_o[0]))+
+                                              (upg_menor*(precio_me_n[posicion]-precio_me_o[0]))+
+                                              (upg_infante*(precio_in_n[posicion]-precio_in_o[0]));
                     int producto_id = id_producto[spi_productos_upg.getSelectedItemPosition()];
                     String response = dbs.inserta_upgrade_temporal(cupon,producto_id,producto_selecc,upg_adulto,upg_menor,upg_infante,producto_importe,ad_cupon,me_cupon,in_cupon);
                     valida_response(response, v);

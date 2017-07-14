@@ -51,7 +51,6 @@
                 android:layout_weight=".5"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Booking"
                 android:textSize="30sp" />
 
             <TextView
@@ -60,9 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="30sp"
                 android:inputType="textPersonName"
-                android:text="Abordar" />
+                android:text="Abordados"
+                android:textSize="30sp" />
 
         </LinearLayout>
 

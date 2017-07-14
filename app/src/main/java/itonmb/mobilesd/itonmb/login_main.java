@@ -63,16 +63,19 @@ public class login_main extends AppCompatActivity {
         txt_pwd = (TextView) findViewById(R.id.txt_login_pass);
 
     }
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
     private void setTriggers(){
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                new login_main.DatosCupones().execute();
-              /* Intent intent =
+               // new login_main.DatosCupones().execute();
+             /*  Intent intent =
                         new Intent(getApplicationContext(), apertura_caja.class);
                 startActivity(intent);*/
-            /*  String v_user = txt_usr.getText().toString().toLowerCase();
+              String v_user = txt_usr.getText().toString().toLowerCase();
                 String v_pwd = txt_pwd.getText().toString().toLowerCase();
 
                 if (v_user.equals("")||v_pwd.equals("")) {
@@ -91,17 +94,12 @@ public class login_main extends AppCompatActivity {
                         Global.usuario=v_user;
                         Global.usuario_nombre =nombre;
 
-
                         new login_main.DatosCupones().execute();
-
-
-
-
 
                     }
 
 
-                }*/
+                }
             }
         });
 
