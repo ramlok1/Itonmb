@@ -1092,7 +1092,9 @@ public class DBhelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         cursor.close();
+
         if(menor<0){menor=0;}
+
         int[] idbr = getProducto_idbrazalete(id_tour,adulto,menor,complemento,0);
          dbs = this.getWritableDatabase();
         String sql_brazalete = "Select idBrazalete,tipo,color from brazaletes where folio="+folio+"  " +
