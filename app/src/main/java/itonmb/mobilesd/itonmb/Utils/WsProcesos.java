@@ -35,6 +35,12 @@ public class WsProcesos {
     Date date = new Date();
 
 
+
+
+
+    String fech="2017/07/14";
+
+
     public boolean  WSObtenerReservas (Context context, String fecha) {
 
         dbs = new DBhelper(context);
@@ -50,7 +56,7 @@ public class WsProcesos {
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 
 
-            request.addProperty("fecha",dateFormat2.format(date));
+            request.addProperty("fecha",fech);
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
@@ -299,7 +305,7 @@ public class WsProcesos {
         final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/ObtenerEquipo_Base";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("fecha",dateFormat2.format(date));
+        request.addProperty("fecha",fech);//dateFormat2.format(date));
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;
@@ -417,8 +423,7 @@ public class WsProcesos {
         final String SOAP_ACTION = "http://sql2mobilesd.cloudapp.net/Valida_Capacidad_Bote";
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("fecha",dateFormat2
-                .format(date));
+        request.addProperty("fecha",fech);//dateFormat2.format(date));
         request.addProperty("idtourequipobase",id_barco);
         request.addProperty("pax",pax);
 

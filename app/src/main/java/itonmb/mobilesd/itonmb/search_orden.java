@@ -84,19 +84,19 @@ public class search_orden extends BaseMenu {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String consulta_where=Global.consulta_where;
                 // Se pasan a variables para que se coloque "" en vez de null
                 String name= txt_name.getText().toString();
-                String fecha= txt_fecha.getText().toString();
+               // String fecha= "14/07/17";//txt_fecha.getText().toString();
                 String operacion= txt_id_oper.getText().toString();
                 String producto = spi_producto.getSelectedItem().toString();
                 String cupon = txt_cupon.getText().toString();
                 Global.consulta_where=" where status not in (14,2) and (adulto+menor+infante)!=0";
+                String consulta_where=Global.consulta_where;
                 if(producto=="Producto"){producto="";}
 
                 // Armado de where dinamico
                 if(name.length()!=0){consulta_where=consulta_where+" and nombre_cliente like '%"+name+"%'";}
-                if(fecha.length()!=0){consulta_where=consulta_where+" and fecha = '"+fecha+"'";}
+               // if(fecha.length()!=0){consulta_where=consulta_where+" and fecha = '"+fecha+"'";}
                 if(producto.length()!=0){consulta_where=consulta_where+" and producto like '%"+producto+"%'";}
                 if(operacion.length()!=0){consulta_where=consulta_where+" and orden_servicio="+operacion;}
                 if(cupon.length()!=0){consulta_where=consulta_where+" and cupon='"+cupon+"'";}
